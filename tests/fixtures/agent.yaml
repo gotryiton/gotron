@@ -1,0 +1,4 @@
+table_name: agents
+attributes:
+    id: 1
+    name: something

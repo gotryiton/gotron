@@ -1,0 +1,17 @@
+development: &development
+  adapter: mysql
+  encoding: utf8
+  reconnect: false
+  database: gtio_framework_development
+  pool: 5
+  username: root
+  password:
+  host: localhost
+
+test: 
+  <<: *development
+  database: gtio_framework_test
+
+production:
+  <<: *development
+  database: gtio_framework_production

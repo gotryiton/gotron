@@ -1,0 +1,9 @@
+test:
+  text: this is test text
+invite:
+  sms_text: Here is your invitation url
+  email_text: Here is your invitation url
+  email_subject: Be my Personal Stylist on GO TRY IT ON!
+  facebook_text:  Be my Personal Stylist on GO TRY IT ON!
+other_test:
+  text: this is different test text

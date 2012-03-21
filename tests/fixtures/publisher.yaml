@@ -1,0 +1,6 @@
+table_name: publishers
+attributes:
+    id: 1
+    name: random house
+    created_at: 1000
+    updated_at: 1000
