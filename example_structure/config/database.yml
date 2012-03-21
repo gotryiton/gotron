@@ -1,0 +1,17 @@
+development: &development
+  adapter: mysql
+  encoding: utf8
+  reconnect: false
+  database: development
+  pool: 5
+  username: root
+  password:
+  host: localhost
+
+test: 
+  <<: *development
+  database: test
+
+production:
+  <<: *development
+  database: production

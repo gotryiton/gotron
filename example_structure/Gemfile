@@ -1,0 +1,8 @@
+source :rubygems
+
+gem 'railsless-deploy'
+gem 'capistrano-ext'
+gem 'xmpp4r'
+gem 'mysql'
+gem 'standalone_migrations'
+gem 'logging'
