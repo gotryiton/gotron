@@ -4,7 +4,7 @@ namespace TestApp;
 
 use Gotron\Application;
 
-require __DIR__ . "/../../../../lib/gotron/bootstrap.php";
+require __DIR__ . "/../../../../lib/Gotron/bootstrap.php";
 
 class TestApplication extends Application {
 	public static function configuration() {
