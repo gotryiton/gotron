@@ -250,7 +250,7 @@ class Router {
         }
 		
 		//If no controller was found, we'll look for a view
-		if (static::render_view($class_path,$action)) {
+		if (self::render_view($class_path,$action)) {
             return true;
 		}
 	}

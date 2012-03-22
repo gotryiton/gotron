@@ -11,6 +11,7 @@ class TestApplication extends Application {
         return function($config){
             $config->set('i18n.default_locale', 'en');
             $config->set('root_directory', __DIR__ . "/../");
+            $config->set('namespace', 'TestApp');
         };
 	}
 }

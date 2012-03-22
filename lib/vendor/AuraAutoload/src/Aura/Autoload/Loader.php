@@ -122,6 +122,13 @@ class Loader
      * 
      */
     protected $tried_paths = array();
+
+    /**
+     * Namespace for app (controllers, models, etc)
+     *
+     * @var string
+     */
+    protected $framework_namespace = "Gotron";
     
     /**
      * 
@@ -218,8 +225,9 @@ class Loader
     	$this->framework_class_paths[] = rtrim($path, DIRECTORY_SEPARATOR);
     }
 
-    public function addFrameworkClassPaths($paths)
+    public function addFrameworkClassPaths($paths, $namespace = "Gotron")
     {
+        $this->framework_namespace = $namespace;
         foreach ((array) $paths as $path) {
             $this->framework_class_paths[] = rtrim($path, DIRECTORY_SEPARATOR);
         }
@@ -445,7 +453,7 @@ class Loader
 		$pos = strrpos($spec, '\\');
 		$namespace = substr($spec, 0, $pos);
 
-		if($namespace === static::FRAMEWORK_NAMESPACE) {
+		if($namespace === $this->framework_namespace) {
 			$non_namespace = str_replace($namespace, "", $spec);
 			$ctf = $this->classToFile($non_namespace);
 			foreach($this->framework_class_paths as $i => $path) {

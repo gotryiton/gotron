@@ -69,7 +69,7 @@ class Application extends Singleton {
         	file_join($root_directory, "app", "models"),
         	file_join($root_directory, "app", "modules"),
         	file_join($root_directory, "app", "views")
-        ));
+        ), $this->config->get('namespace'));
     }
 
 	/**
