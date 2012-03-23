@@ -59,7 +59,9 @@ abstract class AbstractView{
      */
     public static function render($data = array(), $view_path = null, $cache = false, $headers = true) {
         $instance = new static($view_path, $cache);
-        $instance->set_headers();
+        if($headers == true) {
+            $instance->set_headers();
+        }
         return $instance->generate($data);
     }
 

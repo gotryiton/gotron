@@ -1,0 +1,1 @@
+<div>Name is: <?= $name ?></div>
