@@ -21,6 +21,7 @@ class Application extends Singleton {
 		$instance->config = $config;
         $instance->autoload_app();
 		$instance->check_maintenance();
+        $instance->autoload_config();
 		self::initialize_active_record($config);
         self::initialize_routes();
 	}
@@ -51,6 +52,29 @@ class Application extends Singleton {
         $loader->setPlainPaths(array(
             file_join(__DIR__, "/../vendor/"),
         ));
+    }
+
+    /**
+     * Load the config/autoload.php file
+     *
+     * @return void
+     */
+    public function autoload_config() {
+		require file_join($this->config->get('root_directory'), $this->config->config_directory, "autoload.php");
+    }
+
+    /**
+     * Defines any additional autoloads
+     *
+     * @param array $array
+     * @return void
+     */
+    public static function define_autoloads(array $array) {
+        $instance = static::instance();
+		$config = $instance->config();
+        $loader = new Loader;
+        $loader->register();
+        $loader->setClasses($array);
     }
 
     /**
