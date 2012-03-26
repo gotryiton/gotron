@@ -23,14 +23,14 @@ class Logging {
 	 *
 	 * @param string $logFile 
 	 */
-	public function __construct($logName, $logMessage = NULL){
-        if($this->log_name = 'STDOUT') {
+	public function __construct($log_name, $log_message = null){
+        if($log_name == 'STDOUT') {
             $this->type = 'STDOUT';
         }
-        else{
+        else {
             $this->type = 'SYSLOG';
         }
-		$this->log_name = "##$logName##";
+		$this->log_name = "##$log_name##";
 		if (isset($logMessage)){
 			$this->lwrite($logMessage);
 		}
@@ -44,7 +44,7 @@ class Logging {
      * @param string $level 
      * @return void
      */
-	public static function log($message, $tag = "default", $level = 1){
+	public static function log($message, $tag = "default", $level = 1) {
 	    $log_name = "##$tag##";
 		if (isset($message)) {
 		    $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
@@ -61,8 +61,7 @@ class Logging {
 	 * @param string $level 1 for standard 2 for verbose
 	 * @return void
 	 */
-	public function setLogLevel($level)
-	{
+	public function setLogLevel($level) {
 	  $this->logLevel = $level;
 	}
 	
