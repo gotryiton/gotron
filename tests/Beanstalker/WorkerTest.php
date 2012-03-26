@@ -31,7 +31,7 @@ class BeanstalkerWorkerTests extends UnitTest {
 	public function test_reserve_job() {
 		$worker = new BeanstalkerWorker(array("TestQueue"));
 		$job = new BeanstalkerJob;
-		$jobId = $job->enqueue("TestQueue", "TestingJob", $this->data);
+		$jobId = $job->enqueue("TestQueue", "TestApp\TestingJob", $this->data);
         $jobby = $job->peek($jobId);
         $worker->reserveJob();
         $this->assertInstanceOf('Gotron\Beanstalker\BeanstalkerJob', $worker->getCurrentJob());
@@ -39,7 +39,7 @@ class BeanstalkerWorkerTests extends UnitTest {
     
     public function test_worker_performs_work() {
         $job = new BeanstalkerJob;
-        $job->enqueue('SomeQueue', 'TestingJob', $this->data);
+        $job->enqueue('SomeQueue', 'TestApp\TestingJob', $this->data);
 
         $worker = new BeanstalkerWorker(array("SomeQueue"));
         $worker->setLog('STDOUT');

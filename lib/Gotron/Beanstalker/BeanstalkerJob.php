@@ -37,9 +37,8 @@ class BeanstalkerJob extends Beanstalker {
             throw new Exception("A valid queue name is required");
         }
 
-        $class = "Gotron\jobs\\" . $class;
         if(!class_exists($class)) {
-            throw new Exception( "Class does not exist: " . $this->payload['class'] );
+            throw new Exception( "Class does not exist: " . $class );
         }
 
 		$this->checkData($data);
@@ -47,12 +46,11 @@ class BeanstalkerJob extends Beanstalker {
 		$this->setPayload($class, $data);
 
 		if (Config::bool('beanstalk.disabled')) {
-            echo "Performing\n";
 			return $this->perform();
 		}
 		else{
 			$this->useTube($queue);
-			
+
 			$response = $this->put($this->getEncodedPayload(),$priority, $delay);
 			
 			return (!is_null($response)) ? $response : false;	
@@ -143,8 +141,7 @@ class BeanstalkerJob extends Beanstalker {
 	 * Performs the job with the worker class and then deletes it from the queue
 	 * returns true or exception message
 	 */
-	public function perform()
-	{
+	public function perform() {
 		$instance = $this->getInstance();
 		try {
 			if($instance){
