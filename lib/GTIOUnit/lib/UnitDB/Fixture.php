@@ -8,9 +8,14 @@ use Spyc,
 
 class Fixture extends UnitDB {
 
-    public function __construct($fixture_path = null) {   
+    public function __construct($fixture_path = null) {
         if(is_null($fixture_path)) {
-            $fixture_path = __DIR__ . "/../../../fixtures/";
+            if(defined('FIXTURE_PATH')) {
+                $fixture_path = FIXTURE_PATH;
+            }
+            else {
+                $fixture_path = __DIR__ . "/../../../fixtures/";
+            }
         }
         if(is_dir($fixture_path)) {
             $this->fixture_path = $fixture_path;
