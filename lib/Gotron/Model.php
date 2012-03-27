@@ -67,7 +67,7 @@ class Model extends ActiveRecord\Model {
         elseif (is_array($value)){
             $varValue = array();    
             foreach ($value as $o){
-                if (isset($o) && ($o instanceof GtioModel) ){
+                if (isset($o) && ($o instanceof Model) ){
                     $varValue[] =$o->dump();
                 }
                 else {
@@ -78,7 +78,7 @@ class Model extends ActiveRecord\Model {
             
         }
         elseif (is_object($value)){
-            if (($value instanceof GtioModel) ) {
+            if (($value instanceof Model) ) {
                 $varValue = $this->$k->dump();
                 return $varValue;
             }
