@@ -248,10 +248,14 @@ class Model extends ActiveRecord\Model {
         else if(isset($options['offset']))
             $offset = $options['offset'];
 
-        if(isset($limits['limit']))
-            $query .= " LIMIT $offset,{$limits['limit']}";
-        else if(isset($options['limit']))
-            $query .= " LIMIT $offset,{$options['limit']}";
+        if(isset($limits['limit'])){
+            if ($limits['limit'] === false) {
+                $query .= " OFFSET $offset";
+            }
+            else {
+                $query .= " LIMIT $offset,{$limits['limit']}";
+            }
+        }
 
         return $query;
     }
@@ -302,8 +306,12 @@ class Model extends ActiveRecord\Model {
         }
         
         foreach($limits as $key => $value){
-            if (isset($value))
+            if ($key=='limit' && $value === false) {
+                unset($options[$key]);
+            }
+            elseif (isset($value)) {
                 $options[$key] = $value;
+            }
         }
         
         return $options;
