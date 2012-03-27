@@ -29,7 +29,7 @@ class Cookie {
     }
 
     /**
-     * Read the cookie, uses GLOBALS if cookies are disabledd
+     * Read the cookie, uses GLOBALS if cookies are disabled
      *
      * @param string $name 
      * @return string
@@ -47,7 +47,16 @@ class Cookie {
         else {
             return (isset($_COOKIE[$name])) ? $_COOKIE[$name] : null;
         }
+    }
 
+    /**
+     * Checks if a cookie name is defined
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function is_defined($name) {
+        return self::read($name) !== null;
     }
 
     /**
