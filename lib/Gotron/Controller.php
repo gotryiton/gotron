@@ -45,6 +45,7 @@ class Controller {
                     'yield' => $controller_view['content'],
                     'includes' => $controller_view['includes']
                 );
+				$data = $data + $parameters;
                 $layout_path = $instance->get_layout($layout);
                 $output = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false);
                 echo $output['content'];
