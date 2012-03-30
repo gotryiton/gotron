@@ -146,12 +146,16 @@ class Config extends Singleton implements ArrayAccess {
 	public function define_app_version() {
 		$asset_revision_file = file_join(static::get('root_directory'), 'ASSET_REVISION');
 		if(file_exists($asset_revision_file)) {
-			return $this->set('app_version', file_get_contents($asset_revision_file));
+            $version = file_get_contents($asset_revision_file);
+            $this->set_constant('APPLICATION_VERSION', $version);
+			return $this->set('app_version', $version);
 		}
 		else if(array_key_exists("Gotron_APP_VERSION", $_ENV)) {
+            $this->set_constant('APPLICATION_VERSION', $_ENV["APP_ENVIRONMENT"]);
 			return $this->set('app_version', $_ENV["APP_ENVIRONMENT"]);
 		}
 		else {
+            $this->set_constant('APPLICATION_VERSION', static::DEFAULT_APP_VERSION);
 			return $this->set('app_version', static::DEFAULT_APP_VERSION);
 		}
 	}
