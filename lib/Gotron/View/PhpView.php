@@ -39,8 +39,7 @@ class PhpView extends AbstractView{
      *
      * @return void
      */
-    protected function get_headers()
-    {
+    protected function get_headers() {
         $this->add_header('Content-type', 'text/html');
 		return $this->headers;
     }
