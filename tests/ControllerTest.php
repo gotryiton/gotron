@@ -50,6 +50,14 @@ class ControllerTest extends UnitTest {
         $controller->call_method();
     }
 
+	public function test_long_controller_name() {
+        $controller = new SomeLongController;
+        $controller->parameters['name'] = 'somebody';
+
+        $this->expectOutputString("This is the start of a test set layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test set layout");
+        $controller->call_method('test_php_layout_set');
+    }
+
 }
 
 ?>

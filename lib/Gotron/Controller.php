@@ -90,8 +90,9 @@ class Controller {
     protected function controller_name() {
         $reflector = new ReflectionClass($this);
         $namespace = $reflector->getNamespaceName();
-        $class = strtolower(get_called_class());
-        return str_replace(array("controller", strtolower($namespace) . '\\'), "", $class);
+        $class = get_called_class();
+		$denamespaced = str_replace($namespace . '\\', "", $class);
+        return str_replace(array("_controller"), "", Util::uncamelize($denamespaced));
     }
 
 	/**
