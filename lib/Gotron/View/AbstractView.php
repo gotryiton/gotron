@@ -12,6 +12,8 @@ use Gotron\Header,
  */
 abstract class AbstractView{
 
+    const DEFAULT_CACHE_TTL = 86400;
+
     /**
      * Full path to the view, from root view path
      *
@@ -80,20 +82,19 @@ abstract class AbstractView{
      * @param bool $update Set to true to update existing keys
      * @return void
      */
-    public function add_header($key, $value, $update = true)
-    {
-		if($update) {
+    public function add_header($key, $value, $update = true) {
+		if ($update) {
 		    $this->headers[$key] = $value;
 		}
 		else {
-		    if(!array_key_exists($key, $this->headers)) {
+		    if (!array_key_exists($key, $this->headers)) {
 		        $this->headers[$key] = $value;
 		    }
 		}
     }
 
 	public function set_headers() {
-		foreach($this->get_headers() as $key => $value) {
+		foreach ($this->get_headers() as $key => $value) {
 			Header::set("$key: $value");
 		}
 	}
