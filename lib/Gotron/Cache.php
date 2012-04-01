@@ -9,9 +9,9 @@ namespace Gotron;
  */
 class Cache extends \ActiveRecord\Cache {
 
-    public static function get($key, $closure) {
+    public static function get($key, $closure, $ttl = 0) {
         $real_key = static::get_key($key);
-        return parent::get($real_key, $closure);
+        return parent::get($real_key, $closure, $ttl);
 	}
 
     public static function get_key($key) {
