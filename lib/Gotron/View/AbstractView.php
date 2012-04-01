@@ -2,7 +2,8 @@
 
 namespace Gotron\View;
 
-use Gotron\Header as Header;
+use Gotron\Header,
+    Gotron\Cache;
 
 /**
  * Abstract view class to be implemented by a number of View classes
@@ -40,13 +41,10 @@ abstract class AbstractView{
      * @param string $view_path Relative path to the view (from view directory)
      * @param bool $cache 
      */
-    public function __construct($view_path = null, $cache = false)
-    {
-        if(!is_null($view_path)) {
+    public function __construct($view_path = null) {
+        if (!is_null($view_path)) {
             $this->view_path = $view_path;
         }
-
-        $this->cache = $cache;
     }
 
     /**
@@ -57,12 +55,21 @@ abstract class AbstractView{
      * @param string $cache 
      * @return bool
      */
-    public static function render($data = array(), $view_path = null, $cache = false, $headers = true) {
-        $instance = new static($view_path, $cache);
-        if($headers == true) {
+    public static function render($data = array(), $view_path = null, $cache_ttl = self::DEFAULT_CACHE_TTL, $headers = true) {
+        $instance = new static($view_path);
+        if(is_callable($data)) {
+            $instance->cache = true;
+            $instance->cache_ttl = $cache_ttl;
+        }
+        if ($headers == true) {
             $instance->set_headers();
         }
-        return $instance->generate($data);
+        if($instance->cache) {
+            return $instance->try_cache($data);
+        }
+        else {
+            return $instance->generate($data);
+        }
     }
 
     /**
@@ -106,6 +113,29 @@ abstract class AbstractView{
      * @return array
      */
     abstract protected function get_headers();
+
+    /**
+     * Key to be used for page view caching
+     *
+     * @return string
+     */
+    protected function cache_key() {
+	    return md5($this->view_path);
+	}
+
+    /**
+     * Checks for a cached page view otherwise generates it and sets the cache
+     *
+     * @return void
+     */
+    protected function try_cache($closure) {
+        $instance = $this;
+        $generate_closure = function() use ($closure, $instance) {
+            return $instance->generate($closure());
+        };
+
+        return Cache::get($this->cache_key(), $generate_closure, $this->cache_ttl);
+    }
 
 }
 
