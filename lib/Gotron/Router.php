@@ -191,8 +191,8 @@ class Router {
                 return;
             }
 			
-			if ($path_components[1]!='' && $path_components[1]!=NULL) {
-				if(static::perform_controller_action('Staticpage', 'index', $objects, $parameters, $namespace)) {
+			if ($path_components[1]!='' && $path_components[1] != null) {
+				if(static::perform_controller_action('Static', 'index', $objects, $parameters, $namespace)) {
                     return;
                 }
 			}
