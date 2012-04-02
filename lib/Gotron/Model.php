@@ -152,14 +152,17 @@ class Model extends ActiveRecord\Model {
                     if(array_key_exists('limit',$pk_options)) unset($pk_options['limit']);
                     if(array_key_exists('group',$pk_options)) unset($pk_options['group']);
                     if(array_key_exists('sql',$pk_options)) unset($pk_options['sql']);
-                    if(!empty($found_ids))
+                    if(array_key_exists('totals',$pk_options)) unset($pk_options['totals']);
+                    if (!empty($found_ids)) {
                         $found_objects = static::find_by_pk($found_ids,$pk_options,true);
-                    else
+                    }
+                    else {
                         $found_objects = array();
+                    }
 
-                    if(!is_array($found_objects))
+                    if (!is_array($found_objects))
                         $found_objects = array($found_objects);
-                    if(!is_null($totals)){
+                    if (!is_null($totals)){
                         $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
                     }
                 }
