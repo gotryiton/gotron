@@ -97,8 +97,8 @@ class BeanstalkerWorker extends Beanstalker {
                     $exitStatus = 0;
                 }
                 else {
-                    $exitStatus = pcntl_wexitstatus($status);
-                    pcntl_wait($status);
+                    pcntl_wait($pid_status);
+                    $exitStatus = pcntl_wexitstatus($pid_status);
                 }
                 $this->incrementProcessed();
                 if($exitStatus !== 0) {
