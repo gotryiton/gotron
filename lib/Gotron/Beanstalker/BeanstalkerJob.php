@@ -4,7 +4,8 @@ namespace Gotron\Beanstalker;
 
 use Gotron\Config,
     Gotron\Exception,
-    Gotron\Jobs;
+    Gotron\Jobs,
+    Gotron\Logging;
 
 /**
  * BeanstalkerJob
@@ -150,6 +151,7 @@ class BeanstalkerJob extends Beanstalker {
 		}
 		catch(Exception $e) {
             //release the job back to the queue
+            Logging::log($e, 'beanstalker');
             return $e;
 		}
    		if (!(Config::bool('beanstalk.disabled'))) {
