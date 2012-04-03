@@ -67,7 +67,8 @@ class Controller {
                 $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false);
             }
 			if($this->dont_render) {
-				$GLOBALS['controller_content'] = $view_data['content'];
+                $GLOBALS['controller_content'] = $view_data['content'];
+				$GLOBALS['controller_data'] = $parameters;
 			}
 			else {
 				echo $view_data['content'];
