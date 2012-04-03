@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../../vendor/Swift/swift_init.php';
  *
  */
  
-class SendgridService extends AbstractEmailService
+class SendgridService extends EmailService
 {
     const USER = "SENDGRID_USER";
     const PASSWORD = "SENDGRID_PASSWORD";

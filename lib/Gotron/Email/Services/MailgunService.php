@@ -2,41 +2,37 @@
 
 namespace Gotron\Email\Services;
 
+use Requests,
+    Gotron\Config;
+
 /**
  * Mailgun email service
  *
  */
-class MailgunService extends AbstractEmailService
-{
+class MailgunService extends EmailService {
 
-    private $api_domain = "http://gtio.mailgun.org/";
-    private $api_key = "12345667";
-    private $api_user = "api";
+    const API_DOMAIN = "http://gtio.mailgun.org/";
+    const API_KEY = "12345667";
     const API_BASE = "https://api.mailgun.net/v2";
 
-	public function send($email)
-	{
+	public function send($email) {
         $response = $this->send_request($email);
         return ($response->success === true);
 	}
 
-	protected function send_request($email)
-	{
+	protected function send_request($email) {
+        $domain = (Config::bool('mailgun.domain')) ? Config::get('mailgun.domain') : self::API_DOMAIN;
+        $key = (Config::bool('mailgun.api_key')) ? Config::get('mailgun.api_key') : self::API_KEY;
 
-	    $request_url = self::API_BASE . "/" . $this->api_domain . "/messages";
-	    
+	    $request_url = self::API_BASE . "/" . $domain . "/messages";
 	    $params = $this->build_request($email);
-
-	    $options = array('auth' => array('api', $this->api_key));
-
+	    $options = array('auth' => array('api', $key));
         $response = Requests::post($request_url, array(), $params, $options);
 
         return $response;
-
 	}
-	
-	public function build_request($email)
-	{
+
+	public function build_request($email) {
 	    return array(
                 'from' => $email->from,
                 'to' => $email->to,
