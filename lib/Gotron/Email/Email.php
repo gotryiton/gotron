@@ -86,8 +86,12 @@ class Email {
         if(isset($options['data']))
             $this->data = $options['data'];
 
-        if(isset($options['view_path']))
+        if(isset($options['view_path'])) {
             $this->view_path = $options['view_path'];
+        }
+        else {
+            $this->view_path = file_join(Config::get('root_directory'), "/app/views/emails/");
+        }
 
         $this->subject = (isset($options['subject'])) ? $options['subject'] : null;
     }
