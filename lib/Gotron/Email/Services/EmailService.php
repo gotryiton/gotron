@@ -2,11 +2,12 @@
 
 namespace Gotron\Email\Services;
 
-use Gotron\Exception;
+use Gotron\Exception,
+    Gotron\Config;
 
-abstract class AbstractEmailService {
+abstract class EmailService {
 
-    // const SERVICE = EMAIL_SERVICE;
+    const SERVICE = "mailgun";
 
     /**
      * Send email with service
@@ -15,20 +16,22 @@ abstract class AbstractEmailService {
      * @return void
      * @author 
      */
-    public static function send_email($email)
-    {
-        $instance = self::instance(self::SERVICE);
+    public static function send_email($email) {
+        if ($service = Config::get('email.service', true)) {
+            $instance = self::instance($service);
+        }
+        else {
+            $instance = self::instance(self::SERVICE);
+        }
         return $instance->send($email);
     }
 
-    public static function instance($service)
-    {
+    public static function instance($service) {
         $class = self::load_adapter_class($service);
         return new $class();
     }
 
-	private static function load_adapter_class($service)
-	{
+	private static function load_adapter_class($service) {
 		$class = ucwords($service) . 'Service';
 		$service_class = __NAMESPACE__ . "\\$class";
         $source = __DIR__ . "/$class.php";
@@ -37,17 +40,16 @@ abstract class AbstractEmailService {
             throw new Exception("$class not found!");
         }
 
-        // require_once($source);
 		return $service_class;
 	}
-	
+
     /**
      * Send an email
      *
      * @param Email email
      * @return bool
      */
-     
+
     protected abstract function send($email);
 }
 
