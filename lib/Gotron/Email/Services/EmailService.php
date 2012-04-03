@@ -23,7 +23,12 @@ abstract class EmailService {
         else {
             $instance = self::instance(self::SERVICE);
         }
-        return $instance->send($email);
+        if (Config::bool('notifications.disabled')) {
+            return true;
+        }
+        else {
+            return $instance->send($email);
+        }
     }
 
     public static function instance($service) {
