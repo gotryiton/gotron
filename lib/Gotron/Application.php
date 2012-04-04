@@ -111,7 +111,7 @@ class Application extends Singleton {
 		    $cfg->set_model_directory($app_config->model_directory);
 			$cfg->set_default_connection("environment");
 		    $cfg->set_connections(array(
-				"environment" => 'mysql://' . $app_config->user . ':' . $app_config->password . '@' . $app_config->host .'/' . $app_config->database));
+				"environment" => 'mysql://' . $app_config->username . ':' . $app_config->password . '@' . $app_config->host .'/' . $app_config->database));
 
             if($cache_servers = $app_config->get('cache.servers', true)) {
 			    $cfg->set_cache($cache_servers, array("expire" => 60,'namespace' => $app_config->environment));

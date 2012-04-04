@@ -12,7 +12,7 @@ class Config extends Singleton implements ArrayAccess {
 	const DEFAULT_ENVIRONMENT 		        = "development";
 	const DEFAULT_HOST 	                    = "localhost";
 	const DEFAULT_PORT           	        = "3306";
-	const DEFAULT_USER 	                    = "root";
+	const DEFAULT_USERNAME                  = "root";
 	const DEFAULT_PASSWORD                  = "";
 	const DEFAULT_DATABASE 			        = "gtioStage";
 	const DEFAULT_APP_VERSION 		        = "0ad335cdbc6611da404f80266f2d5b7cf199150d";
@@ -166,7 +166,7 @@ class Config extends Singleton implements ArrayAccess {
 	 * @return void
 	 */
 	public function load_database_config() {
-		$database_parameters = array("database", "user", "password", "host", "port");
+		$database_parameters = array("database", "username", "password", "host", "port");
 		$this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/database.yml"));
 	}
 
