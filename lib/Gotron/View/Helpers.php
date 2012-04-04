@@ -72,4 +72,20 @@ function render_partial($name, $context, $data = array()) {
     return $view_data['content'];
 }
 
+function select_tag($id = "", $start, $finish) {
+    $tag = "<select id=\"$id\">\n";
+    if ($start < $finish) {
+        for ($i = $start; $i <= $finish; $i++) {
+            $tag.= "    <option value=\"{$i}\">{$i}</option>\n";
+        }
+    }
+    else {
+        for ($i = $start; $i >= $finish; $i--) {
+            $tag.= "    <option value=\"{$i}\">{$i}</option>\n";
+        }
+    }
+    $tag .= "</select>";
+    return $tag;
+}
+
 ?>
