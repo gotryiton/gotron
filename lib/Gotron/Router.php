@@ -23,13 +23,15 @@ class Router {
 		$path_components = explode('/', $path);
 		$real_path_components = $path_components;
 
-		if (Config::bool('show_maintenance_screen')){
+		if (Config::bool('show_maintenance')){
 		    $api = array_search('rest', $path_components) !== FALSE;
 			static::perform_controller_action("Error", "maintenance", array(), array('api' => $api), $namespace);
+            return;
 		}
-		else if (Config::bool('show_error_screen')){
+		else if (Config::bool('show_error')){
 		    $api = array_search('rest',$path_components) !== FALSE;
 			static::perform_controller_action("Error", "error_page", array(), array('api' => $api), $namespace);
+            return;
 		}
 
 		while (substr($path, -1) == '/') {
@@ -198,7 +200,8 @@ class Router {
 			}
 			
 		}
-        Error::error_404();
+        Error::error_404($namespace);
+        return;
 	}
 
 	/**
@@ -230,7 +233,8 @@ class Router {
 					$action='index';
 				}
 				else {
-					Error::error_500("$controller_class does not respond to $action");
+					Error::error_500($namespace);
+                    return;
 				}
 			}
 			if(function_exists('newrelic_name_transaction')) newrelic_name_transaction($class_path . "/" . $action);
