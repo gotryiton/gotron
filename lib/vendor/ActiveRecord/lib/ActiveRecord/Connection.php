@@ -289,7 +289,7 @@ abstract class Connection
 	 * @param array &$values Optional array of bind values
 	 * @return mixed A result set object
 	 */
-	public function query($sql, &$values=array())
+	public function query($sql, &$values=array(), $log = true)
 	{
 		$this->last_query = $sql;
 
@@ -309,14 +309,14 @@ abstract class Connection
             // $result = $timer->stop();
             $result = 0;
 		} catch (PDOException $e) {
-		    if ($this->logging){ 
+		    if ($this->logging && $log){
     		    $tag = (strpos($sql,'SHOW COLUMNS') !== false) ? "#columns" : "#query";
     			$this->logger->log($sql . '; VALUES: ' .json_encode($values) . "; ");
     		}
 			throw new DatabaseException($sth);
 		}
 		
-		if ($this->logging){ 
+		if ($this->logging && $log){
 		    $tag = (strpos($sql,'SHOW COLUMNS') !== false) ? "#columns" : "#query";
 			$this->logger->log($sql . '; VALUES: ' .json_encode($values) . "; query took $result sec $tag");
 		}

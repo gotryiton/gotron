@@ -16,7 +16,7 @@ class UnitDB {
         $connection = ConnectionManager::get_connection();
 
         if($fetch) {
-            $query = $connection->query($query, $parameters);
+            $query = $connection->query($query, $parameters, false);
             return $query->fetchAll();
         }
         else {
