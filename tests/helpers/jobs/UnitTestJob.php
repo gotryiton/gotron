@@ -1,11 +1,6 @@
 <?php
 
-namespace Gotron\Jobs;
-
-/**
- * Test BeanstalkerJob
- *
- */
+namespace TestApp;
 
 class UnitTestJob {
     public function perform() {

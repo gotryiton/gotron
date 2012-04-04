@@ -1,11 +1,10 @@
 <?php
 
-namespace Gotron\Jobs;
+namespace TestApp;
 
 use Gotron\Exception;
 
-class UnitTestErrorJob
-{
+class UnitTestErrorJob {
     public function perform() {
         throw new Exception("Testing an exception");
     }

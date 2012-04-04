@@ -37,6 +37,15 @@ class CookieTest extends UnitTest {
         $this->assertFalse(array_key_exists('test_cookie_four', $GLOBALS['cookies']));
     }
 
+    public function test_is_defined() {
+        $value = '555555';
+        $config = Config::instance();
+        $config->set('cookies.namespace', 'test_namespace');
+        Cookie::set('test_cookie_five', $value);
+        $this->assertTrue(Cookie::is_defined('test_cookie_five'));
+        $this->assertFalse(Cookie::is_defined('test_cookie_not_defined'));
+    }
+
 }
 
 ?>

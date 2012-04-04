@@ -67,7 +67,7 @@ class Model extends ActiveRecord\Model {
         elseif (is_array($value)){
             $varValue = array();    
             foreach ($value as $o){
-                if (isset($o) && ($o instanceof GtioModel) ){
+                if (isset($o) && ($o instanceof Model) ){
                     $varValue[] =$o->dump();
                 }
                 else {
@@ -78,7 +78,7 @@ class Model extends ActiveRecord\Model {
             
         }
         elseif (is_object($value)){
-            if (($value instanceof GtioModel) ) {
+            if (($value instanceof Model) ) {
                 $varValue = $this->$k->dump();
                 return $varValue;
             }
@@ -152,14 +152,17 @@ class Model extends ActiveRecord\Model {
                     if(array_key_exists('limit',$pk_options)) unset($pk_options['limit']);
                     if(array_key_exists('group',$pk_options)) unset($pk_options['group']);
                     if(array_key_exists('sql',$pk_options)) unset($pk_options['sql']);
-                    if(!empty($found_ids))
+                    if(array_key_exists('totals',$pk_options)) unset($pk_options['totals']);
+                    if (!empty($found_ids)) {
                         $found_objects = static::find_by_pk($found_ids,$pk_options,true);
-                    else
+                    }
+                    else {
                         $found_objects = array();
+                    }
 
-                    if(!is_array($found_objects))
+                    if (!is_array($found_objects))
                         $found_objects = array($found_objects);
-                    if(!is_null($totals)){
+                    if (!is_null($totals)){
                         $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
                     }
                 }
@@ -248,10 +251,14 @@ class Model extends ActiveRecord\Model {
         else if(isset($options['offset']))
             $offset = $options['offset'];
 
-        if(isset($limits['limit']))
-            $query .= " LIMIT $offset,{$limits['limit']}";
-        else if(isset($options['limit']))
-            $query .= " LIMIT $offset,{$options['limit']}";
+        if(isset($limits['limit'])){
+            if ($limits['limit'] === false) {
+                $query .= " OFFSET $offset";
+            }
+            else {
+                $query .= " LIMIT $offset,{$limits['limit']}";
+            }
+        }
 
         return $query;
     }
@@ -302,8 +309,12 @@ class Model extends ActiveRecord\Model {
         }
         
         foreach($limits as $key => $value){
-            if (isset($value))
+            if ($key=='limit' && $value === false) {
+                unset($options[$key]);
+            }
+            elseif (isset($value)) {
                 $options[$key] = $value;
+            }
         }
         
         return $options;

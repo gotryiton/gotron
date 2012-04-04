@@ -4,7 +4,9 @@ namespace GTIOUnit;
 
 use PHPUnit_Framework_TestCase,
     Pheanstalk,
-    Gotron\Header;
+    Gotron\Header,
+    PHPUnit_Framework_Constraint_IsTrue,
+    __;
 
 class UnitTest extends PHPUnit_Framework_TestCase {
     
@@ -55,7 +57,40 @@ class UnitTest extends PHPUnit_Framework_TestCase {
             $jobs = $stats['current-jobs-ready'];
         }
     }
-    
+
+    protected function assertValidAttributes($valid_attributes, $object) {
+        $message = '';
+        $condition = true;
+
+        if(method_exists($object,'attributes') && $keys = $object->attributes()) {
+            $object = $keys;
+            $objectKeys = __::keys($keys);
+        }
+        else {
+            $objectKeys = __::keys($object);
+        }
+        foreach($valid_attributes as $key => $value) {
+            if(__::includ($objectKeys,$key)) {
+                if($object[$key] != $value) {
+                    $message = "Value {$object[$key]} for '{$key}' does not match expected value {$value}";
+                    $condition = false;
+                    break;
+                }
+            }
+            else {
+                $message = "Key '$key' does not exist in tested object";
+                $condition = false;
+                break;
+            }
+        }
+
+        $this->assertThat($condition, self::isTrue(), $message);
+    }
+
+    public static function isTrue() {
+        return new PHPUnit_Framework_Constraint_IsTrue;
+    }
+
 }
 
 ?>

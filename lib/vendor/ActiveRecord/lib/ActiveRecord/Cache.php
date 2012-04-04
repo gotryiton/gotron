@@ -67,7 +67,7 @@ class Cache
 			static::$adapter->flush();
 	}
 
-	public static function get($key, $closure)
+	public static function get($key, $closure, $ttl = null)
 	{
 		$key = static::get_namespace() . $key;
 		
@@ -75,7 +75,8 @@ class Cache
 			return $closure();
 
 		if (!($value = static::$adapter->read($key))){
-			static::$adapter->write($key,($value = $closure()),static::$options['expire']);
+            $expire = (!is_null($ttl)) ? $ttl : static::$options['expire'];
+			static::$adapter->write($key,($value = $closure()), $expire);
 		}
 		
 		return $value;
@@ -127,7 +128,7 @@ class Cache
 	    return static::$adapter->multi_set($list,$expire);
 	}
 
-	private static function get_namespace()
+	protected static function get_namespace()
 	{
 		return (isset(static::$options['namespace']) && strlen(static::$options['namespace']) > 0) ? (static::$options['namespace'] . "::") : "";
 	}

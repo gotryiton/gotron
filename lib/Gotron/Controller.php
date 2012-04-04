@@ -12,6 +12,8 @@ class Controller {
 
     public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false);
 
+	protected $dont_render = false;
+
 	/**
 	 * Renders the view
 	 *
@@ -21,34 +23,56 @@ class Controller {
 	 * @param string $view 
 	 * @return string
 	 */
-    protected static function render(array $parameters, $options = array()) {
-        $instance = new static();
-        $instance->parse_options($options);
-        $instance->view_type = static::get_view_type($parameters);
-        $layout = $instance->options['layout'];
-        if ($instance->view_type == "php") {
-            $instance->view_path = $instance->fileize_view_path($instance->options['view']);
+    protected function render(array $parameters, $options = array()) {
+        $this->parse_options($options);
+        $this->view_type = static::get_view_type($parameters);
+        $layout = $this->options['layout'];
+        if ($this->view_type == "php") {
+            $this->view_path = $this->fileize_view_path($this->options['view']);
         }
-        else if($instance->view_type == "json") {
+        else if($this->view_type == "json") {
             $parameters = $parameters['json'];
             $layout = false;
         }
-        $view = ucfirst($instance->view_type) . "View";
+        $view = ucfirst($this->view_type) . "View";
         if(class_exists(__NAMESPACE__ . "\\View\\$view")) {
             if($layout === false) {
-                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $instance->view_path, false);
-                echo $view_data['content'];
+                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false);
             }
             else {
-                $controller_view = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $instance->view_path, false);
+                $controller_view = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false);
+				$includes['js'] = array();
+				$includes['css'] = array();
+				if(isset($controller_view['includes']['js'])) {
+					$includes['js'] = $includes['js'] + $controller_view['includes']['js'];
+				}
+				if(isset($controller_view['includes']['css'])) {
+					$includes['css'] = $includes['css'] + $controller_view['includes']['css'];
+				}
+				if(!is_null($controller_view['title'])) {
+					$title = $controller_view['title'];
+				}
+				else {
+					$title = null;
+				}
+
                 $data = array(
                     'yield' => $controller_view['content'],
-                    'includes' => $controller_view['includes']
+                    'includes' => $includes,
+					'title' => $title
                 );
-                $layout_path = $instance->get_layout($layout);
-                $output = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false);
-                echo $output['content'];
+
+				$data = $data + $parameters;
+                $layout_path = $this->get_layout($layout);
+                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false);
             }
+			if($this->dont_render) {
+                $GLOBALS['controller_content'] = $view_data['content'];
+				$GLOBALS['controller_data'] = $parameters;
+			}
+			else {
+				echo $view_data['content'];
+			}
         }
         else {
             throw new Exception("$view has not been defined");
@@ -87,10 +111,16 @@ class Controller {
 	 * @return string
 	 */
     protected function controller_name() {
-        $reflector = new ReflectionClass($this);
-        $namespace = $reflector->getNamespaceName();
-        $class = strtolower(get_called_class());
-        return str_replace(array("controller", strtolower($namespace) . '\\'), "", $class);
+		if(isset($this->class_name)) {
+			$denamespaced = $this->class_name;
+		}
+		else {
+			$reflector = new ReflectionClass($this);
+			$namespace = $reflector->getNamespaceName();
+	        $class = get_called_class();
+			$denamespaced = str_replace($namespace . '\\', "", $class);
+		}
+        return str_replace(array("_controller"), "", Util::uncamelize($denamespaced));
     }
 
 	/**
@@ -150,6 +180,19 @@ class Controller {
 	 * @return void
 	 */
 	protected function after() {}
+
+	/**
+	 * Sets the controller to not actually render output when render() is called
+	 * useful for testing
+	 *
+	 * @return void
+	 */
+	public function dont_render($class = null) {
+		if(!is_null($class)) {
+			$this->class_name = $class;
+		}
+		$this->dont_render = true;
+	}
 
 }
 

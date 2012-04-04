@@ -1,9 +1,8 @@
 <?php
 
-namespace Gotron\Jobs;
+namespace TestApp;
 
-class TestingJob
-{	
+class TestingJob {	
 	public function perform() {
 		return "Hello";
 	}

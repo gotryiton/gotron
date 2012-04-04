@@ -13,6 +13,8 @@ class PhpView extends AbstractView{
 
     public $includes = array();
 
+	public $title = null;
+
     /**
      * Generates the PhpView
      *
@@ -27,11 +29,14 @@ class PhpView extends AbstractView{
             if(isset($include)) {
                 $this->includes = $include;
             }
+			if(isset($title)) {
+                $this->title = $title;
+            }
 		}
         else {
             throw new Exception("Cannot find view {$this->view_path}");
         }
-        return array('content' => $this->content, 'includes' => $this->includes);
+        return array('content' => $this->content, 'includes' => $this->includes, 'title' => $this->title);
     }
 
     /**
@@ -39,8 +44,7 @@ class PhpView extends AbstractView{
      *
      * @return void
      */
-    protected function get_headers()
-    {
+    protected function get_headers() {
         $this->add_header('Content-type', 'text/html');
 		return $this->headers;
     }

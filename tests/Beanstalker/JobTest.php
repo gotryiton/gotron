@@ -31,7 +31,7 @@ class BeanstalkerJobTests extends UnitTest {
     
     public function test_add_job_to_queue() {
         $job = new BeanstalkerJob;
-        $jobId = $job->enqueue('SomeQueue', 'TestingJob', $this->data);
+        $jobId = $job->enqueue('SomeQueue', 'TestApp\TestingJob', $this->data);
         $deleteJob = $job->peek($jobId);
         $this->assertInternalType('integer', $jobId);
         $job->delete($deleteJob);
@@ -40,24 +40,24 @@ class BeanstalkerJobTests extends UnitTest {
     public function test_fails_with_empty_queue() {
         $job = new BeanstalkerJob;
         $this->setExpectedException('Gotron\Exception');
-        $job->enqueue('', 'TestingJob', $this->data);
+        $job->enqueue('', 'TestApp\TestingJob', $this->data);
     }
     
     public function test_fails_with_non_existent_class() {
         $job = new BeanstalkerJob;
         $this->setExpectedException("Gotron\Exception");
-        $job->enqueue('SomeQueue', 'BadJob', $this->data);
+        $job->enqueue('SomeQueue', 'TestApp\BadJob', $this->data);
     }
     
     public function test_fails_with_empty_data() {
         $job = new BeanstalkerJob;
         $this->setExpectedException("Gotron\Exception");
-        $job->enqueue('SomeQueue','TestingJob', array());
+        $job->enqueue('SomeQueue','TestApp\TestingJob', array());
     }
     
     public function test_work_is_performed_properly() {
         $job = new BeanstalkerJob;
-        $job->enqueue('SomeQueue', 'TestingJob', $this->data);
+        $job->enqueue('SomeQueue', 'TestApp\TestingJob', $this->data);
         $job2 = $job->reserveJob(array('SomeQueue'));
         $this->assertGreaterThan(0, $job2->perform());
     }

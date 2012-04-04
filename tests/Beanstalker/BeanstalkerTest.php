@@ -11,7 +11,7 @@ require_once dirname(__FILE__) . "/../helpers/jobs/UnitTestErrorJob.php";
 
 class BeanstalkerTests extends UnitTest {
     public $queueName = 'UnitTestQueue';
-    public $className = 'UnitTestJob';
+    public $className = 'TestApp\UnitTestJob';
     public $log;
     public $log_file;
 
@@ -59,7 +59,7 @@ class BeanstalkerTests extends UnitTest {
     
     public function test_logs_exception_in_job() {
         $job = new BeanstalkerJob;
-        $result = $job->enqueue('ErrorQueue', 'UnitTestErrorJob', array('name' => 'UnitTestName'));
+        $result = $job->enqueue('ErrorQueue', 'TestApp\UnitTestErrorJob', array('name' => 'UnitTestName'));
         $this->expectOutputRegex("/\[test\] Exception: exception 'Gotron\\\Exception' with message 'Testing an exception'/");
         $worker = new BeanstalkerWorker(array('ErrorQueue'));
         $worker->setLog("STDOUT");
