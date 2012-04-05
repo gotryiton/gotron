@@ -168,6 +168,7 @@ class Config extends Singleton implements ArrayAccess {
 	public function load_database_config() {
 		$database_parameters = array("database", "username", "password", "host", "port");
 		$this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/database.yml"));
+        $this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/ci.yml"), false, false);
 	}
 
     /**
@@ -188,7 +189,7 @@ class Config extends Singleton implements ArrayAccess {
 	 * @param string $params 
 	 * @return void
 	 */
-	public function load_from_yaml($params, $yaml_file) {
+	public function load_from_yaml($params, $yaml_file, $environment = true, $default = true) {
 		
 		if(!is_array($params)) {
 			$params = array($params);
@@ -196,12 +197,17 @@ class Config extends Singleton implements ArrayAccess {
 
         if(file_exists($yaml_file)) {
             $yaml = Spyc::YAMLLoad($yaml_file);
-            $config = $yaml[$this->environment];
+            if ($environment) {
+                $config = $yaml[$this->environment];
+            }
+            else {
+                $config = $yaml;
+            }
             foreach($params as $param) {
                 if(array_key_exists($param, $config)) {
                     $this->set($param, $config[$param]);
                 }
-                else {
+                elseif ($default) {
                     $this->set($param, constant('self::DEFAULT_' . strtoupper($param)));
                 }
             }
