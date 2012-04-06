@@ -2,7 +2,8 @@
 
 namespace Gotron\View;
 
-use Gotron\Exception;
+use Gotron\Exception,
+    Gotron\Util;
 
 /**
  * View class used to create JSON views
