@@ -128,6 +128,9 @@ class Application extends Singleton {
 		if(file_exists(file_join(Config::get('root_directory'), '../MAINTENANCE'))){
 			$this->config->set('show_maintenance', true);
 		}
+        else {
+            $this->config->set('show_maintenance', false);
+        }
 	}
 	
 	/**

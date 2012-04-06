@@ -14,6 +14,8 @@ class ApplicationTest extends UnitTest {
         $app->check_maintenance();
         $this->assertTrue(Config::bool('show_maintenance'));
         unlink($maintenance_file);
+        $app->check_maintenance();
+        $this->assertFalse(Config::bool('show_maintenance'));
     }
 
     public function testConfigure() {
