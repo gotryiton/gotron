@@ -33,9 +33,9 @@ class Application extends Singleton {
      * @author 
      */
     public function autoload_library() {
-        $loader = new Loader;
-        $loader->register();
-        $loader->setNamespacedPaths(array(
+        $this->loader = new Loader;
+        $this->loader->register();
+        $this->loader->setNamespacedPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
             'ActiveRecord\\' => file_join(__DIR__, "/../vendor/ActiveRecord/lib"),
             'Requests_' => file_join(__DIR__, "/../vendor/Requests"),
@@ -43,13 +43,13 @@ class Application extends Singleton {
             'Pheanstalk_' => file_join(__DIR__, "/../vendor/Pheanstalk/classes")
         ));
 
-        $loader->setClasses(array(
+        $this->loader->setClasses(array(
            'Requests' => file_join(__DIR__, "/../vendor/Requests/Requests.php"),
            'Swift' => file_join(__DIR__, "/../vendor/Swift/classes/Swift.php"),
            'Pheanstalk' => file_join(__DIR__, "/../vendor/Pheanstalk/classes/Pheanstalk.php")
         ));
 
-        $loader->setPlainPaths(array(
+        $this->loader->setPlainPaths(array(
             file_join(__DIR__, "/../vendor/"),
         ));
     }
@@ -84,16 +84,14 @@ class Application extends Singleton {
      */
     public function autoload_app() {
         $root_directory = $this->config->get('root_directory');
-
-        $loader = new Loader;
-        $loader->register();
-        $loader->addFrameworkClassPaths(array(
+        $this->loader->addFrameworkClassPaths(array(
             file_join($root_directory, "app", "controllers"),
         	file_join($root_directory, "app", "jobs"),
         	file_join($root_directory, "app", "models"),
         	file_join($root_directory, "app", "modules"),
         	file_join($root_directory, "app", "views")
         ), $this->config->get('namespace'));
+        $this->loader->register();
     }
 
 	/**
