@@ -20,7 +20,7 @@ class JsonView extends AbstractView{
      */
     public function generate(array $parameters)
     {
-        return array('content' => json_encode($parameters));
+        return array('content' => Util::json_encode($parameters));
     }
 
     /**
