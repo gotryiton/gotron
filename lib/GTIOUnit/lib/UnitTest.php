@@ -44,7 +44,7 @@ class UnitTest extends PHPUnit_Framework_TestCase {
      * @author 
      */
     protected static function clear_beanstalk() {
-        $pheanstalk = new \Pheanstalk('127.0.0.1');
+        $pheanstalk = new Pheanstalk('127.0.0.1');
         $stats = $pheanstalk->stats();
         $jobs = $stats['current-jobs-ready'];
         foreach($pheanstalk->listTubes() as $tube){
