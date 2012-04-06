@@ -22,6 +22,7 @@ class Application extends Singleton {
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
+        $instance->autoload_vendor_plain_path();
 		self::initialize_active_record($config);
         self::initialize_routes();
 	}
@@ -52,6 +53,10 @@ class Application extends Singleton {
         $this->loader->setPlainPaths(array(
             file_join(__DIR__, "/../vendor/"),
         ));
+    }
+
+    public function autoload_vendor_plain_path() {
+        $this->loader->addPlainClassPath(file_join(Config::get('root_directory'), 'vendor'));
     }
 
     /**
