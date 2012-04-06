@@ -2,8 +2,8 @@
 
 namespace Gotron;
 
-use \ArrayAccess,
-    \Spyc;
+use ArrayAccess,
+    Spyc;
 
 class Config extends Singleton implements ArrayAccess {
 	/**
