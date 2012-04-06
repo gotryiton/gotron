@@ -71,10 +71,8 @@ class Application extends Singleton {
      */
     public static function define_autoloads(array $array) {
         $instance = static::instance();
-		$config = $instance->config();
-        $loader = new Loader;
-        $loader->register();
-        $loader->setClasses($array);
+        $instance->loader->register();
+        $instance->loader->setClasses($array);
     }
 
     /**
