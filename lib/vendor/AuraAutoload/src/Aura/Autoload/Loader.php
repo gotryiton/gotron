@@ -513,18 +513,22 @@ class Loader
             	return $file;
             }
         }
-        
+
         // fall back to the include path
         $file = $this->classToFile($spec);
-        try {
-            $obj = new \SplFileObject($file, 'r', true);
-        } catch (\RuntimeException $e) {
-            $k = count($this->tried_paths);
-            $this->tried_paths[] = "#{$k}" . get_include_path();
-            return false;
+        $paths = explode(PATH_SEPARATOR, get_include_path());
+        foreach($paths as $p) {
+            $fullname = $p.DIRECTORY_SEPARATOR.$file;
+            if(is_file($fullname)) {
+                return $fullname;
+            }
+            else {
+                $k = count($this->tried_paths);
+                $this->tried_paths[] = $fullname;
+            }
         }
-        $path = $obj->getRealPath();
-        return $path;
+
+        return false;
     }
     
     /**
