@@ -1618,6 +1618,10 @@ class Model
 		
 		$results = count($list);
 
+		if($sort && is_array($values) && count($values) > 1) {
+            $list = self::sort_model_list_by_value_list($list, $values);
+		}
+
 		if ($results != ($expected = count($values)))
 		{
 
@@ -1938,5 +1942,26 @@ class Model
         $updated_at = (array_key_exists('updated_at',$this->attributes)) ? "/{$this->updated_at}" : "";
         return "{$class_name}/{$this->read_attribute($this->get_primary_key(true))}{$updated_at}";
     }
+
+	/**
+     * Sorts $list of models by the order of their primary key in $values
+     *
+     * @param array $list
+     * @param array $values
+     * @return array
+     */
+    private static function sort_model_list_by_value_list($list, $values) {
+        $return_list = array();
+        $key_list = array();
+        foreach($list as $model)
+        {
+            $pk = $model->read_attribute($model->get_primary_key(true));
+            $key = array_search($pk,$values);
+            $return_list[$key] = $model;
+        }
+        ksort($return_list);
+        return $return_list;
+    }
+
 };
 ?>
