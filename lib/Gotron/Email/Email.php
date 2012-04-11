@@ -72,7 +72,13 @@ class Email {
     public function __construct($type, $to, $options = array()) {
 
         $this->type = $type;
-        $this->to = $to;
+
+        if (Config::bool('email.testing')) {
+            $this->to = Config::get('email.test_recipient');
+        }
+        else {
+            $this->to = $to;
+        }
 
         if(isset($options['reply_to'])) {
             $this->reply_to = $options['reply_to'];

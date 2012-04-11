@@ -89,7 +89,7 @@ class BeanstalkerWorker extends Beanstalker {
                 }
             }
 
-            if($this->child > 0) {
+            if($this->child > 0 || Config::bool('beanstalk.testing')) {
                 // Parent process, sit and wait
                 $status = 'Forked at ' . strftime('%F %T');
                 $this->log->lwrite($status,2);
@@ -125,8 +125,6 @@ class BeanstalkerWorker extends Beanstalker {
             $result = $job->perform();
             if($result === true) {
                 $this->log->lwrite("Successfully performed Job Id: " . $job->getJobId());
-                $this->child = 1;
-
                 return true;
             }
             else {
@@ -135,7 +133,7 @@ class BeanstalkerWorker extends Beanstalker {
                 return false;
             }
         }
-        catch(Exception $e) {
+        catch(\Exception $e) {
             $this->log->lwrite("Exception: $e");
             $this->releaseJob($job->getJobId());
             return false;
