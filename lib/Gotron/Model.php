@@ -184,8 +184,8 @@ class Model extends ActiveRecord\Model {
                     $found_objects = static::find_by_sql($sql,$sql_parameters,true,$default_options['include']); 
                 }
                 else{
-                   $options = static::create_options_from_finder($default_options,$conditions,$filters);
-                   $found_objects = static::find('all',$options);
+                    $options = static::create_options_from_finder($default_options,$conditions,$filters);
+                    $found_objects = static::find('all',$options);
                 }
                 $object_ids = array();
                 foreach($found_objects as $object){
@@ -272,34 +272,34 @@ class Model extends ActiveRecord\Model {
      * @return array of options for find
      */
     public static function create_options_from_finder($options,$additional_conditions,$limits = array()){
-        
         if(!ActiveRecord\is_hash($options['conditions'])){
             $string_conditions = $options['conditions'][0];
             foreach($additional_conditions as $attribute => $value){
                 // Arrays need to be used for attributes that appear multiple times in the condition string
-                if(is_array($value) && count($value) == substr_count($string_conditions,$attribute)){
+                if(is_array($value) && count($value) == ($count = preg_match_all("/\b$attribute/", $string_conditions, $matches, PREG_OFFSET_CAPTURE))){
                     $positions = array();
-                    $start = 0;
                     // Find every position of $attribute in $string_conditions
-                    while( ($pos = strpos(($string_conditions),$attribute,$start)) !== false) {
-                        $positions[] = $pos;
-                        $start = $pos + 1; 
+                    foreach($matches[0] as $match) {
+                        $positions[]= $match[1];
                     }
                     $i = 0;
                     foreach($positions as $position){
                         // Get the key to replace in the conditions array by counting occurrences of '?' prior 
                         // to $position in $string_conditions and adding 1
-                        $replace_key = substr_count(substr($string_conditions,0,$position),'?') + 1;
+                        $replace_key = substr_count(substr($string_conditions, 0, $position),'?') + 1;
                         $options['conditions'][$replace_key] = $value[$i];
                         $i++;
                     }
                 }
                 elseif (isset($value)) {
-                    $occurrence = strpos($string_conditions,$attribute);
-                    if($occurrence == 0) 
+                    $number = preg_match("/\b$attribute/", $string_conditions, $matches, PREG_OFFSET_CAPTURE);
+                    $occurrence = $matches[0][1];
+
+                    if($occurrence == 0) {
                         $occurrence = 1;
-                        
-                    $replace_key = substr_count(substr($string_conditions,0,$occurrence - 1),'?') + 1;
+                    }
+
+                    $replace_key = substr_count(substr($string_conditions, 0, $occurrence - 1), '?') + 1;
                     $options['conditions'][$replace_key] = $value;
                 }
             }
@@ -316,7 +316,6 @@ class Model extends ActiveRecord\Model {
                 $options[$key] = $value;
             }
         }
-        
         return $options;
     }
     

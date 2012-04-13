@@ -19,7 +19,9 @@ class Book extends Model {
         'title_author_hash' => array('conditions' => array('title' => 1,'author' => 'john')),
         'title_twice' => array('conditions' => array('author=? AND (title=? OR title=?)',1,1,1)),
         'cache_test' => array('conditions' => array('id' => array(1,2,3)),'order' => 'id desc'),
-        'title_array' => array('conditions' => array('title in (?) AND author = ?',array(),'john'))
+        'title_array' => array('conditions' => array('title in (?) AND author = ?',array(),'john')),
+        'multiple_ids' => array('conditions' => array('publisher_id = ? AND id != ?',array(),'john')),
+        'multiple_id_array' => array('conditions' => array('publisher_id = ? AND id != ? AND id != ?', 1, 1, 1))
     );
 
 }

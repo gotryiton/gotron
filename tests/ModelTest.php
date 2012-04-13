@@ -5,7 +5,8 @@ namespace TestApp;
 use ActiveRecord\ConnectionManager,
     GTIOUnit\UnitDB\Fixture,
     GTIOUnit\UnitDB\Utils,
-    Gotron\Config;
+    Gotron\Config,
+    Gotron\Cache;
 
 class ModelTest extends UnitTest {
 
@@ -16,6 +17,8 @@ class ModelTest extends UnitTest {
         $config->set('model_directory', 'tests/GTIO/helpers/mdoels');
 
         Utils::clear_db($config['database']);
+
+        Cache::flush();
 
         $connection = ConnectionManager::get_connection();
         $connection->query(Book::$create_query);
@@ -80,6 +83,23 @@ class ModelTest extends UnitTest {
     public function testGetByFinderWithArrayInConditions() {
         $books = Book::finder('title_array',array('title' => array('something','nothing')));
         $this->assertEquals(2,count($books));
+    }
+
+    public function testGetByFinderWithMultipleIdFields() {
+        $fix = new Fixture(__DIR__ . "/fixtures/");
+        $fix->create('publisher', array('id' => 26));
+        $fix->create('book', array('id' => 100, 'publisher_id' => 26));
+        $fix->create('book',array('id' => 101,'author' => 'dave', 'publisher_id' => 26));
+        $fix->create('book',array('id' => 102, 'title' => 'nothing', 'publisher_id' => 26));
+        $books = Book::finder('multiple_ids', array('publisher_id' => '26', 'id' => 100));
+        $this->assertEquals(2, count($books));
+    }
+
+    public function testGetByFinderWithMultipleIdFieldsMultiArray() {
+        $fix = new Fixture(__DIR__ . "/fixtures/");
+        $fix->create('book', array('id' => 103, 'publisher_id' => 26));
+        $books = Book::finder('multiple_id_array', array('publisher_id' => '26', 'id' => array(100, 103)));
+        $this->assertEquals(2, count($books));
     }
 
     public function testLoadAndTouchModel() {
