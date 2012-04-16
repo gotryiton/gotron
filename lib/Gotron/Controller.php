@@ -120,7 +120,7 @@ class Controller {
 	        $class = get_called_class();
 			$denamespaced = str_replace($namespace . '\\', "", $class);
 		}
-        return str_replace(array("_controller"), "", Util::uncamelize($denamespaced));
+        return str_replace(array("_controller"), "", Helper::uncamelize($denamespaced));
     }
 
 	/**

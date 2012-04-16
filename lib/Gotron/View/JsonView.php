@@ -3,7 +3,7 @@
 namespace Gotron\View;
 
 use Gotron\Exception,
-    Gotron\Util;
+    Gotron\Helper;
 
 /**
  * View class used to create JSON views
@@ -21,7 +21,7 @@ class JsonView extends AbstractView{
      */
     public function generate(array $parameters)
     {
-        return array('content' => Util::json_encode($parameters));
+        return array('content' => Helper::json_encode($parameters));
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Gotron;
 
-class Util {
+class Helper {
 
     function camelize($string, $pascalCase = false) {
         $string = str_replace(array('-', '_'), ' ', $string); 

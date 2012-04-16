@@ -52,7 +52,7 @@ class Model extends ActiveRecord\Model {
         $keys = array_unique(array_merge(array_keys($arr),static::$auto_include_in_dump,$includes));
                 
         foreach($keys as $key){
-            $varName = Util::camelize($key);
+            $varName = Helper::camelize($key);
             $ret[$varName] = $this->_get_dump_value($key);
         }
 		return $ret;
