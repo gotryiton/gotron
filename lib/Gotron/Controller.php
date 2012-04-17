@@ -37,10 +37,10 @@ class Controller {
         $view = ucfirst($this->view_type) . "View";
         if(class_exists(__NAMESPACE__ . "\\View\\$view")) {
             if($layout === false) {
-                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false);
+                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false, !$this->dont_render);
             }
             else {
-                $controller_view = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false);
+                $controller_view = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false, !$this->dont_render);
 				$includes['js'] = array();
 				$includes['css'] = array();
 				if(isset($controller_view['includes']['js'])) {
@@ -64,7 +64,7 @@ class Controller {
 
 				$data = $data + $parameters;
                 $layout_path = $this->get_layout($layout);
-                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false);
+                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false, !$this->dont_render);
             }
 			if($this->dont_render) {
                 $GLOBALS['controller_content'] = $view_data['content'];
