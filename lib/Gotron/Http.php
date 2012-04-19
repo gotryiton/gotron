@@ -48,39 +48,42 @@ class Http_Multiple_Error
     }
 }
 
-class Http
-{
+class Http extends Singleton {
+
     private $_host = null;
     private $_port = null;
     private $_user = null;
     private $_pass = null;
     private $_protocol = null;
 
+    private $has_mock = false;
+    private $mock_urls = array();
+    private $persistent = false;
+
     const HTTP  = 'http';
     const HTTPS = 'https';
     
     private $_connMultiple = false;
-    /**
-     * Factory of the class. Lazy connect
-     *
-     * @param string $host
-     * @param integer $port
-     * @param string $user
-     * @param string $pass
-     * @return Http
-     */
-    static public function connect($host, $port = null, $protocol = self::HTTP)
-    {
-        return new self($host, $port, $protocol, false);
+
+    static public function connect($host, $port = null, $protocol = self::HTTP) {
+        $instance = self::instance();
+        $instance->_host = $host;
+        $instance->_port = $port;
+        $instance->_protocol = $protocol;
+        return $instance;
     }
     
     /**
      *
      * @return Http
      */
-    static public function multiConnect()
-    {
-        return new self(null, null, null, true);
+    static public function multiConnect() {
+        $instance = self::instance();
+        $this->_host = null;
+        $this->_port = null;
+        $this->_protocol = null;
+        $this->_connMultiple = true;
+        return $instance;
     }
 
     private $_append = array();
@@ -91,52 +94,42 @@ class Http
     }
     
     private $_silentMode = false;
+
     /**
      *
      * @param bool $mode
      * @return Http
      */
-    public function silentMode($mode=true)
-    {
+    public function silentMode($mode=true) {
         $this->_silentMode = $mode;
         return $this;    
     }
     
     private $_debugMode = false;
-    public function debugMode($mode=true)
-    {
+
+    public function debugMode($mode=true) {
         $this->_debugMode = $mode;
         return $this;    
     }
 
-    protected function __construct($host, $port, $protocol, $connMultiple)
-    {
-        $this->_connMultiple = $connMultiple;
-        
-        $this->_host     = $host;
-        $this->_port     = $port;
-        $this->_protocol = $protocol;
-    }
-    
-    public function setCredentials($user, $pass)
-    {
+    public function setCredentials($user, $pass) {
         $this->_user = $user;
         $this->_pass = $pass;
         return $this;
     }
 
     private $_agent;
-    public function setUserAgent($agent){
+    public function setUserAgent($agent) {
         $this->_agent = $agent;
     }
 
     private $_referer;
-    public function setReferer($referer){
+    public function setReferer($referer) {
         $this->_referer = $referer;
     }
 
     private $_cookie;
-    public function setCookie($cookie){
+    public function setCookie($cookie) {
         $this->_cookie = $cookie;
     }
 
@@ -152,8 +145,7 @@ class Http
      * @param array $params
      * @return Http
      */
-    public function put($url, $params=array())
-    {
+    public function put($url, $params=array()) {
         $this->_requests[] = array(self::PUT, $this->_url($url), $params);
         return $this;
     }
@@ -163,8 +155,7 @@ class Http
      * @param array $params
      * @return Http
      */
-    public function post($url, $params=array())
-    {
+    public function post($url, $params=array()) {
         $this->_requests[] = array(self::POST, $this->_url($url), $params);
         return $this;
     }
@@ -174,25 +165,22 @@ class Http
      * @param array $params
      * @return Http
      */
-    public function get($url, $params=array())
-    {
+    public function get($url, $params=array()) {
         $this->_requests[] = array(self::GET, $this->_url($url), $params);
         return $this;
     }
-    
+
     /**
      * @param string $url
      * @param array $params
      * @return Http
      */
-    public function delete($url, $params=array())
-    {
+    public function delete($url, $params=array()) {
         $this->_requests[] = array(self::DELETE, $this->_url($url), $params);
         return $this;
     }
     
-    public function _getRequests()
-    {
+    public function _getRequests() {
         return $this->_requests;
     }
     
@@ -203,11 +191,10 @@ class Http
      * @param array $params
      * @return string
      */
-    public function doPut($url, $params=array())
-    {
+    public function doPut($url, $params=array()) {
         return $this->_exec(self::PUT, $this->_url($url), $params);
     }
-    
+
     /**
      * POST request
      *
@@ -215,8 +202,7 @@ class Http
      * @param array $params
      * @return string
      */
-    public function doPost($url, $params=array())
-    {
+    public function doPost($url, $params=array()) {
         return $this->_exec(self::POST, $this->_url($url), $params);
     }
 
@@ -227,8 +213,7 @@ class Http
      * @param array $params
      * @return string
      */
-    public function doGet($url, $params=array())
-    {
+    public function doGet($url, $params=array()) {
         return $this->_exec(self::GET, $this->_url($url), $params);
     }
     
@@ -239,8 +224,7 @@ class Http
      * @param array $params
      * @return string
      */
-    public function doDelete($url, $params=array())
-    {
+    public function doDelete($url, $params=array()) {
         return $this->_exec(self::DELETE, $this->_url($url), $params);
     }
 
@@ -251,8 +235,7 @@ class Http
      * @param array $headers
      * @return Http
      */
-    public function setHeaders($headers)
-    {
+    public function setHeaders($headers) {
         $this->_headers = $headers;
         return $this;
     }
@@ -264,8 +247,7 @@ class Http
      * @param array $timeout
      * @return Http
      */
-    public function setTimeout($timeout)
-    {
+    public function setTimeout($timeout) {
         $this->_timeout = $timeout;
         return $this;
     }
@@ -273,11 +255,10 @@ class Http
     /**
      * Builds absolute url 
      *
-     * @param unknown_type $url
-     * @return unknown
+     * @param string $url
+     * @return string
      */
-    private function _url($url=null)
-    {
+    private function _url($url = null) {
         if(substr($url,0,1) == "/")
             $url = substr($url, 1, strlen($url) - 1);
 
@@ -294,6 +275,51 @@ class Http
     const HTTP_CREATED = 201;
     const HTTP_ACEPTED = 202;
 
+    public static function mock_url($url, $data, $persistent = false) {
+        $instance = self::instance();
+        $instance->mock($url, $data, $persistent);
+        return true;
+    }
+
+    public static function mock_all($data, $persistent = false) {
+        $instance = self::instance();
+        $instance->mock('mock_all', $data, $persistent);
+        return true;
+    }
+
+    public function mock($url, $data, $persistent = false) {
+        $this->has_mock = true;
+        $this->mock_urls[$url] = $data;
+        $this->persistent = $persistent;
+    }
+
+    public function has_mock_all() {
+        return array_key_exists('mock_all', $this->mock_urls);
+    }
+
+    public function mock_contains($url) {
+        return array_key_exists($url, $this->mock_urls);
+    }
+
+    public function mock_data_for($url) {
+        if ($this->has_mock_all()) {
+            return $this->mock_urls['mock_all'];
+        }
+        else {
+            return $this->mock_urls[$url];
+        }
+    }
+
+    public static function disable_mock() {
+        $instance = self::instance();
+        $instance->close_mock();
+    }
+
+    public function close_mock() {
+        $this->mock_urls = array();
+        $this->has_mock = false;
+    }
+
     /**
      * Performing the real request
      *
@@ -302,8 +328,17 @@ class Http
      * @param array $params
      * @return string
      */
-    private function _exec($type, $url, $params = array())
-    {
+    private function _exec($type, $url, $params = array()) {
+        if ($this->has_mock) {
+            if ($this->has_mock_all() || $this->mock_contains($url)) {
+                $data = $this->mock_data_for($url);
+                if (!$this->persistent) {
+                    $this->close_mock();
+                }
+                return $data;
+            }
+        }
+
         $headers = $this->_headers;
         $s = curl_init();
         
@@ -367,8 +402,7 @@ class Http
         return $out;
     }
     
-    public function run()
-    {
+    public function run() {
         if ($this->_connMultiple) {
             return $this->_runMultiple();
         } else {
@@ -376,8 +410,7 @@ class Http
         }
     }
     
-    private function _runMultiple()
-    {
+    private function _runMultiple() {
         $out= null;
         if (count($this->_append) > 0) {
             $arr = array();
@@ -391,98 +424,100 @@ class Http
         return $out;
     }
     
-    private function _run()
-    {
-        $headers = $this->_headers;
-        $curly = $result = array();
+    private function _run() {
+        if ($this->has_mock) {
 
-        $mh = curl_multi_init();
-        foreach ($this->_requests as $id => $reg) {
-            $curly[$id] = curl_init();
-            
-            $type   = $reg[0];
-            $url    = $reg[1];
-            $params = $reg[2];
-            
-            if(!is_null($this->_user)){
-               curl_setopt($curly[$id], CURLOPT_USERPWD, $this->_user.':'.$this->_pass);
-            }
-            
-            if ($this->_debugMode)
-                curl_setopt($curly[$id], CURLOPT_VERBOSE, 1);
-
-            switch ($type) {
-                case self::DELETE:
-                    curl_setopt($curly[$id], CURLOPT_URL, $url . '?' . http_build_query($params));
-                    curl_setopt($curly[$id], CURLOPT_CUSTOMREQUEST, self::DELETE);
-                    break;
-                case self::PUT:
-                    curl_setopt($curly[$id], CURLOPT_URL, $url);
-                    curl_setopt($curly[$id], CURLOPT_CUSTOMREQUEST, self::PUT);
-                    curl_setopt($curly[$id], CURLOPT_POSTFIELDS, $params);
-                    break;
-                case self::POST:
-                    curl_setopt($curly[$id], CURLOPT_URL, $url);
-                    curl_setopt($curly[$id], CURLOPT_POST, true);
-                    curl_setopt($curly[$id], CURLOPT_POSTFIELDS, $params);
-                    break;
-                case self::GET:
-                    curl_setopt($curly[$id], CURLOPT_URL, $url . '?' . http_build_query($params));
-                    break;
-            }
-            curl_setopt($curly[$id], CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curly[$id], CURLOPT_HTTPHEADER, $headers);
-            
-            curl_multi_add_handle($mh, $curly[$id]);
         }
-    
-        $running = null;
-        do {
-            curl_multi_exec($mh, $running);
-            sleep(0.2);
-        } while($running > 0);
-    
-        foreach($curly as $id => $c) {
-            $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
-            switch ($status) {
-                case self::HTTP_OK:
-                case self::HTTP_CREATED:
-                case self::HTTP_ACEPTED:
-                    $result[$id] = curl_multi_getcontent($c);
-                    break;
-                default:
-                    if (!$this->_silentMode) {
-                        $result[$id] = new Http_Multiple_Error($status, $type, $url, $params);
-                    }
-            }
-            curl_multi_remove_handle($mh, $c);
-        }
+        else {
+            $headers = $this->_headers;
+            $curly = $result = array();
 
-        curl_multi_close($mh);
-        return $result;
+            $mh = curl_multi_init();
+            foreach ($this->_requests as $id => $reg) {
+                $curly[$id] = curl_init();
+            
+                $type   = $reg[0];
+                $url    = $reg[1];
+                $params = $reg[2];
+            
+                if(!is_null($this->_user)){
+                   curl_setopt($curly[$id], CURLOPT_USERPWD, $this->_user.':'.$this->_pass);
+                }
+            
+                if ($this->_debugMode)
+                    curl_setopt($curly[$id], CURLOPT_VERBOSE, 1);
+
+                switch ($type) {
+                    case self::DELETE:
+                        curl_setopt($curly[$id], CURLOPT_URL, $url . '?' . http_build_query($params));
+                        curl_setopt($curly[$id], CURLOPT_CUSTOMREQUEST, self::DELETE);
+                        break;
+                    case self::PUT:
+                        curl_setopt($curly[$id], CURLOPT_URL, $url);
+                        curl_setopt($curly[$id], CURLOPT_CUSTOMREQUEST, self::PUT);
+                        curl_setopt($curly[$id], CURLOPT_POSTFIELDS, $params);
+                        break;
+                    case self::POST:
+                        curl_setopt($curly[$id], CURLOPT_URL, $url);
+                        curl_setopt($curly[$id], CURLOPT_POST, true);
+                        curl_setopt($curly[$id], CURLOPT_POSTFIELDS, $params);
+                        break;
+                    case self::GET:
+                        curl_setopt($curly[$id], CURLOPT_URL, $url . '?' . http_build_query($params));
+                        break;
+                }
+                curl_setopt($curly[$id], CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curly[$id], CURLOPT_HTTPHEADER, $headers);
+            
+                curl_multi_add_handle($mh, $curly[$id]);
+            }
+    
+            $running = null;
+            do {
+                curl_multi_exec($mh, $running);
+                sleep(0.2);
+            } while($running > 0);
+    
+            foreach($curly as $id => $c) {
+                $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
+                switch ($status) {
+                    case self::HTTP_OK:
+                    case self::HTTP_CREATED:
+                    case self::HTTP_ACEPTED:
+                        $result[$id] = curl_multi_getcontent($c);
+                        break;
+                    default:
+                        if (!$this->_silentMode) {
+                            $result[$id] = new Http_Multiple_Error($status, $type, $url, $params);
+                        }
+                }
+                curl_multi_remove_handle($mh, $c);
+            }
+
+            curl_multi_close($mh);
+            return $result;
+        }
     }
 
-    public static function http_get($url, $params = array())
-    {
+    public static function http_get($url, $params = array()) {
         $http = self::connect_with_url($url);
         $parsed = parse_url($url);
-        $path = $parsed['path'];
-        return $http->doGet($url, $params);
+        $path = isset($parsed['path']) ? $parsed['path'] : "/";
+        return $http->doGet($path, $params);
     }
 
-    public static function http_post($url, $params = array())
-    {
+    public static function http_post($url, $params = array()) {
         $http = self::connect_with_url($url);
         $parsed = parse_url($url);
         $path = $parsed['path'];
         return $http->doPost($path, $params);
     }
 
-    public static function connect_with_url($url)
-    {
+    public static function connect_with_url($url) {
         $parsed_url = parse_url($url);
         $host = $parsed_url['host'];
+        $port = isset($parsed_url['port']) ? $parsed_url['port'] : null;
         $scheme = (isset($parsed_url['scheme']) && $parsed_url['scheme'] == 'https') ? 'https' : 'http';
-        return self::connect($host,$parsed_url['port'],$scheme);
+        return self::connect($host, $port, $scheme);
     }
 }
