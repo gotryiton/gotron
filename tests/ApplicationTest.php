@@ -47,6 +47,15 @@ class ApplicationTest extends UnitTest {
         $this->assertNotEquals($routes, Config::get('routes'));
     }
 
+    public function testVersion() {
+        $app = TestApplication::instance();
+        $this->assertEquals(4, $app->version);
+
+        $_SERVER['version'] = 2;
+        TestApplication::initialize();
+        $this->assertEquals(2, $app->version);
+    }
+
 }
 
 ?>

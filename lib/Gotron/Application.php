@@ -7,7 +7,11 @@ use ActiveRecord,
 
 class Application extends Singleton {
 
+    const VERSION = 1;
+
 	public $config;
+
+    public $version;
 	
 	/**
 	 * Bootstraps the application
@@ -89,13 +93,18 @@ class Application extends Singleton {
      */
     public function autoload_app() {
         $root_directory = $this->config->get('root_directory');
+
+        $this->version = (isset($_SERVER['version']) && $_SERVER['version'] <= static::VERSION) ? floor($_SERVER['version']) : static::VERSION;
+
         $this->loader->addFrameworkClassPaths(array(
             file_join($root_directory, "app", "controllers"),
         	file_join($root_directory, "app", "jobs"),
         	file_join($root_directory, "app", "models"),
         	file_join($root_directory, "app", "modules"),
-        	file_join($root_directory, "app", "views")
+        	file_join($root_directory, "app", "views"),
+            file_join($root_directory, "app", "presenters", "v{$this->version}")
         ), $this->config->get('namespace'));
+
         $this->loader->register();
     }
 
