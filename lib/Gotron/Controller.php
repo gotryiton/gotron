@@ -56,10 +56,18 @@ class Controller {
 					$title = null;
 				}
 
+                if (!is_null($controller_view['meta_tags'])) {
+					$meta_tags = $controller_view['meta_tags'];
+				}
+				else {
+					$meta_tags = null;
+				}
+
                 $data = array(
                     'yield' => $controller_view['content'],
                     'includes' => $includes,
-					'title' => $title
+					'title' => $title,
+                    'meta_tags' => $meta_tags
                 );
 
 				$data = $data + $parameters;
