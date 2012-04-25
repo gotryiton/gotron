@@ -66,8 +66,8 @@ class Cookie {
      * @return bool
      */
     public static function delete($name) {
-        $name = static::namespaced($name);
         if(Config::bool('cookies.disabled')) {
+            $name = static::namespaced($name);
             if(isset($GLOBALS['cookies'][$name])) {
                 unset($GLOBALS['cookies'][$name]);
                 return true;

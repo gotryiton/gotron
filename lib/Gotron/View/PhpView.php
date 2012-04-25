@@ -15,6 +15,8 @@ class PhpView extends AbstractView{
 
 	public $title = null;
 
+    public $meta_tags = null;
+
     /**
      * Generates the PhpView
      *
@@ -29,14 +31,19 @@ class PhpView extends AbstractView{
             if(isset($include)) {
                 $this->includes = $include;
             }
+
 			if(isset($title)) {
                 $this->title = $title;
+            }
+
+            if (isset($meta_tags)) {
+                $this->meta_tags = $meta_tags;
             }
 		}
         else {
             throw new Exception("Cannot find view {$this->view_path}");
         }
-        return array('content' => $this->content, 'includes' => $this->includes, 'title' => $this->title);
+        return array('content' => $this->content, 'includes' => $this->includes, 'title' => $this->title, 'meta_tags' => $this->meta_tags);
     }
 
     /**
