@@ -23,6 +23,7 @@ class Application extends Singleton {
         $instance->autoload_library();
 		$config = Config::load_config(static::configuration());
 		$instance->config = $config;
+        $instance->load_accept_header();
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
@@ -86,6 +87,21 @@ class Application extends Singleton {
         }
     }
 
+    public function load_accept_header() {
+        if (array_key_exists('Accept', $_SERVER)) {
+            $header = $_SERVER['Accept'];
+            $exploded_header = explode("/", $header);
+            $version_type = explode("-", $exploded_header[1]);
+            if (preg_match("/v\d/", $version_type[0])) {
+                $this->version = str_replace("v", "", $version_type[0]);
+            }
+            $this->content_type = $version_type[1];
+            return true;
+        }
+        $this->version = static::VERSION;
+        $this->content_type = 'json';
+    }
+
     /**
      * Autoloads the app paths
      *
@@ -93,8 +109,6 @@ class Application extends Singleton {
      */
     public function autoload_app() {
         $root_directory = $this->config->get('root_directory');
-
-        $this->version = (isset($_SERVER['version']) && $_SERVER['version'] <= static::VERSION) ? floor($_SERVER['version']) : static::VERSION;
 
         $this->loader->addFrameworkClassPaths(array(
             file_join($root_directory, "app", "controllers"),
