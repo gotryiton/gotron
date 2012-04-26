@@ -47,6 +47,18 @@ class ApplicationTest extends UnitTest {
         $this->assertNotEquals($routes, Config::get('routes'));
     }
 
+    public function testVersion() {
+        $app = TestApplication::instance();
+        $this->assertEquals(4, $app->version);
+        $this->assertEquals('json', $app->config->get('content_type'));
+
+        $_SERVER['HTTP_ACCEPT'] = "application/v2-html";
+
+        TestApplication::initialize();
+        $this->assertEquals(2, $app->version);
+        $this->assertEquals('html', $app->config->get('content_type'));
+    }
+
 }
 
 ?>

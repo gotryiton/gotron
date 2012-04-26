@@ -7,7 +7,11 @@ use ActiveRecord,
 
 class Application extends Singleton {
 
+    const VERSION = 1;
+
 	public $config;
+
+    public $version;
 	
 	/**
 	 * Bootstraps the application
@@ -19,6 +23,7 @@ class Application extends Singleton {
         $instance->autoload_library();
 		$config = Config::load_config(static::configuration());
 		$instance->config = $config;
+        $instance->load_accept_header();
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
@@ -82,6 +87,28 @@ class Application extends Singleton {
         }
     }
 
+    public function load_accept_header() {
+        if (array_key_exists('HTTP_ACCEPT', $_SERVER)) {
+            $header = $_SERVER['HTTP_ACCEPT'];
+            $exploded_header = explode("/", $header);
+            $version_type = explode("-", $exploded_header[1]);
+            if (preg_match("/v\d/", $version_type[0])) {
+                $this->version = str_replace("v", "", $version_type[0]);
+                $this->config->set('version', str_replace("v", "", $version_type[0]));
+                $this->config->set('content_type', $version_type[1]);
+            }
+            else {
+                $this->version = static::VERSION;
+                $this->config->set('version', static::VERSION);
+                $this->config->set('content_type', 'html');
+            }
+            return true;
+        }
+        $this->version = static::VERSION;
+        $this->config->set('version', static::VERSION);
+        $this->config->set('content_type', 'json');
+    }
+
     /**
      * Autoloads the app paths
      *
@@ -89,13 +116,17 @@ class Application extends Singleton {
      */
     public function autoload_app() {
         $root_directory = $this->config->get('root_directory');
+
         $this->loader->addFrameworkClassPaths(array(
             file_join($root_directory, "app", "controllers"),
         	file_join($root_directory, "app", "jobs"),
         	file_join($root_directory, "app", "models"),
         	file_join($root_directory, "app", "modules"),
-        	file_join($root_directory, "app", "views")
+        	file_join($root_directory, "app", "views"),
+            file_join($root_directory, "app", "finders"),
+            file_join($root_directory, "app", "presenters", "v{$this->version}")
         ), $this->config->get('namespace'));
+
         $this->loader->register();
     }
 
