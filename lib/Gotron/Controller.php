@@ -213,6 +213,12 @@ class Controller {
         if (array_key_exists($content_type, $respond_array)) {
             return $respond_array[$content_type]();
         }
+        elseif (array_key_exists('html', $respond_array)){
+        	return $respond_array['html']();
+        }
+        elseif (array_key_exists('json', $respond_array)){
+        	return $respond_array['json']();
+        }
         else {
             throw new Exception("Content type $content_type does not exist in respond_array");
         }
