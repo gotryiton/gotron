@@ -50,13 +50,13 @@ class ApplicationTest extends UnitTest {
     public function testVersion() {
         $app = TestApplication::instance();
         $this->assertEquals(4, $app->version);
-        $this->assertEquals('json', $app->content_type);
+        $this->assertEquals('json', $app->config->get('content_type'));
 
-        $_SERVER['Accept'] = "application/v2-html";
+        $_SERVER['HTTP_ACCEPT'] = "application/v2-html";
 
         TestApplication::initialize();
         $this->assertEquals(2, $app->version);
-        $this->assertEquals('html', $app->content_type);
+        $this->assertEquals('html', $app->config->get('content_type'));
     }
 
 }
