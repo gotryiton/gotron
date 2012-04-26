@@ -214,7 +214,6 @@ class Controller {
             return $respond_array[$content_type]();
         }
         else {
-            // TODO: Output correct response based on content_type requested
             throw new Exception("Content type $content_type does not exist in respond_array");
         }
     }
