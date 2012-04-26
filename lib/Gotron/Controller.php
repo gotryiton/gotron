@@ -23,7 +23,7 @@ class Controller {
 	 * @param string $view 
 	 * @return string
 	 */
-    protected function render(array $parameters, $options = array()) {
+    public function render(array $parameters, $options = array()) {
         $this->parse_options($options);
         $this->view_type = static::get_view_type($parameters);
         $layout = $this->options['layout'];
@@ -201,6 +201,23 @@ class Controller {
 		}
 		$this->dont_render = true;
 	}
+
+    /**
+     * Calls the closure defined for the content_type specified for the current request
+     *
+     * @param string $respond_array
+     * @return mixed
+     */
+    protected function respond_to($respond_array) {
+        $content_type = Config::get('content_type');
+        if (array_key_exists($content_type, $respond_array)) {
+            return $respond_array[$content_type]();
+        }
+        else {
+            // TODO: Output correct response based on content_type requested
+            throw new Exception("Content type $content_type does not exist in respond_array");
+        }
+    }
 
 }
 
