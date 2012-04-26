@@ -228,6 +228,7 @@ class Router {
             }
 			$controller = new $controller_class();
 			$controller->parameters = $parameters;
+            $controller->params = &$controller->parameters;
 
             if(function_exists('newrelic_add_custom_parameter')){
                 if(is_array($parameters)){
