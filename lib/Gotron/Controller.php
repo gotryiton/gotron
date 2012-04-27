@@ -14,6 +14,8 @@ class Controller {
 
 	protected $dont_render = false;
 
+    public $json = false;
+
 	/**
 	 * Renders the view
 	 *
@@ -209,7 +211,12 @@ class Controller {
      * @return mixed
      */
     protected function respond_to($respond_array) {
-        $content_type = Config::get('content_type');
+        if ($this->json = true) {
+            $content_type = 'json';
+        }
+        else {
+            $content_type = Config::get('content_type');
+        }
         if (array_key_exists($content_type, $respond_array)) {
             return $respond_array[$content_type]();
         }

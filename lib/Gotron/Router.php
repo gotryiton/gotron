@@ -19,17 +19,23 @@ class Router {
 	public static function route($namespace = "Gotron") {
 	    $url = explode('?', $_SERVER['REQUEST_URI']);
 		$path = mb_strtolower($url[0]);
+        $json = false;
+        if (preg_match("/\.json/", $path)) {
+            $json = true;
+            $path = preg_replace("/\.json/", "", $path);
+        }
+
 		$path_components = explode('/', $path);
 		$real_path_components = $path_components;
 
 		if (Config::bool('show_maintenance')){
 		    $api = array_search('rest', $path_components) !== FALSE;
-			static::perform_controller_action("Error", "maintenance", array(), array('api' => $api), $namespace);
+			static::perform_controller_action("Error", "maintenance", array(), array('api' => $api), $namespace, array('api' => $api));
             return;
 		}
 		else if (Config::bool('show_error')){
 		    $api = array_search('rest',$path_components) !== FALSE;
-			static::perform_controller_action("Error", "error_page", array(), array('api' => $api), $namespace);
+			static::perform_controller_action("Error", "error_page", array(), array('api' => $api), $namespace, array('api' => $api));
             return;
 		}
 
@@ -58,6 +64,7 @@ class Router {
 			$j = 0;
 			$objects = array();
 			$parameters = array();
+            $params = array();
 			$goodRoute = true;
 			$custom_parameters = array();
 			$boolean_parameters = array();
@@ -73,9 +80,11 @@ class Router {
 			//put the GET and POST into the parameters array 		
 			foreach ($_GET as $key => $value) {
 			    $parameters[$key] = $value;
+                $params[$key] = $value;
 			}
 			foreach ($_POST as $key => $value) {
 			  	$parameters[$key] = $value;
+                $params[$key] = $value;
 			}
 
 			//Handle routes that call a specific action
@@ -108,6 +117,7 @@ class Router {
 				//this part of the route is a variable
 				if (substr($route_component,0,1) == ":" && $path_components[$i]!='') {
 					$parameters[substr($route_component,1)] = $path_components[$i];
+                    $params[substr($route_component,1)] = $path_components[$i];
 					//This part of the route is an action for a controller
 				}
 				elseif ($route_component == "[action]") {
@@ -133,24 +143,28 @@ class Router {
 						$i = array_search($path_component, $custom_parameters);
 						//add to parameters list
 						$parameters[$custom_parameters[$i]] = $path_components[$j + 1];
+                        $params[$custom_parameters[$i]] = $path_components[$j + 1];
 						$lastParameter =  $path_components[$j + 1];
 					}
 					elseif (in_array($path_component, $boolean_parameters)) {
 						$i=array_search($path_component, $boolean_parameters);
 						$parameters[$boolean_parameters[$i]] = true;
+                        $params[$boolean_parameters[$i]] = true;
 					}
 					elseif (isset($array_parameter) && $path_components[$j] != "" && !in_array($path_components[$j], $route_components) && $path_component != $lastParameter) {
 						$parameters[$array_parameter][] = $path_components[$j];
+                        $params[$array_parameter][] = $path_components[$j];
 					}
 					$j++;
 				}
-				if(static::perform_controller_action($controller, $action, $objects, $parameters, $namespace)) {
+				if(static::perform_controller_action($controller, $action, $objects, $parameters, $namespace, $params, $json)) {
                     return;
                 }
 			}
 		}
 		
 		$parameters = array();
+        $params = array();
 		//put the route components in 'args' within parameters
 		$parameters['args'] = $route_components;
 		$parameters['path'] = $real_path_components;
@@ -158,14 +172,17 @@ class Router {
 		//put the GET, POST and FILES into the parameters array 		
 		foreach ($_GET as $key => $value) {
 		    $parameters[$key] = $value;
+            $params[$key] = $value;
 		}
 
 		foreach ($_POST as $key => $value) {
 		  	$parameters[$key] = $value;
+            $params[$key] = $value;
 		}
 
 		foreach ($_FILES as $key => $value) {
 		  	$parameters[$key] = $value;
+            $params[$key] = $value;
 		}
 
 		if (!$goodRoute){
@@ -174,12 +191,12 @@ class Router {
 			if ($path_components[2]!='' && $path_components[2]!=NULL) {
 				$action = str_replace("-","_", $path_components[2]);
 			}
-			if(static::perform_controller_action($controller, $action, $objects, $parameters, $namespace)) {
+			if(static::perform_controller_action($controller, $action, $objects, $parameters, $namespace, $params, $json)) {
                 return;
             }
 
 			if ($path_components[1] != '' && $path_components[1] != null) {
-				if(static::perform_controller_action('Static', 'index', $objects, $parameters, $namespace)) {
+				if(static::perform_controller_action('Static', 'index', $objects, $parameters, $namespace, $params, $json)) {
                     return;
                 }
 			}
@@ -197,7 +214,7 @@ class Router {
      * @param array $parameters 
 	 * @return void
 	 */
-	public function perform_controller_action($class_path, $action, $objects, $parameters, $namespace) {
+	public function perform_controller_action($class_path, $action, $objects, $parameters, $namespace, $params, $json = false) {
 		//We treat 'new' the same as 'edit', since they generally contain a lot of the same code
 		if ($action == "new") {
 			$action = "edit";
@@ -228,7 +245,8 @@ class Router {
             }
 			$controller = new $controller_class();
 			$controller->parameters = $parameters;
-            $controller->params = &$controller->parameters;
+            $controller->params = $params;
+            $controller->json = $json;
 
             if(function_exists('newrelic_add_custom_parameter')){
                 if(is_array($parameters)){
