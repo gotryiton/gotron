@@ -14,7 +14,6 @@ class DumpService extends EmailService {
     const DUMP_DIRECTORY = "public/emails";
 
 	public function send($email) {
-        echo "Sending\n";
         return $this->save($email);
 	}
 
