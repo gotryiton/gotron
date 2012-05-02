@@ -125,7 +125,7 @@ class Application extends Singleton {
 	public static function initialize_active_record($app_config) {
         require_once __DIR__ . '/../vendor/ActiveRecord/lib/ActiveRecord/Utils.php';
 		ActiveRecord\Config::initialize(function($cfg) use($app_config) {
-		    $logger = \Log::singleton('syslog',LOG_LOCAL0,'##QUERY_LOG##',array('timeFormat' =>  '%Y-%m-%d %H:%M:%S'));
+            $logger = new Logging('QUERY_LOG');
 		    $cfg->set_logging($app_config->bool('db.query_logging'));
 		    $cfg->set_logger($logger);
 		    $cfg->set_model_directory($app_config->model_directory);
