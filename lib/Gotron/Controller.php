@@ -2,11 +2,14 @@
 
 namespace Gotron;
 
-use ReflectionClass;
+use ReflectionClass,
+    Gotron\Dispatch\Error;
 
 class Controller {
 
     public $view_path = null;
+
+    public $params = array();
 
     public $parameters = array();
 
@@ -14,7 +17,7 @@ class Controller {
 
 	protected $dont_render = false;
 
-    public $json = false;
+    public $request = null;
 
 	/**
 	 * Renders the view
@@ -211,17 +214,16 @@ class Controller {
      * @return mixed
      */
     protected function respond_to($respond_array) {
-        if ($this->json = true) {
-            $content_type = 'json';
+        if ($content_type = $this->request->simple_content_type()) {
+            if (array_key_exists($content_type, $respond_array)) {
+                return $respond_array[$content_type]();
+            }
+            else {
+                Error::error_500($this->request->app);
+            }
         }
         else {
-            $content_type = Config::get('content_type');
-        }
-        if (array_key_exists($content_type, $respond_array)) {
-            return $respond_array[$content_type]();
-        }
-        else {
-            throw new Exception("Content type $content_type does not exist in respond_array");
+            Error::error_500($this->request->app);
         }
     }
 
