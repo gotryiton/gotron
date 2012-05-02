@@ -29,7 +29,7 @@ class Helper {
         if (0 === error_reporting()) {
             return false;
         }
-        Logging::log($errstr,'json_view');
+        Logging::write($errstr,'json_view');
     }
 
     public static function json_encode($data) {

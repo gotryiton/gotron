@@ -10,20 +10,19 @@ namespace Gotron;
  * @package Gotron
  */
 class Logging {
-	private $fp = null;
-	
-	private $logLevel = 1; // 1: Standard, 2: Verbose 
 	
 	public $doLog = true;
 
     public $type = "SYSLOG";
+
+    public $log_name;
 	
 	/**
 	 * Set the log name and open a file pointer to the file
 	 *
 	 * @param string $logFile 
 	 */
-	public function __construct($log_name, $log_message = null){
+	public function __construct($log_name = "default", $log_message = null){
         if($log_name == 'STDOUT') {
             $this->type = 'STDOUT';
         }
@@ -31,40 +30,36 @@ class Logging {
             $this->type = 'SYSLOG';
         }
 		$this->log_name = "##$log_name##";
-		if (isset($logMessage)){
-			$this->lwrite($logMessage);
+
+		if (isset($log_message)) {
+			$this->lwrite($log_message);
 		}
 	}
 
     /**
-     * Static method to log to syslog
+     * Logs to syslog
      *
      * @param string $message 
      * @param string $tag 
      * @param string $level 
      * @return void
      */
-	public static function log($message, $tag = "default", $level = 1) {
-	    $log_name = "##$tag##";
-		if (isset($message)) {
-		    $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
-		    openlog($log_name,0,LOG_LOCAL0);
-            syslog(LOG_WARNING,"[$script_name] $message");
-            closelog();
-		    return;
-		} 
+	public function log($message) {
+        $this->lwrite($message);
 	}
-	
-	/**
-	 * Sets the level of the log
-	 *
-	 * @param string $level 1 for standard 2 for verbose
-	 * @return void
-	 */
-	public function setLogLevel($level) {
-	  $this->logLevel = $level;
-	}
-	
+
+    /**
+     * Static function to write to the log
+     *
+     * @param string $message 
+     * @param string $log_name 
+     * @return void
+     */
+    public static function write($message, $log_name = "default"){
+        $instance = new self($log_name);
+	    $instance->lwrite($message);
+    }
+
     /**
      * Write to the log file
      *
@@ -72,14 +67,14 @@ class Logging {
      * @param string $level 
      * @return void
      */
-	public function lwrite($message, $level = 1){
+	public function lwrite($message){
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
         $message = "[$script_name] $message";
-        if($this->doLog && $level <= $this->logLevel) {
+        if($this->doLog) {
             if($this->type == "STDOUT") {
                 echo $message . "\n";
             }
-            else{
+            else {
                 openlog($this->log_name, 0, LOG_LOCAL0);
                 syslog(LOG_WARNING, $message);
                 closelog();
@@ -87,9 +82,6 @@ class Logging {
             }
         }
     }
-    
-    public function write($message,$level = 1){
-	    $this->lwrite($message, $level);
-    }
+
 }
 ?>
