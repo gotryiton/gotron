@@ -2,10 +2,10 @@
 
 namespace Gotron;
 
-class Presenter extends Singleton {
+class Presenter {
 
-    public static function to_array($model) {
-        $instance = new static($model);
+    public static function to_array($model, $options = array()) {
+        $instance = new static($model, $options);
         return $instance->as_array();
     }
 
