@@ -125,7 +125,7 @@ class Request {
      * @return string
      */
     public function simple_content_type() {
-        return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : false;
+        return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : 'html';
     }
 
 }
