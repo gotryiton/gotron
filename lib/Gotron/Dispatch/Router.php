@@ -63,6 +63,10 @@ class Router {
 		  	$parameters[$key] = $value;
 		}
 
+        foreach (json_decode(file_get_contents('php://input'), true) as $key => $value){
+            $parameters[$key] = $value;
+        }
+
 		//default actions are called 'index'
 		$action = "index";
         $routes = Config::get('routes');
