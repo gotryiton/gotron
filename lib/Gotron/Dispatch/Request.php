@@ -21,7 +21,7 @@ class Request {
      *
      * @var string
      */
-    public $content_type = "text/html";
+    public $content_type = null;
 
     /**
      * The version requested for the application
@@ -79,6 +79,7 @@ class Request {
             }
         }
         $instance->load_content_type_and_version($options);
+        $instance->load_json_header_body();
         return $instance;
     }
 
@@ -92,12 +93,31 @@ class Request {
             if(preg_match("/v\d\-/", substr($this->accept_header, strpos($this->accept_header, "/") + 1 ), $matches)) {
                 $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
             }
-            if (!array_key_exists('content_type', $options) || is_null($this->content_type)) {
+            if (empty($options['content_type'])) {
                 $this->content_type = preg_replace("/v\d\-/", "", $this->accept_header);
-            }
-            return true;
+            }            
+            
         }
-        return false;
+        if (is_null($this->content_type))
+            $this->content_type = 'text/html';
+
+        return true;
+    }
+
+    /**
+     * Pulls the json header body and adds it to params if content_type is json
+     *
+     * @return void
+     */
+    public function load_json_header_body(){
+        if ($this->simple_content_type()=='json'){
+            $header_body = json_decode(file_get_contents('php://input'), true);
+            if (is_array($header_body)) {
+                foreach ($header_body as $key => $value){
+                     $this->params[$key] = $value;
+                }    
+            }
+        }
     }
 
     /**
@@ -107,7 +127,7 @@ class Request {
      * @return string
      */
     public function simple_content_type() {
-        return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : false;
+        return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : 'html';
     }
 
 }
