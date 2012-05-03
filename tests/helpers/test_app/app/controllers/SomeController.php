@@ -7,32 +7,60 @@ use Gotron\Controller;
 class SomeController extends Controller {
 
     public function index() {
-        $data = array("name" => $this->parameters['name']);
+        $data = array("name" => $this->params['name']);
         $this->render(array('json' => $data));
     }
 
     public function test_json() {
-		$data = array("name" => $this->parameters['name']);
+		$data = array("name" => $this->params['name']);
         $this->render(array('json' => $data));
     }
 
     public function test_php_no_layout() {
-		$data = array("name" => $this->parameters['name']);
+		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => false));
     }
 
     public function test_php_layout_default() {
-		$data = array("name" => $this->parameters['name']);
+		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test'));
     }
 
     public function test_php_layout_set() {
-		$data = array("name" => $this->parameters['name']);
+		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => 'layout_set'));
     }
 
     public function test_route() {
         $this->render(array('json' => array('test' => 123456)));
+    }
+
+    public function test_named() {
+        $this->render(array('json' => array('test' => (int)$this->params['named'])));
+    }
+
+    public function test_named_two() {
+        $this->render(array('json' => array('test' => (int)$this->params['named'], 'test_two' => (int)$this->params['named_two'])));
+    }
+
+    public function test_array() {
+        $this->render(array('json' => array('test' => (int)$this->params['array_params'][0], 'test_two' => (int)$this->params['array_params'][1], 'test_three' => (int)$this->params['array_params'][2], 'test_four' => (int)$this->params['array_params'][3])));
+    }
+
+    public function test_custom() {
+        $this->render(array('json' => array('test' => (int)$this->params['custom'])));
+    }
+
+    public function test_bool() {
+        $this->render(array('json' => array('test' => $this->params['test_bool'])));
+    }
+
+    public function test_query() {
+        $this->render(array('json' => array('test' => $this->params['test_query_param'])));
+    }
+
+    public function test_custom_only() {
+        $this->render(array('json' => array('test_custom' => (int)$this->params['custom'])));
     }
 
     protected function before() {

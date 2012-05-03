@@ -151,7 +151,7 @@ class BeanstalkerJob extends Beanstalker {
 		}
 		catch(Exception $e) {
             //release the job back to the queue
-            Logging::log($e, 'beanstalker');
+            Logging::write($e, 'beanstalker');
             return $e;
 		}
    		if (!(Config::bool('beanstalk.disabled'))) {
@@ -218,7 +218,7 @@ class BeanstalkerJob extends Beanstalker {
         if (0 === error_reporting()) {
             return false;
         }
-        \Logging::log($errstr,'BEANSTALKER_JOB');
+        \Logging::write($errstr,'BEANSTALKER_JOB');
     }
 
 	/**
