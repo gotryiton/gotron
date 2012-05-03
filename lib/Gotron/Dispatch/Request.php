@@ -96,13 +96,12 @@ class Request {
             if (empty($options['content_type'])) {
                 $this->content_type = preg_replace("/v\d\-/", "", $this->accept_header);
             }            
-            if (is_null($this->content_type))
-                $this->content_type = 'text/html';
-
-
-            return true;
+            
         }
-        return false;
+        if (is_null($this->content_type))
+            $this->content_type = 'text/html';
+
+        return true;
     }
 
     /**
@@ -112,8 +111,11 @@ class Request {
      */
     public function load_json_header_body(){
         if ($this->simple_content_type()=='json'){
-            foreach (json_decode(file_get_contents('php://input'), true) as $key => $value){
-                 $this->params[$key] = $value;
+            $header_body = json_decode(file_get_contents('php://input'), true);
+            if (is_array($header_body)) {
+                foreach ($header_body as $key => $value){
+                     $this->params[$key] = $value;
+                }    
             }
         }
     }
