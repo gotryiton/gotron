@@ -21,7 +21,7 @@ class Request {
      *
      * @var string
      */
-    public $content_type = "text/html";
+    public $content_type = null;
 
     /**
      * The version requested for the application
@@ -93,8 +93,11 @@ class Request {
                 $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
             }
             if (!array_key_exists('content_type', $options) || is_null($this->content_type)) {
-                $this->content_type = preg_replace("/v\d\-/", "", $this->accept_header);
-            }
+                $this->content_type = preg_replace("/\-v\d/", "", $this->accept_header);
+            }            
+            if (is_null($this->content_type))
+                $this->content_type = 'text/html';
+            
             return true;
         }
         return false;
