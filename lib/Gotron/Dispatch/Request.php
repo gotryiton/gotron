@@ -79,6 +79,7 @@ class Request {
             }
         }
         $instance->load_content_type_and_version($options);
+        $instance->load_json_header_body();
         return $instance;
     }
 
@@ -102,6 +103,19 @@ class Request {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Pulls the json header body and adds it to params if content_type is json
+     *
+     * @return void
+     */
+    public function load_json_header_body(){
+        if ($this->simple_content_type()=='json'){
+            foreach (json_decode(file_get_contents('php://input'), true) as $key => $value){
+                 $this->params[$key] = $value;
+            }
+        }
     }
 
     /**
