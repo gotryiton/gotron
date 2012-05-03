@@ -92,12 +92,12 @@ class Request {
             if(preg_match("/v\d\-/", substr($this->accept_header, strpos($this->accept_header, "/") + 1 ), $matches)) {
                 $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
             }
-            if (!array_key_exists('content_type', $options) || is_null($this->content_type)) {
+            if (empty($options['content_type'])) {
                 $this->content_type = preg_replace("/v\d\-/", "", $this->accept_header);
             }            
             if (is_null($this->content_type))
                 $this->content_type = 'text/html';
-            
+
 
             return true;
         }
