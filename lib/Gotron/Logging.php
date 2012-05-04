@@ -10,8 +10,10 @@ namespace Gotron;
  * @package Gotron
  */
 class Logging {
-	
-	public $doLog = true;
+
+	private $log_level = 1; // 1: Standard, 2: Verbose
+
+	public $do_log = true;
 
     public $type = "SYSLOG";
 
@@ -67,10 +69,10 @@ class Logging {
      * @param string $level 
      * @return void
      */
-	public function lwrite($message){
+	public function lwrite($message, $level = 1){
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
         $message = "[$script_name] $message";
-        if($this->doLog) {
+        if($this->do_log && $level <= $this->log_level) {
             if($this->type == "STDOUT") {
                 echo $message . "\n";
             }
