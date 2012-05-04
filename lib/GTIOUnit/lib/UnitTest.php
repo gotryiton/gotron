@@ -64,13 +64,13 @@ class UnitTest extends PHPUnit_Framework_TestCase {
 
         if(method_exists($object,'attributes') && $keys = $object->attributes()) {
             $object = $keys;
-            $objectKeys = __::keys($keys);
+            $objectKeys = __($keys)->keys();
         }
         else {
-            $objectKeys = __::keys($object);
+            $objectKeys = __($object)->keys();
         }
         foreach($valid_attributes as $key => $value) {
-            if(__::includ($objectKeys,$key)) {
+            if(__()->includ($objectKeys,$key)) {
                 if($object[$key] != $value) {
                     $message = "Value {$object[$key]} for '{$key}' does not match expected value {$value}";
                     $condition = false;

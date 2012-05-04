@@ -87,7 +87,7 @@ class Model extends ActiveRecord\Model {
 
     }
 	
-	public function to_array(){
+	public function to_array(array $options = array()){
 		$arr = $this->attributes();
 		
 		return $arr;

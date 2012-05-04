@@ -61,7 +61,7 @@ class Fixture extends UnitDB {
 
             //iterate through the attributes to check if the column exists
             __($attributes)->each(function($value, $column) use ($columns, $table_name) {
-                if(!__::includ($columns,$column)) throw new \Exception( "Column $column does not exist for table $table_name");
+                if(!__()->includ($columns, $column)) throw new \Exception( "Column $column does not exist for table $table_name");
             });  
 
             //override $attributes with $added_attributes
