@@ -150,6 +150,7 @@ class Model extends ActiveRecord\Model {
                     if(array_key_exists('joins',$pk_options)) unset($pk_options['joins']);
                     if(array_key_exists('order',$pk_options)) unset($pk_options['order']);
                     if(array_key_exists('limit',$pk_options)) unset($pk_options['limit']);
+                    if(array_key_exists('offset',$pk_options)) unset($pk_options['offset']);
                     if(array_key_exists('group',$pk_options)) unset($pk_options['group']);
                     if(array_key_exists('sql',$pk_options)) unset($pk_options['sql']);
                     if(array_key_exists('totals',$pk_options)) unset($pk_options['totals']);
