@@ -43,7 +43,7 @@ class BeanstalkerWorkerTests extends UnitTest {
 
         $worker = new BeanstalkerWorker(array("SomeQueue"));
         $worker->setLog('STDOUT');
-        $worker->log->doLog = false;
+        $worker->log->do_log = false;
         $worker->work(0);
         $this->assertEquals(1, $worker->getNumProcessed());
     }
