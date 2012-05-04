@@ -171,7 +171,7 @@ class BeanstalkerJob extends Beanstalker {
 	 * @return BeanstalkerJob
 	 */
 	 
-	public function reserveJob($queues) {
+	public static function reserveJob($queues) {
 		$job = new BeanstalkerJob;
 		foreach($queues as $queue) {
             $job->watch($queue);

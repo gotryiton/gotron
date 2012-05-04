@@ -48,7 +48,7 @@ class Presenter {
     	      
     }
 
-    public static function inherit_user($u){
+    public static function inherit_user(&$u){
     	$p = self::instance();
     	$p->u = $u;
     }

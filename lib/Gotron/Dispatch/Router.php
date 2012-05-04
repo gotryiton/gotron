@@ -166,7 +166,7 @@ class Router {
      * @param Application $app 
 	 * @return bool
 	 */
-	public function perform_controller_action($controller, $action, $request, $app) {
+	public static function perform_controller_action($controller, $action, $request, $app) {
         $reflector = new ReflectionClass($app);
         $namespace = $reflector->getNamespaceName();
         $app->autoload_presenters($request->version);
