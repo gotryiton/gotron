@@ -222,6 +222,12 @@ class Controller {
                 Error::error_500($this->request->app);
             }
         }
+        elseif (array_key_exists('html', $respond_array)){
+        	return $respond_array['html']();
+        }
+        elseif (array_key_exists('json', $respond_array)){
+        	return $respond_array['json']();
+        }
         else {
             Error::error_500($this->request->app);
         }
