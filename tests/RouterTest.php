@@ -20,7 +20,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":123456}\ngoodbye";
+        $json = "{\"test\":123456}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -35,7 +35,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":654321}\ngoodbye";
+        $json = "{\"test\":654321}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -51,7 +51,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":654321,\"test_two\":100001}\ngoodbye";
+        $json = "{\"test\":654321,\"test_two\":100001}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -68,7 +68,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":654321,\"test_two\":14,\"test_three\":22,\"test_four\":44}\ngoodbye";
+        $json = "{\"test\":654321,\"test_two\":14,\"test_three\":22,\"test_four\":44}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -86,7 +86,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":999}\ngoodbye";
+        $json = "{\"test\":999}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -105,7 +105,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":true}\ngoodbye";
+        $json = "{\"test\":true}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -125,7 +125,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test\":889988}\ngoodbye";
+        $json = "{\"test\":889988}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
@@ -146,13 +146,13 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "hello\n{\"test_custom\":223344}\ngoodbye";
+        $json = "{\"test_custom\":223344}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }
 
     public function test_perform_controller_action() {
-        $json = "hello\n{\"test\":123456}\ngoodbye";
+        $json = "{\"test\":123456}";
         $this->expectOutputString($json);
 
         $request = Request::build(array(
@@ -166,7 +166,7 @@ class RouterTest extends UnitTest {
     }
 
     public function test_perform_controller_action_with_params() {
-        $json = "hello\n{\"name\":\"someone\"}\ngoodbye";
+        $json = "{\"name\":\"someone\"}";
         $this->expectOutputString($json);
 
         $request = Request::build(array(
