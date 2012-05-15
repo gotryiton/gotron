@@ -85,7 +85,15 @@ class Application extends Singleton {
         $instance = static::instance();
         $instance->loader->register();
         foreach ($array as $class_name => $path) {
-            $instance->loader->setClass($class_name, $path);
+            if (is_array($path) && array_key_exists('dir', $path)) {
+                $instance->loader->add($class_name, $path['dir']);
+            }
+            elseif (is_array($path) && array_key_exists('class', $path)) {
+                $instance->loader->add($class_name, $path['class']);
+            }
+            else {
+                $instance->loader->setClass($class_name, $path);
+            }
         }
     }
 

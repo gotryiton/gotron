@@ -19,6 +19,21 @@ class Controller {
 
     public $request = null;
 
+    /**
+     * Empty filters
+     *
+     * @var string
+     */
+    protected $before_filter = array();
+    protected $after_filter = array();
+
+    /**
+     * Stores whether the controller has already rendered
+     *
+     * @var string
+     */
+    private $rendered = false;
+
 	/**
 	 * Renders the view
 	 *
@@ -29,6 +44,7 @@ class Controller {
 	 * @return string
 	 */
     public function render(array $parameters, $options = array()) {
+        $this->rendered = true;
         $this->parse_options($options);
         $this->view_type = static::get_view_type($parameters);
         $layout = $this->options['layout'];
@@ -166,15 +182,54 @@ class Controller {
 	 * @return void
 	 */
 	public function call_method($method = 'index') {
-		$this->before();
+        $this->before();
+		$this->invoke_filter('before', $method, true);
 		if (is_callable(array($this, $method))) {
-			$this->$method();
-			$this->after();
+            if (!$this->rendered) {
+    			$this->$method();
+                $this->invoke_filter('after', $method);
+                $this->after();
+            }
 		}
 		else {
 			throw new Exception("Method $method does not exist in " . get_called_class());
 		}
 	}
+
+    /**
+     * Calls the appropriate filter callbacks for the controller
+     *
+     * @param string $type 
+     * @param string $method 
+     * @param bool $check_rendered Should it check if the controller has already rendered
+     * @return void
+     */
+    protected function invoke_filter($type, $method, $check_rendered = false) {
+        $name = "{$type}_filter";
+        if (isset($this->$name)) {
+            $callbacks = $this->$name;
+            foreach ($callbacks as $key => $value) {
+                if (is_array($value)) {
+                    $callback = $key;
+                    $methods = $value;
+                    if (array_search($method, $methods) !== false) {
+                        if (method_exists($this, $callback) && (($check_rendered && !$this->rendered) || !$check_rendered)) {
+                            call_user_method($callback, $this);
+                        }
+                    }
+                }
+                else {
+                    $callback = $value;
+                    if (method_exists($this, $callback) && (($check_rendered && !$this->rendered) || !$check_rendered)) {
+                        call_user_method($callback, $this);
+                    }
+                }
+            }
+        }
+        else {
+            throw new Exception("$name is not defined for " . get_called_class());
+        }
+    }
 
 	/**
 	 * Called inside render method prior to rendering view
@@ -219,10 +274,12 @@ class Controller {
                 return $respond_array[$content_type]();
             }
             else {
+                $this->rendered = true;
                 Error::error_500($this->request->app);
             }
         }
         else {
+            $this->rendered = true;
             Error::error_500($this->request->app);
         }
     }
