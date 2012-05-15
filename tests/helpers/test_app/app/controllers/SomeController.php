@@ -6,6 +6,9 @@ use Gotron\Controller;
 
 class SomeController extends Controller {
 
+    protected $before_filter = array('before_test' => array('filter_test'));
+    protected $after_filter = array('after_test' => array('filter_test'));
+
     public function index() {
         $data = array("name" => $this->params['name']);
         $this->render(array('json' => $data));
@@ -63,11 +66,16 @@ class SomeController extends Controller {
         $this->render(array('json' => array('test_custom' => (int)$this->params['custom'])));
     }
 
-    protected function before() {
+    public function filter_test() {
+        $data = array("name" => $this->params['name']);
+        $this->render(array('json' => $data));
+    }
+
+    protected function before_test() {
         echo "hello\n";
     }
 
-    protected function after() {
+    protected function after_test() {
         echo "\ngoodbye";
     }
 }
