@@ -71,6 +71,11 @@ class SomeController extends Controller {
         $this->render(array('json' => $data));
     }
 
+    public function optional_named() {
+        $data = array("name" => (int)$this->params['optional_named_parameter']);
+        $this->render(array('json' => $data));
+    }
+
     protected function before_test() {
         echo "hello\n";
     }

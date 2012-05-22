@@ -101,7 +101,11 @@ class Router {
             $custom_parameters = array();
             $boolean_parameters = array();
             foreach ($optional_components as $i => $component) {
-                if (substr($component, 0, 1) == "~") {
+                $path_key = $i + count($standard_components) - 1;
+                if (substr($component, 0, 1) == ":" && array_key_exists($path_key, $path_components)) {
+                    $parameters[substr($component, 1)] = $path_components[$path_key];
+                }
+                elseif (substr($component, 0, 1) == "~") {
                     $custom_parameters[] = substr($component, 1);
                 }
                 elseif (substr($component, 0, 2) == "=:") {
