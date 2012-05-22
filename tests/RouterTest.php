@@ -91,6 +91,25 @@ class RouterTest extends UnitTest {
         Router::route($this->app);
     }
 
+    public function test_route_with_optional_named_parameter() {
+        $_SERVER['REQUEST_URI'] = "/some/test_optional_named/101010";
+        $routes = array(
+            '/' => 'Homepage:index',
+            '/some/test_optional_named(/:optional_named_parameter)' => 'Some:optional_named',
+            '/some/[action]/:named' => 'Some',
+            '/some/[action](/~custom)' => 'Some',
+            '/some/test_array/:named(/*:array_params)' => 'Some:test_array',
+            '/some/[action]/:named/:named_two' => 'Some',
+            '/some/[action]' => 'Some'
+        );
+
+        TestApplication::define_routes($routes);
+
+        $json = "{\"name\":101010}";
+        $this->expectOutputString($json);
+        Router::route($this->app);
+    }
+
     public function test_route_with_boolean_parameter() {
         $_SERVER['REQUEST_URI'] = "/some/test_bool/custom/999/test_bool";
         $routes = array(
