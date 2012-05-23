@@ -80,10 +80,6 @@ class PhpView extends AbstractView{
 		return $this->headers;
     }
 
-    public function __toString(){
-        return $this->content;
-	}
-
 }
 
 ?>
