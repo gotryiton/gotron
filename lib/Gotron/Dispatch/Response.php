@@ -12,22 +12,45 @@ use Gotron\Header;
 class Response {
 
    /**
-     * The content-type sent back
+     * Content-type sent back
      *
      * @var string
      */
     public $content_type = "text/html";
 
+    /**
+     * Status code sent for the response
+     *
+     * @var string
+     */
 	public $status_code = 200;
 
+    /**
+     * Headers to be sent with the response as key => value
+     *
+     * @var array
+     */
 	public $headers = array();
 
-	public $content = null;
+    /**
+     * The content body
+     *
+     * @var string
+     */
+	public $body = null;
 
+    /**
+     * If the response should actually be rendered
+     *
+     * @var string
+     */
 	protected $render = true;
 
-    public $app;
-
+    /**
+     * List of HTTP/1.1 status codes and definitions
+     *
+     * @var array
+     */
     private static $status_codes = array(
         100 => 'Continue',
 		101 => 'Switching Protocols',
@@ -70,6 +93,14 @@ class Response {
 		504 => 'Gateway Timeout'
     );
 
+    /**
+     * Build a Response object from a view object
+     *
+     * @param View $view
+     * @param int $status_code Status code of the response
+     * @param bool $render If the view should be rendered
+     * @return Response
+     */
 	public static function build_from_view($view, $status_code = 200, $render = true) {
 		$instance = new self;
 		$instance->headers = $view->headers;
@@ -81,6 +112,11 @@ class Response {
 		return $instance;
 	}
 
+    /**
+     * Send the response to the client
+     *
+     * @return void
+     */
 	public function send() {
 		$this->write_headers();
 		if ($this->render) {
@@ -88,6 +124,11 @@ class Response {
 		}
 	}
 
+    /**
+     * Sends headers to the client
+     *
+     * @return void
+     */
 	protected function write_headers() {
 		Header::set("HTTP/1.1 {$this->status_code} " . self::$status_codes[$this->status_code], true, $this->status_code);
 		Header::set("Content-type: {$this->content_type}");
