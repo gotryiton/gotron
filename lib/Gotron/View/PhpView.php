@@ -11,11 +11,11 @@ use Gotron\Exception;
  */
 class PhpView extends AbstractView{
 
-    public $includes = array();
+	public $injected = array();
 
-	public $title = null;
+	private static $allowed_injected_variables = array('include', 'title', 'meta_tags');
 
-    public $meta_tags = null;
+	protected $content_type = "text/html";
 
     /**
      * Generates the PhpView
@@ -28,22 +28,18 @@ class PhpView extends AbstractView{
 			ob_start();
 			include $this->view_path;
 			$this->content = ob_get_clean();
-            if(isset($include)) {
-                $this->includes = $include;
-            }
 
-			if(isset($title)) {
-                $this->title = $title;
-            }
+			foreach (self::$allowed_injected_variables as $injected_variable) {
+				if (isset($$injected_variable)) {
+					$this->injected[$injected_variable] = $$injected_variable;
+				}
 
-            if (isset($meta_tags)) {
-                $this->meta_tags = $meta_tags;
-            }
+			}
 		}
         else {
             throw new Exception("Cannot find view {$this->view_path}");
         }
-        return array('content' => $this->content, 'includes' => $this->includes, 'title' => $this->title, 'meta_tags' => $this->meta_tags);
+		return $this;
     }
 
     /**
@@ -52,7 +48,6 @@ class PhpView extends AbstractView{
      * @return void
      */
     protected function get_headers() {
-        $this->add_header('Content-type', 'text/html');
 		return $this->headers;
     }
 

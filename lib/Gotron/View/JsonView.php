@@ -14,14 +14,16 @@ class JsonView extends AbstractView{
 
     protected $etag = null;
 
+	protected $content_type = "application/json";
+
     /**
      * Generate method to be implemented
      *
      * @return bool
      */
-    public function generate(array $parameters)
-    {
-        return array('content' => Helper::json_encode($parameters));
+    public function generate(array $parameters) {
+		$this->content = Helper::json_encode($parameters);
+		return $this;
     }
 
     /**
@@ -29,9 +31,7 @@ class JsonView extends AbstractView{
      *
      * @return void
      */
-    protected function get_headers()
-    {
-        $this->add_header('Content-type', 'application/json');
+    protected function get_headers() {
         $this->add_header('Cache-Control', 'no-cache, must-revalidate');
         $this->add_header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
 		return $this->headers;

@@ -69,7 +69,7 @@ function css_includes($includes) {
 function render_partial($name, $context, $data = array()) {
     $path = realpath(file_join(Config::get('root_directory'), Config::get('view_directory'), $context, "_{$name}.php"));
     $view_data = PhpView::render($data, $path, false, false);
-    return $view_data['content'];
+    return $view_data->content;
 }
 
 function select_tag($id = "", $start, $finish) {

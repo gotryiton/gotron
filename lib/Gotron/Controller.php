@@ -3,7 +3,8 @@
 namespace Gotron;
 
 use ReflectionClass,
-    Gotron\Dispatch\Error;
+    Gotron\Dispatch\Error,
+	Gotron\Dispatch\Response;
 
 class Controller {
 
@@ -13,7 +14,7 @@ class Controller {
 
     public $parameters = array();
 
-    public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false);
+    public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false, 'status' => 200);
 
 	protected $dont_render = false;
 
@@ -33,6 +34,9 @@ class Controller {
      * @var string
      */
     private $rendered = false;
+	private static $catchable_exceptions = array(
+        "ActiveRecord\RecordNotFound" => 404,
+    );
 
 	/**
 	 * Renders the view
@@ -55,58 +59,66 @@ class Controller {
             $parameters = $parameters['json'];
             $layout = false;
         }
-        $view = ucfirst($this->view_type) . "View";
-        if(class_exists(__NAMESPACE__ . "\\View\\$view")) {
+        $view_name = ucfirst($this->view_type) . "View";
+        if(class_exists(__NAMESPACE__ . "\\View\\$view_name")) {
             if($layout === false) {
-                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false, !$this->dont_render);
+                $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $this->view_path);
             }
             else {
-                $controller_view = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $parameters, $this->view_path, false, !$this->dont_render);
-				$includes['js'] = array();
-				$includes['css'] = array();
-				if(isset($controller_view['includes']['js'])) {
-					$includes['js'] = $includes['js'] + $controller_view['includes']['js'];
-				}
-				if(isset($controller_view['includes']['css'])) {
-					$includes['css'] = $includes['css'] + $controller_view['includes']['css'];
-				}
-				if(!is_null($controller_view['title'])) {
-					$title = $controller_view['title'];
-				}
-				else {
-					$title = null;
-				}
-
-                if (!is_null($controller_view['meta_tags'])) {
-					$meta_tags = $controller_view['meta_tags'];
-				}
-				else {
-					$meta_tags = null;
-				}
-
-                $data = array(
-                    'yield' => $controller_view['content'],
-                    'includes' => $includes,
-					'title' => $title,
-                    'meta_tags' => $meta_tags
-                );
-
-				$data = $data + $parameters;
+                $main_view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $this->view_path);
+				$data = $this->build_data_for_layout($main_view, $parameters);
                 $layout_path = $this->get_layout($layout);
-                $view_data = call_user_func(__NAMESPACE__ . "\\View\\$view::render", $data, $layout_path, false, !$this->dont_render);
+                $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $data, $layout_path, false);
             }
+
+			$response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
 			if($this->dont_render) {
-                $GLOBALS['controller_content'] = $view_data['content'];
+                $GLOBALS['controller_content'] = $response->content;
 				$GLOBALS['controller_data'] = $parameters;
 			}
-			else {
-				echo $view_data['content'];
-			}
+			$response->send();
         }
         else {
             throw new Exception("$view has not been defined");
         }
     }
+
+	protected function build_data_for_layout($main_view, $parameters) {	
+		$includes['js'] = array();
+		$includes['css'] = array();
+		if (array_key_exists('include', $main_view->injected)) {
+			if(array_key_exists('js', $main_view->injected['include'])) {
+				$includes['js'] = $includes['js'] + $main_view->injected['include']['js'];
+			}
+
+			if(array_key_exists('css', $main_view->injected['include'])) {
+				$includes['css'] = $includes['css'] + $main_view->injected['include']['css'];
+			}
+		}
+
+		if(array_key_exists('title', $main_view->injected)) {
+			$title = $main_view->injected['title'];
+		}
+		else {
+			$title = null;
+		}
+
+		if (array_key_exists('meta_tags', $main_view->injected)) {
+			$meta_tags = $main_view->injected['meta_tags'];
+		}
+		else {
+			$meta_tags = null;
+		}
+
+		$data = array(
+			'yield' => $main_view->content,
+		    'includes' => $includes,
+			'title' => $title,
+		    'meta_tags' => $meta_tags
+		  );
+
+		return $data + $parameters;
+	}
 
     protected function parse_options(array $options) {
         foreach($options as $key => $value) {
@@ -182,18 +194,31 @@ class Controller {
 	 * @return void
 	 */
 	public function call_method($method = 'index') {
-        $this->before();
-		$this->invoke_filter('before', $method, true);
-		if (is_callable(array($this, $method))) {
-            if (!$this->rendered) {
-    			$this->$method();
-                $this->invoke_filter('after', $method);
-                $this->after();
+        try {
+            $this->before();
+    		$this->invoke_filter('before', $method, true);
+    		if (is_callable(array($this, $method))) {
+                if (!$this->rendered) {
+        			$this->$method();
+                    $this->invoke_filter('after', $method);
+                    $this->after();
+                }
+    		}
+            else {
+                $this->render_error("500");
             }
-		}
-		else {
-			throw new Exception("Method $method does not exist in " . get_called_class());
-		}
+        }
+        catch(\Exception $e) {
+			echo $e;
+            $exception_type = get_class($e);
+            if (array_key_exists($exception_type, self::$catchable_exceptions)) {
+                $error_status = self::$catchable_exceptions[$exception_type];
+                $this->render_error($error_status);
+            }
+            else {
+                $this->render_error("500");
+            }
+        }
 	}
 
     /**
@@ -273,15 +298,13 @@ class Controller {
             if (array_key_exists($content_type, $respond_array)) {
                 return $respond_array[$content_type]();
             }
-            else {
-                $this->rendered = true;
-                Error::error_500($this->request->app);
-            }
-        }
-        else {
-            $this->rendered = true;
-            Error::error_500($this->request->app);
-        }
+		}
+		$this->render_error('406');
+    }
+
+    protected function render_error($status_code = "500") {
+        $this->rendered = true;
+        // Error::call_error_method($status_code, $this->request->app);
     }
 
 }

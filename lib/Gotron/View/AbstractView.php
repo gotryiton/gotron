@@ -36,6 +36,13 @@ abstract class AbstractView{
      */
     public $headers = array();
 
+	/**
+	 * The view's content to be displayed
+	 *
+	 * @var string
+	 */
+	public $content = null;
+
     /**
      * Initialize AbstactView and assign properties
      *
@@ -57,15 +64,13 @@ abstract class AbstractView{
      * @param string $cache 
      * @return bool
      */
-    public static function render($data = array(), $view_path = null, $cache_ttl = self::DEFAULT_CACHE_TTL, $headers = true) {
+    public static function render($data = array(), $view_path = null, $cache_ttl = self::DEFAULT_CACHE_TTL) {
         $instance = new static($view_path);
         if(is_callable($data)) {
             $instance->cache = true;
             $instance->cache_ttl = $cache_ttl;
         }
-        if ($headers == true) {
-            $instance->set_headers();
-        }
+		$instance->get_headers();
         if($instance->cache) {
             return $instance->try_cache($data);
         }
@@ -121,7 +126,7 @@ abstract class AbstractView{
      * @return string
      */
     protected function cache_key() {
-	    return md5($this->view_path);
+	    return md5($this->view_path) . "v2";
 	}
 
     /**
@@ -137,6 +142,10 @@ abstract class AbstractView{
 
         return Cache::get($this->cache_key(), $generate_closure, $this->cache_ttl);
     }
+
+	public function content_type() {
+		return $this->content_type;
+	}
 
 }
 
