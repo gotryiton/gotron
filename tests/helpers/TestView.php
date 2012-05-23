@@ -6,12 +6,12 @@ use Gotron\Exception;
 
 class TestView extends AbstractView {
 
-    public function generate(array $parameters) {
+    public function generate(array $parameters, $injected_view = null) {
         $this->content = $parameters['text'];
         return $this->content;
     }
 
-    protected function get_headers() {
+    public function get_headers() {
         $this->add_header('Content-type', 'text/test');
 		return $this->headers;
     }

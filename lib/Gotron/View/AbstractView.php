@@ -36,6 +36,13 @@ abstract class AbstractView{
      */
     public $headers = array();
 
+	/**
+	 * The view's content to be displayed
+	 *
+	 * @var string
+	 */
+	public $content = null;
+
     /**
      * Initialize AbstactView and assign properties
      *
@@ -57,20 +64,15 @@ abstract class AbstractView{
      * @param string $cache 
      * @return bool
      */
-    public static function render($data = array(), $view_path = null, $cache_ttl = self::DEFAULT_CACHE_TTL, $headers = true) {
+    public static function render($data = array(), $view_path = null, $cache_ttl = self::DEFAULT_CACHE_TTL, $injected_view = null) {
         $instance = new static($view_path);
         if(is_callable($data)) {
             $instance->cache = true;
             $instance->cache_ttl = $cache_ttl;
-        }
-        if ($headers == true) {
-            $instance->set_headers();
-        }
-        if($instance->cache) {
-            return $instance->try_cache($data);
+            return $instance->try_cache($data, $injected_view);
         }
         else {
-            return $instance->generate($data);
+            return $instance->generate($data, $injected_view);
         }
     }
 
@@ -113,7 +115,7 @@ abstract class AbstractView{
      *
      * @return array
      */
-    abstract protected function get_headers();
+    abstract public function get_headers();
 
     /**
      * Key to be used for page view caching
@@ -121,7 +123,7 @@ abstract class AbstractView{
      * @return string
      */
     protected function cache_key() {
-	    return md5($this->view_path);
+	    return md5($this->view_path) . "v2";
 	}
 
     /**
@@ -129,14 +131,18 @@ abstract class AbstractView{
      *
      * @return void
      */
-    protected function try_cache($closure) {
+    protected function try_cache($closure, $injected_view) {
         $instance = $this;
-        $generate_closure = function() use ($closure, $instance) {
-            return $instance->generate($closure());
+        $generate_closure = function() use ($closure, $instance, $injected_view) {
+            return $instance->generate($closure(), $injected_view);
         };
 
         return Cache::get($this->cache_key(), $generate_closure, $this->cache_ttl);
     }
+
+	public function content_type() {
+		return $this->content_type;
+	}
 
 }
 
