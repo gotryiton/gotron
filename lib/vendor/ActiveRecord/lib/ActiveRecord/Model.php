@@ -1630,10 +1630,10 @@ class Model
 				if (!is_array($values))
 					$values = array($values);
 
-				// Not throwing exception here anymore for no record found
-                return NULL;
+				throw new RecordNotFound("Couldn't find $class with ID=" . join(',',$values));
 			}
-			// Not throwing exception here for wrong number of objects returned
+			$values = join(',',$values);
+			throw new RecordNotFound("Couldn't find all $class with IDs ($values) (found $results, but was looking for $expected)");
 		}
 		return $expected == 1 ? $list[0] : $list;
 	}
