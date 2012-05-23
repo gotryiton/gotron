@@ -11,8 +11,20 @@ use Gotron\Exception;
  */
 class PhpView extends AbstractView{
 
-	public $injected = array();
+    /**
+     * Array of variables that will be injected into a layout view
+     *
+     * @var string
+     */
+	public $inject = array('includes' => array('css' => array(), 'js' => array()));
 
+    /**
+     * Variables that are pulled from the injected view and sent to the layout
+     *  - if attribute is key/value it will convert the
+     *    name of the variable from the key to the value
+     *
+     * @var array
+     */
 	private static $allowed_injected_variables = array('include' => 'includes', 'title', 'meta_tags');
 
 	protected $content_type = "text/html";
@@ -24,25 +36,34 @@ class PhpView extends AbstractView{
      */
     public function generate(array $parameters, $injected_view = null) {
         if (is_file($this->view_path)) {
-            if (!is_null($injected_view)) {
-                extract($injected_view->injected);
+            if ($injected_view instanceof PhpView) {
+                // Pulls the data from the injected_view view into the layout
+                extract($injected_view->inject);
                 $yield = $injected_view->content;
             }
-
             extract($parameters);
 			ob_start();
 			include $this->view_path;
 			$this->content = ob_get_clean();
 
-			foreach (self::$allowed_injected_variables as $key => $injected_variable) {
-				if (isset($$injected_variable)) {
+            if (is_null($injected_view)) {
+    			foreach (self::$allowed_injected_variables as $key => $inject_variable) {
                     if (is_numeric($key)) {
-                        $key = $injected_variable;
+                        $variable_name = $inject_variable;
                     }
-
-					$this->injected[$key] = $$injected_variable;
-				}
-			}
+                    else {
+                        $variable_name = $key;
+                    }
+    				if (isset($$variable_name)) {
+                        if (array_key_exists($inject_variable, $this->inject) && is_array($$variable_name)) {
+                            $this->inject[$inject_variable] = $this->inject[$inject_variable] + $$variable_name;
+                        }
+                        else {
+                            $this->inject[$inject_variable] = $$variable_name;
+                        }
+    				}
+    			}
+            }
 		}
         else {
             throw new Exception("Cannot find view {$this->view_path}");
@@ -58,6 +79,10 @@ class PhpView extends AbstractView{
     public function get_headers() {
 		return $this->headers;
     }
+
+    public function __toString(){
+        return $this->content;
+	}
 
 }
 
