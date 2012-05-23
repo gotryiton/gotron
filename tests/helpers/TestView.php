@@ -11,7 +11,7 @@ class TestView extends AbstractView {
         return $this->content;
     }
 
-    protected function get_headers() {
+    public function get_headers() {
         $this->add_header('Content-type', 'text/test');
 		return $this->headers;
     }

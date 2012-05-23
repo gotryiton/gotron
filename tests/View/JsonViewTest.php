@@ -19,13 +19,6 @@ class JsonViewTest extends UnitTest {
         $data = array('text' => $text);
         $view = JsonView::render($data);
         $this->assertEquals('{"text":"This is a test json view"}', $view->content);
-
-        $headers = array(
-            'Cache-Control' => 'no-cache, must-revalidate',
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT'
-        );
-
-        $this->assertEquals($headers, $view->headers);
     }
 }
 

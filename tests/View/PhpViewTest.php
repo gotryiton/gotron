@@ -19,8 +19,6 @@ class PhpViewTest extends UnitTest {
             "<div>\n    This is a test view created by anybody \n</div>", 
             $view->content
         );
-
-        $this->assertEquals(array(), $GLOBALS['headers']);
     }
 
     public function test_render_with_partial() {
@@ -30,7 +28,6 @@ class PhpViewTest extends UnitTest {
             "<div>\n    This is a test view created by anybody \n</div>\n<div>Name is: anybody</div>", 
             $view->content
         );
-        $this->assertEquals(array(), $view->headers);
     }
 }
 

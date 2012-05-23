@@ -47,7 +47,7 @@ class PhpView extends AbstractView{
      *
      * @return void
      */
-    protected function get_headers() {
+    public function get_headers() {
 		return $this->headers;
     }
 

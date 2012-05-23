@@ -103,7 +103,7 @@ class Response {
      */
 	public static function build_from_view($view, $status_code = 200, $render = true) {
 		$instance = new self;
-		$instance->headers = $view->headers;
+		$instance->headers = $view->get_headers();
 		$instance->content_type = $view->content_type();
 		$instance->content = $view->content;
 		$instance->status_code = $status_code;

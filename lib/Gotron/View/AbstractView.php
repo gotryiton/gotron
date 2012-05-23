@@ -118,7 +118,7 @@ abstract class AbstractView{
      *
      * @return array
      */
-    abstract protected function get_headers();
+    abstract public function get_headers();
 
     /**
      * Key to be used for page view caching
