@@ -56,7 +56,7 @@ class PhpView extends AbstractView{
                     }
     				if (isset($$variable_name)) {
                         if (array_key_exists($inject_variable, $this->inject) && is_array($$variable_name)) {
-                            $this->inject[$inject_variable] = $this->inject[$inject_variable] + $$variable_name;
+                            $this->inject[$inject_variable] = array_merge($this->inject[$inject_variable], $$variable_name);
                         }
                         else {
                             $this->inject[$inject_variable] = $$variable_name;
