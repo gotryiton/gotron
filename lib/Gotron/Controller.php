@@ -184,13 +184,13 @@ class Controller {
             }
         }
         catch(\Exception $e) {
-			echo $e;
             $exception_type = get_class($e);
             if (array_key_exists($exception_type, self::$catchable_exceptions)) {
                 $error_status = self::$catchable_exceptions[$exception_type];
                 $this->render_error($error_status);
             }
             else {
+                Logging::write($e, "CONTROLLER");
                 $this->render_error("500");
             }
         }
