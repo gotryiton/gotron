@@ -279,7 +279,7 @@ class Controller {
 
     protected function render_error($status_code = "500") {
         $this->rendered = true;
-        // Error::call_error_method($status_code, $this->request->app);
+        Error::send($status_code, $this->request);
     }
 
 }

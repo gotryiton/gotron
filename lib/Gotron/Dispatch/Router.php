@@ -37,19 +37,25 @@ class Router {
         if (Config::bool('show_maintenance')){
             $request = Request::build(array(
                 "full_url" => $_SERVER['REQUEST_URI'],
-                "params" => array('api' => array_search('rest', $path_components) !== FALSE)
+                "path" => $path,
+                "content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
+                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "app" => $app
             ));
 
-            static::perform_controller_action("Error", "maintenance", $request, $namespace);
+            static::perform_controller_action("Error", "maintenance", $request, $app);
             return;
         }
-        else if (Config::bool('show_error')){
+        elseif (Config::bool('show_error')){
             $request = Request::build(array(
                 "full_url" => $_SERVER['REQUEST_URI'],
-                "params" => array('api' => array_search('rest', $path_components) !== FALSE)
+                "path" => $path,
+                "content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
+                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "app" => $app
             ));
 
-            static::perform_controller_action("Error", "error_page", $request, $namespace);
+            static::perform_controller_action("Error", "error_page", $request, $app);
             return;
         }
         
@@ -186,7 +192,7 @@ class Router {
                 return true;
             }
             else {
-                Error::error_500($app);
+                Error::send('500', $request);
             }
         }
 	}
