@@ -34,6 +34,13 @@ class Controller {
      * @var string
      */
     private $rendered = false;
+
+    /**
+     * List of exceptions that should be code and the HTTP status to send
+     * for them
+     *
+     * @var array
+     */
 	private static $catchable_exceptions = array(
         "ActiveRecord\RecordNotFound" => 404,
     );
@@ -66,9 +73,8 @@ class Controller {
             }
             else {
                 $main_view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $this->view_path);
-				$data = $this->build_data_for_layout($main_view, $parameters);
                 $layout_path = $this->get_layout($layout);
-                $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $data, $layout_path, false);
+                $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $layout_path, false, $main_view);
             }
 
 			$response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
@@ -83,43 +89,12 @@ class Controller {
         }
     }
 
-	protected function build_data_for_layout($main_view, $parameters) {	
-		$includes['js'] = array();
-		$includes['css'] = array();
-		if (array_key_exists('include', $main_view->injected)) {
-			if(array_key_exists('js', $main_view->injected['include'])) {
-				$includes['js'] = $includes['js'] + $main_view->injected['include']['js'];
-			}
-
-			if(array_key_exists('css', $main_view->injected['include'])) {
-				$includes['css'] = $includes['css'] + $main_view->injected['include']['css'];
-			}
-		}
-
-		if(array_key_exists('title', $main_view->injected)) {
-			$title = $main_view->injected['title'];
-		}
-		else {
-			$title = null;
-		}
-
-		if (array_key_exists('meta_tags', $main_view->injected)) {
-			$meta_tags = $main_view->injected['meta_tags'];
-		}
-		else {
-			$meta_tags = null;
-		}
-
-		$data = array(
-			'yield' => $main_view->content,
-		    'includes' => $includes,
-			'title' => $title,
-		    'meta_tags' => $meta_tags
-		  );
-
-		return $data + $parameters;
-	}
-
+    /**
+     * Parse the list of options sent to the controller
+     *
+     * @param array $options
+     * @return void
+     */
     protected function parse_options(array $options) {
         foreach($options as $key => $value) {
             if(array_key_exists($key, $this->options)) {

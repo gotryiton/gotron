@@ -13,7 +13,7 @@ class PhpView extends AbstractView{
 
 	public $injected = array();
 
-	private static $allowed_injected_variables = array('include', 'title', 'meta_tags');
+	private static $allowed_injected_variables = array('include' => 'includes', 'title', 'meta_tags');
 
 	protected $content_type = "text/html";
 
@@ -22,18 +22,26 @@ class PhpView extends AbstractView{
      *
      * @return string
      */
-    public function generate(array $parameters) {
+    public function generate(array $parameters, $injected_view = null) {
         if (is_file($this->view_path)) {
+            if (!is_null($injected_view)) {
+                extract($injected_view->injected);
+                $yield = $injected_view->content;
+            }
+
             extract($parameters);
 			ob_start();
 			include $this->view_path;
 			$this->content = ob_get_clean();
 
-			foreach (self::$allowed_injected_variables as $injected_variable) {
+			foreach (self::$allowed_injected_variables as $key => $injected_variable) {
 				if (isset($$injected_variable)) {
-					$this->injected[$injected_variable] = $$injected_variable;
-				}
+                    if (is_numeric($key)) {
+                        $key = $injected_variable;
+                    }
 
+					$this->injected[$key] = $$injected_variable;
+				}
 			}
 		}
         else {

@@ -21,7 +21,7 @@ class JsonView extends AbstractView{
      *
      * @return bool
      */
-    public function generate(array $parameters) {
+    public function generate(array $parameters, $injected_view = null) {
 		$this->content = Helper::json_encode($parameters);
 		return $this;
     }

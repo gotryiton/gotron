@@ -37,7 +37,7 @@ class EmailView extends AbstractView{
      *
      * @return string
      */
-    public function generate(array $parameters)
+    public function generate(array $parameters, $injected_view = null)
     {
         if (is_file($this->view_path)) {
             extract($parameters);
