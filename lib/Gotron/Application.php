@@ -45,7 +45,7 @@ class Application extends Singleton {
         $this->loader->register();
         $this->loader->setNamespacedPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
-            'ActiveRecord\\' => file_join(__DIR__, "/../vendor/ActiveRecord/lib"),
+            'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
             'Requests_' => file_join(__DIR__, "/../vendor/Requests"),
             'Swift_' => file_join(__DIR__, "/../vendor/Swift/classes"),
             'Pheanstalk_' => file_join(__DIR__, "/../vendor/Pheanstalk/classes")
@@ -131,7 +131,7 @@ class Application extends Singleton {
 	 * @return void
 	 */
 	public static function initialize_active_record($app_config) {
-        require_once __DIR__ . '/../vendor/ActiveRecord/lib/ActiveRecord/Utils.php';
+        require_once __DIR__ . '/../ActiveRecord/lib/ActiveRecord/Utils.php';
 		ActiveRecord\Config::initialize(function($cfg) use($app_config) {
             $logger = new Logging('QUERY_LOG');
 		    $cfg->set_logging($app_config->bool('db.query_logging'));

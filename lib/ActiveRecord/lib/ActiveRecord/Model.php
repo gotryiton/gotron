@@ -826,6 +826,7 @@ class Model
 
 		$this->__new_record = false;
 		$this->invoke_callback('after_create',false);
+        $this->invoke_callback('queue_after_create', false);
 		return true;
 	}
 
