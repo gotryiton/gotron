@@ -11,6 +11,8 @@ class Book extends Model {
     static $belongs_to = array(
         array('publisher', 'touch' => true)
     );
+
+    static $queue_after_create = array("test_after_create");
     
     static $finders = array(
         'title_string' => array('conditions' => array('title = ?',1)),
@@ -23,6 +25,11 @@ class Book extends Model {
         'multiple_ids' => array('conditions' => array('publisher_id = ? AND id != ?',array(),'john')),
         'multiple_id_array' => array('conditions' => array('publisher_id = ? AND id != ? AND id != ?', 1, 1, 1))
     );
+
+    public function test_after_create() {
+        $this->title = "CHANGED TITLE";
+        $this->save();
+    }
 
 }
 
