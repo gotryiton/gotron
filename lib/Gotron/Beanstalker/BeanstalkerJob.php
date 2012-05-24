@@ -32,30 +32,37 @@ class BeanstalkerJob extends Beanstalker {
 	 * @param Array/Object $data, the data provided to the worker class
 	 * @param $priority, priority of job (default 1024, 0 = most urgent)
 	 */
-	public function enqueue($queue, $class = null, $data, $priority = 1024, $delay=0) {
+	public function enqueue($queue, $class_or_method = null, $data, $priority = 1024, $delay=0) {
 
         if(empty($queue)) {
             throw new Exception("A valid queue name is required");
         }
 
-        if(!class_exists($class)) {
-            throw new Exception( "Class does not exist: " . $class );
+        $payload = array("data" => $data);
+        if (is_object($data) && method_exists($data, $class_or_method)) {
+            $payload["method"] = $class_or_method;
+        }
+        else {
+            if(class_exists($class_or_method)) {
+                $payload["method"] = "perform";
+                $payload["class"] = $class_or_method;
+            }
+            else {
+                throw new Exception("Class does not exist: " . $class_or_method);
+            }
         }
 
 		$this->checkData($data);
-		
-		$this->setPayload($class, $data);
+		$this->setPayload($payload);
 
-		if (Config::bool('beanstalk.disabled')) {
-			return $this->perform();
-		}
-		else{
-			$this->useTube($queue);
+        if (Config::bool('beanstalk.disabled')) {
+	        return $this->perform();
+        }
 
-			$response = $this->put($this->getEncodedPayload(),$priority, $delay);
-			
-			return (!is_null($response)) ? $response : false;	
-		}
+		$this->useTube($queue);
+
+		$response = $this->put($this->getEncodedPayload(),$priority, $delay);
+		return (!is_null($response)) ? $response : false;
 		
 	}
 	
@@ -65,10 +72,9 @@ class BeanstalkerJob extends Beanstalker {
 	 * @param string $data 
 	 * @return void
 	 */
-	private function checkData($data)
-	{
-		if(!is_array($data)) {
-			throw new Exception( "Data needs to be of type array");
+	private function checkData($data) {
+		if(!is_array($data) && !is_object($data)) {
+			throw new Exception( "Data needs to be of type array or object");
 			return false;
 		}
 		
@@ -87,9 +93,8 @@ class BeanstalkerJob extends Beanstalker {
 	 * @author Scott Bader
 	 */
 		
-	public function setPayload($class,$data)
-	{
-		$this->payload = array("class" => $class, "data" => $data);
+	public function setPayload($payload) {
+		$this->payload = $payload;
 		return true;
 	}
 	
@@ -104,7 +109,12 @@ class BeanstalkerJob extends Beanstalker {
 		if(is_null(json_decode($payload))) {
 			throw new Exception ( "Payload is not json encoded" );
 		}
- 		return json_decode($payload,true);
+ 		$decoded = json_decode($payload, true);
+        $unserialized = @unserialize($decoded["data"]);
+        if ($unserialized !== false || $decoded["data"] === "b:0;") {
+            $decoded["data"] = $unserialized;
+        }
+        return $decoded;
 	}
 	
 	public function setPayloadFromJson($payload)
@@ -123,8 +133,17 @@ class BeanstalkerJob extends Beanstalker {
 	 *
 	 * @return worker class instance
 	 */
-	private function getInstance()
-	{
+	private function getInstance() {
+        if (array_key_exists("method", $this->payload) && is_object($this->payload['data'])) {
+            $instance = $this->payload['data'];
+            if (method_exists($instance, $this->payload["method"])) {
+                if (method_exists($instance, "reload")) {
+                    $instance->reload();
+                }
+                return $instance;
+            }
+        }
+
 		if(!is_null($this->instance)) {
 			return $this->instance;
 		}
@@ -145,8 +164,9 @@ class BeanstalkerJob extends Beanstalker {
 	public function perform() {
 		$instance = $this->getInstance();
 		try {
-			if($instance){
-				$instance->perform();
+			if($instance) {
+                $method = $this->payload["method"];
+				$instance->$method();
 			}
 		}
 		catch(Exception $e) {
@@ -232,6 +252,10 @@ class BeanstalkerJob extends Beanstalker {
 		{
             //used to catch the Invalid UTF-8 issue
 		    set_error_handler(array('static','handleError'));
+
+            if (is_object($this->payload["data"])) {
+                $this->payload["data"] = serialize($this->payload["data"]);
+            }
 
 			$encoded_payload = json_encode($this->payload);
             restore_error_handler();

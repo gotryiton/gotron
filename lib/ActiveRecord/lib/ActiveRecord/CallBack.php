@@ -3,7 +3,8 @@
  * @package ActiveRecord
  */
 namespace ActiveRecord;
-use Closure;
+use Closure,
+    Gotron\Beanstalker\BeanstalkerJob;
 
 /**
  * Callbacks allow the programmer to hook into the life cycle of a {@link Model}.
@@ -28,6 +29,7 @@ use Closure;
  * <li><b>after_validation_on_update:</b> ...</li>
  * <li><b>before_destroy:</b> called after a model has been deleted</li>
  * <li><b>after_destroy:</b> called after a model has been deleted</li>
+* <li><b>queue_after_create:</b> Queues a BeanstalkJob after a model has been create</li>
  * </ul>
  *
  * This class isn't meant to be used directly. Callbacks are defined on your model like the example below:
@@ -78,7 +80,8 @@ class CallBack
 		'before_validation_on_update',
 		'after_validation_on_update',
 		'before_destroy',
-		'after_destroy'
+		'after_destroy',
+        'queue_after_create'
 	);
 
 	/**
@@ -169,6 +172,7 @@ class CallBack
 			$registry = $this->registry[$name];
 
 		$first = substr($name,0,6);
+        $queue = false;
 
 		// starts with /(after|before)_(create|update)/
 		if (($first == 'after_' || $first == 'before') && (($second = substr($name,7,5)) == 'creat' || $second == 'updat' || $second == 'reate' || $second == 'pdate'))
@@ -180,15 +184,23 @@ class CallBack
 
 			$registry = array_merge($this->registry[$temporal_save], $registry ? $registry : array());
 		}
+        elseif ($name == "queue_after_create") {
+            $queue = true;
+        }
 
-		if ($registry)
-		{
-			foreach ($registry as $method)
-			{
-				$ret = ($method instanceof Closure ? $method($model) : $model->$method());
+		if ($registry) {
+			foreach ($registry as $method) {
+                if (!$queue) {
+    				$ret = ($method instanceof Closure ? $method($model) : $model->$method());
 
-				if (false === $ret && $first === 'before')
-					return false;
+    				if (false === $ret && $first === 'before')
+    					return false;
+                }
+                else {
+                    $job = new BeanstalkerJob;
+                    $response = $job->enqueue("CallbackDelayedJobQueue", $method, $model);
+                    return $response !== false;
+                }
 			}
 		}
 		return true;

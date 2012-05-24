@@ -4,7 +4,11 @@ namespace TestApp;
 
 use Gotron\Beanstalker\BeanstalkerJob,
     Gotron\Beanstalker\BeanstalkerWorker,
-    Gotron\Config;
+    Gotron\Config,
+    ActiveRecord\ConnectionManager,
+    GTIOUnit\UnitDB\Fixture,
+    GTIOUnit\UnitDB\Utils,
+    Gotron\Cache;
 
 require_once dirname(__FILE__) . "/../helpers/jobs/UnitTestJob.php";
 require_once dirname(__FILE__) . "/../helpers/jobs/UnitTestErrorJob.php";
@@ -64,6 +68,40 @@ class BeanstalkerTests extends UnitTest {
         $worker = new BeanstalkerWorker(array('ErrorQueue'));
         $worker->setLog("STDOUT");
         $worker->work(0);
+    }
+
+    public function test_model_queue_callback() {
+        $config = Config::instance();
+        $config->set('beanstalk.disabled', false);
+        $config->set('model_directory', 'tests/GTIO/helpers/models');
+        Utils::clear_db($config['database']);
+
+        $connection = ConnectionManager::get_connection();
+        $connection->query(Book::$create_query);
+        $connection->query(Publisher::$create_query);
+
+        $fix = new Fixture(__DIR__ . "/../fixtures/");
+        $fix->create('publisher');
+
+        $book = Book::create(array(
+                "title" => "ORIGINAL TITLE",
+                "author" => "Some author",
+                "publisher_id" => 1
+            ));
+
+        $this->expectOutputRegex("/\[test\] Worker started\.\.\.\n\[test\] Performing Job Id: \d+\n\[test\] Successfully performed Job Id\: \d+\n\[test\] Worker stopped\.\.\./");
+
+        $worker = new BeanstalkerWorker(array("CallbackDelayedJobQueue"));
+        $worker->setLog("STDOUT");
+        $worker->work(0);
+
+        $book->reload();
+
+        $this->assertEquals("CHANGED TITLE", $book->title);
+
+        $connection = ConnectionManager::get_connection();
+        $connection->query("DROP TABLE IF EXISTS books");
+        $connection->query("DROP TABLE IF EXISTS publishers");
     }
 }
   
