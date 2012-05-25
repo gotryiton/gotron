@@ -35,6 +35,8 @@ class Controller {
      */
     private $rendered = false;
 
+    public $response = null;
+
     /**
      * List of exceptions that should be code and the HTTP status to send
      * for them
@@ -77,12 +79,11 @@ class Controller {
                 $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $layout_path, false, $main_view);
             }
 
-			$response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
+			$this->response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
 			if($this->dont_render) {
-                $GLOBALS['controller_content'] = $response->content;
+                $GLOBALS['controller_content'] = $this->response->content;
 				$GLOBALS['controller_data'] = $parameters;
 			}
-			$response->send();
         }
         else {
             throw new Exception("$view has not been defined");
@@ -169,30 +170,17 @@ class Controller {
 	 * @return void
 	 */
 	public function call_method($method = 'index') {
-        try {
-            $this->before();
-    		$this->invoke_filter('before', $method, true);
-    		if (is_callable(array($this, $method))) {
-                if (!$this->rendered) {
-        			$this->$method();
-                    $this->invoke_filter('after', $method);
-                    $this->after();
-                }
-    		}
-            else {
-                $this->render_error("500");
+        $this->before();
+		$this->invoke_filter('before', $method, true);
+		if (is_callable(array($this, $method))) {
+            if (!$this->rendered) {
+    			$this->$method();
+                $this->invoke_filter('after', $method);
+                $this->after();
             }
-        }
-        catch(\Exception $e) {
-            $exception_type = get_class($e);
-            if (array_key_exists($exception_type, self::$catchable_exceptions)) {
-                $error_status = self::$catchable_exceptions[$exception_type];
-                $this->render_error($error_status);
-            }
-            else {
-                Logging::write($e, "CONTROLLER");
-                $this->render_error("500");
-            }
+		}
+        else {
+            $this->render_error("500");
         }
 	}
 

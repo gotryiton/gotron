@@ -184,18 +184,37 @@ class Router {
         if(class_exists($controller_class)) {
             self::load_newrelic($request, $controller, $action);
             if (method_exists($controller_class, $action)) {
-                $controller = new $controller_class();
-                $controller->params = $request->params;
-                $controller->parameters = &$controller->params;
-                $controller->request = $request;
-                $controller->call_method($action);
-                return true;
+                try {
+                    $controller = new $controller_class();
+                    $controller->params = $request->params;
+                    $controller->parameters = &$controller->params;
+                    $controller->request = $request;
+                    $controller->call_method($action);
+                    $response = $controller->response;
+                }
+                catch(\Exception $e) {
+                    $exception_type = get_class($e);
+                    if (array_key_exists($exception_type, self::$catchable_exceptions)) {
+                        $error_status = self::$catchable_exceptions[$exception_type];
+                        $this->render_error($error_status);
+                    }
+                    else {
+                        Logging::write($e, "ROUTER");
+                        // $this->render_error("500");
+                    }
+                }
+                return self::output_response($response);
             }
             else {
                 Error::send('500', $request);
             }
         }
 	}
+
+    public static function output_response($response) {
+        $response->send();
+        return true;
+    }
 
 	/**
 	 * Renders a view from a class path and action
