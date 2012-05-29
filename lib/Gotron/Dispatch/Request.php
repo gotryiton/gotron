@@ -51,6 +51,18 @@ class Request {
      */
     public $files = array();
 
+    /**
+     * The request method used (GET, POST, PUT, DELETE, PATCH)
+     *
+     * @var string
+     */
+    public $method;
+
+    /**
+     * The application instance to be passed through the request
+     *
+     * @var string
+     */
     public $app;
 
     /**
@@ -58,7 +70,7 @@ class Request {
      *
      * @var string
      */
-    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'content_type', 'accept_header', 'app');
+    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'content_type', 'accept_header', 'app', 'method');
 
     private static $mime_types = array(
         'application/json' => 'json',

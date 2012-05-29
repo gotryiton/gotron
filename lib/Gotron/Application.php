@@ -116,7 +116,7 @@ class Application extends Singleton {
         $this->loader->register();
     }
 
-    public function autoload_presenters($version = self::VERSION) {
+    public function version_by_request($version = self::VERSION) {
         $root_directory = $this->config->get('root_directory');
 
         $this->loader->addFrameworkClassPaths(array(

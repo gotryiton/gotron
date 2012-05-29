@@ -105,7 +105,7 @@ class Response {
 		$instance = new self;
 		$instance->headers = $view->get_headers();
 		$instance->content_type = $view->content_type();
-		$instance->content = $view->content;
+		$instance->body = $view->content;
 		$instance->status_code = $status_code;
 		$instance->render = $render;
 
@@ -120,7 +120,7 @@ class Response {
 	public function send() {
 		$this->write_headers();
 		if ($this->render) {
-			echo $this->content;
+			echo $this->body;
 		}
 	}
 

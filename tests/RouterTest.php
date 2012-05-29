@@ -9,6 +9,7 @@ class RouterTest extends UnitTest {
 
     public function setup() {
         $this->app = TestApplication::instance();
+        $_SERVER['REQUEST_METHOD'] = "GET";
     }
 
     public function test_route() {
