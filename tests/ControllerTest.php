@@ -13,57 +13,66 @@ class ControllerTest extends UnitTest {
     public function test_call_method_php_no_layout() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
+        $expected_output = "<div>\n    This is a test view created by somebody \n</div>";
 
-        $this->expectOutputString("<div>\n    This is a test view created by somebody \n</div>");
         $controller->call_method('test_php_no_layout');
+        $this->assertEquals($expected_output, $controller->response->body);
     }
 
     public function test_call_method_php_layout_default() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
-    
-        $this->expectOutputString("This is the start of a test layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test layout");
+        $expected_output = "This is the start of a test layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test layout";
+
         $controller->call_method('test_php_layout_default');
+        $this->assertEquals($expected_output, $controller->response->body);
     }
     
     public function test_call_method_php_layout_set() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
-    
-        $this->expectOutputString("This is the start of a test set layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test set layout");
+        $expected_output = "This is the start of a test set layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test set layout";
+
         $controller->call_method('test_php_layout_set');
+        $this->assertEquals($expected_output, $controller->response->body);
     }
     
     public function test_call_method_json() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
-        $json = "{\"name\":\"somebody\"}";
-        $this->expectOutputString($json);
+        $expected_output = "{\"name\":\"somebody\"}";
+
         $controller->call_method('test_json');
+        $this->assertEquals($expected_output, $controller->response->body);
     }
     
     public function test_call_method_default() {
         $controller = new SomeController;
         $controller->params['name'] = 'index';
-        $json = "{\"name\":\"index\"}";
-        $this->expectOutputString($json);
+        $expected_output = "{\"name\":\"index\"}";
+
         $controller->call_method();
+        $this->assertEquals($expected_output, $controller->response->body);
     }
 
     public function test_filters() {
         $controller = new SomeController;
         $controller->params['name'] = 'index';
-        $json = "hello\n{\"name\":\"index\"}\ngoodbye";
-        $this->expectOutputString($json);
+        $expected_output = "{\"name\":\"index\"}";
+
         $controller->call_method('filter_test');
+        $this->assertEquals($expected_output, $controller->response->body);
+        $this->assertEquals(999999, $controller->before_test_variable);
+        $this->assertEquals(111111, $controller->after_test_variable);
     }
 
-	public function test_long_controller_name() {
+    public function test_long_controller_name() {
         $controller = new SomeLongController;
         $controller->params['name'] = 'somebody';
+        $expected_output = "This is the start of a test set layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test set layout";
 
-        $this->expectOutputString("This is the start of a test set layout\n<div>\n    This is a test view created by somebody \n</div>This is the end of a test set layout");
         $controller->call_method('test_php_layout_set');
+        $this->assertEquals($expected_output, $controller->response->body);
     }
 
 }

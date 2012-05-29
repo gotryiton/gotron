@@ -37,16 +37,6 @@ class Controller {
 
     public $response = null;
 
-    /**
-     * List of exceptions that should be code and the HTTP status to send
-     * for them
-     *
-     * @var array
-     */
-	private static $catchable_exceptions = array(
-        "ActiveRecord\RecordNotFound" => 404,
-    );
-
 	/**
 	 * Renders the view
 	 *
@@ -80,10 +70,6 @@ class Controller {
             }
 
 			$this->response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
-			if($this->dont_render) {
-                $GLOBALS['controller_content'] = $this->response->content;
-				$GLOBALS['controller_data'] = $parameters;
-			}
         }
         else {
             throw new Exception("$view has not been defined");
@@ -236,19 +222,6 @@ class Controller {
 	 * @return void
 	 */
 	protected function after() {}
-
-	/**
-	 * Sets the controller to not actually render output when render() is called
-	 * useful for testing
-	 *
-	 * @return void
-	 */
-	public function dont_render($class = null) {
-		if(!is_null($class)) {
-			$this->class_name = $class;
-		}
-		$this->dont_render = true;
-	}
 
     /**
      * Calls the closure defined for the content_type specified for the current request

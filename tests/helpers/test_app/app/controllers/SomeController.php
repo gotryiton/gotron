@@ -9,6 +9,9 @@ class SomeController extends Controller {
     protected $before_filter = array('before_test' => array('filter_test'));
     protected $after_filter = array('after_test' => array('filter_test'));
 
+    public $before_test_variable = 1000;
+    public $after_test_variable = 9999;
+
     public function index() {
         $data = array("name" => $this->params['name']);
         $this->render(array('json' => $data));
@@ -77,11 +80,11 @@ class SomeController extends Controller {
     }
 
     protected function before_test() {
-        echo "hello\n";
+        $this->before_test_variable = 999999;
     }
 
     protected function after_test() {
-        echo "\ngoodbye";
+        $this->after_test_variable = 111111;
     }
 }
 

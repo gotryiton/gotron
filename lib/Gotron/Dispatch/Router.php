@@ -3,6 +3,7 @@
 namespace Gotron\Dispatch;
 
 use Gotron\Config,
+    Gotron\Logging,
     ReflectionClass;
 
 /**
@@ -13,6 +14,16 @@ use Gotron\Config,
  * @package Gotron
  */
 class Router {
+
+    /**
+     * List of exceptions that should be code and the HTTP status to send
+     * for them
+     *
+     * @var array
+     */
+	private static $catchable_exceptions = array(
+        "ActiveRecord\RecordNotFound" => 404,
+    );
 
 	/**
 	 * Routes the REQUEST_URI to the appropriate defined Route 
@@ -139,6 +150,7 @@ class Router {
                 "path" => $path,
                 "params" => $parameters,
                 "files" => $_FILES,
+                "method" => $_SERVER['REQUEST_METHOD'],
                 "content_type" => $content_type,
                 "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
                 "app" => $app
@@ -153,6 +165,7 @@ class Router {
                 "full_url" => $_SERVER['REQUEST_URI'],
                 "path" => $path,
                 "params" => array('path' => $path_components),
+                "method" => $_SERVER['REQUEST_METHOD'],
                 "files" => $_FILES,
                 "content_type" => $content_type,
                 "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
@@ -163,7 +176,7 @@ class Router {
                 return true;
             }
         }
-        Error::error_404($app);
+        Error::error_404($request);
         return false;
 	}
 
@@ -179,7 +192,9 @@ class Router {
 	public static function perform_controller_action($controller, $action, $request, $app) {
         $reflector = new ReflectionClass($app);
         $namespace = $reflector->getNamespaceName();
-        $app->autoload_presenters($request->version);
+
+        $app->version_by_request($request->version);
+
         $controller_class = "{$namespace}\\{$controller}Controller";
         if(class_exists($controller_class)) {
             self::load_newrelic($request, $controller, $action);
@@ -191,22 +206,27 @@ class Router {
                     $controller->request = $request;
                     $controller->call_method($action);
                     $response = $controller->response;
+                    return self::output_response($response);
                 }
                 catch(\Exception $e) {
-                    $exception_type = get_class($e);
-                    if (array_key_exists($exception_type, self::$catchable_exceptions)) {
-                        $error_status = self::$catchable_exceptions[$exception_type];
-                        $this->render_error($error_status);
+                    if (Config::bool('show_errors')) {
+                        throw $e;
                     }
                     else {
-                        Logging::write($e, "ROUTER");
-                        // $this->render_error("500");
+                        $exception_type = get_class($e);
+                        if (array_key_exists($exception_type, self::$catchable_exceptions)) {
+                            $error_status = self::$catchable_exceptions[$exception_type];
+                            static::render_error($error_status, $request);
+                        }
+                        else {
+                            Logging::write($e, "ROUTER");
+                            static::render_error("500", $request);
+                        }
                     }
                 }
-                return self::output_response($response);
             }
             else {
-                Error::send('500', $request);
+                static::render_error('500', $request);
             }
         }
 	}
@@ -216,21 +236,9 @@ class Router {
         return true;
     }
 
-	/**
-	 * Renders a view from a class path and action
-	 *
-	 * @param string $class_path
-	 * @param string $action
-	 */
-	public static function render_view($class_path, $action) {
-		$view_path = file_join(Config::get('root_directory'), "app/views/{$class_path}/{$action}.php");
-		if (file_exists($view_path)) {
-			$controller = new Controller();
-			require_once($view_path);
-			return true;
-		}
-		return false;
-	}
+    public static function render_error($status, $request) {
+        Error::send($status, $request);
+    }
 
     /**
      * Takes a route and transforms it to a regex pattern
