@@ -46,15 +46,6 @@ class Application extends Singleton {
         $this->loader->setNamespacedPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
             'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
-            'Requests_' => file_join(__DIR__, "/../vendor/Requests"),
-            'Swift_' => file_join(__DIR__, "/../vendor/Swift/classes"),
-            'Pheanstalk_' => file_join(__DIR__, "/../vendor/Pheanstalk/classes")
-        ));
-
-        $this->loader->setClasses(array(
-           'Requests' => file_join(__DIR__, "/../vendor/Requests/Requests.php"),
-           'Swift' => file_join(__DIR__, "/../vendor/Swift/classes/Swift.php"),
-           'Pheanstalk' => file_join(__DIR__, "/../vendor/Pheanstalk/classes/Pheanstalk.php")
         ));
 
         $this->loader->setPlainPaths(array(

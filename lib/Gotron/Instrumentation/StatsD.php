@@ -1,5 +1,7 @@
 <?php
 
+namespace Gotron;
+
 /**
  * Sends statistics to the stats daemon over UDP
  *
@@ -93,6 +95,5 @@ class StatsD {
 		}
     }
 }
-
 
 ?>
