@@ -1,0 +1,34 @@
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/gotryiton/pheanstalk"
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "spyc/spyc",
+        "version": "0.5",
+        "dist": {
+          "url": "http://spyc.googlecode.com/files/spyc-0.5.zip",
+          "type": "zip"
+        }
+      }
+    }
+  ],
+  "require": {
+    "rmccue/requests": ">=1.0",
+    "swiftmailer/swiftmailer": "4.1.x",
+    "pda/pheanstalk": "dev-master",
+    "spyc/spyc": ">=0.5",
+    "Aura/Autoload": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "Requests": "vendor/rmccue/requests/library/",
+      "Swift": "vendor/swiftmailer/swiftmailer/lib/classes/",
+      "Spyc": "vendor/spyc/spyc/",
+      "Aura": "vendor/Aura/Autoload/src/"
+    }
+  }
+}

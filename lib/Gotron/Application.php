@@ -3,7 +3,6 @@
 namespace Gotron;
 
 use ActiveRecord,
-    Aura\Autoload\Loader,
     Gotron\Dispatch\Router;
 
 class Application extends Singleton {
@@ -27,7 +26,6 @@ class Application extends Singleton {
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
-        $instance->autoload_vendor_plain_path();
 		self::initialize_active_record($config);
         self::initialize_routes();
 
@@ -42,14 +40,11 @@ class Application extends Singleton {
      */
     public function autoload_library() {
         $this->loader = new Loader;
+        $this->loader->setMode(0);
         $this->loader->register();
-        $this->loader->setNamespacedPaths(array(
+        $this->loader->setPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
             'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
-        ));
-
-        $this->loader->setPlainPaths(array(
-            file_join(__DIR__, "/../vendor/"),
         ));
     }
 
