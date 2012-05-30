@@ -48,10 +48,6 @@ class Application extends Singleton {
         ));
     }
 
-    public function autoload_vendor_plain_path() {
-        $this->loader->addPlainClassPath(file_join(Config::get('root_directory'), 'vendor'));
-    }
-
     /**
      * Load the config/autoload.php file
      *
