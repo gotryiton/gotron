@@ -1,4 +1,8 @@
 {
+  "name": "gotryiton/gotron",
+  "description": "Gotron PHP Framework",
+  "keywords": ["framework"],
+  "homepage": "https://github.com/gotryiton/gotron",
   "repositories": [
     {
       "type": "vcs",
