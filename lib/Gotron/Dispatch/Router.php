@@ -232,7 +232,14 @@ class Router {
 	}
 
     public static function output_response($response) {
-        $response->send();
+        if (!is_null($response) && $response instanceof Response) {
+            $response->send();
+        }
+        else {
+            $response = new Response;
+            $response->status_code = 204;
+            $response->send();
+        }
         return true;
     }
 

@@ -26,6 +26,7 @@ class Application extends Singleton {
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
+        $instance->load_helpers();
 		self::initialize_active_record($config);
         self::initialize_routes();
 
@@ -55,6 +56,20 @@ class Application extends Singleton {
      */
     public function autoload_config() {
 		require file_join($this->config->get('root_directory'), $this->config->config_directory, "autoload.php");
+    }
+
+    /**
+     * Loads any files in the app/helpers directory
+     *
+     * @return void
+     */
+    public function load_helpers() {
+        $dir = file_join($this->config->get('root_directory'), 'app', 'helpers');
+        if (is_dir($dir)) {
+            foreach (glob($dir . "/*.php") as $filename) {
+                require_once $filename;
+            }
+        }
     }
 
     /**

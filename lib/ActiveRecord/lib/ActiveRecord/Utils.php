@@ -155,6 +155,25 @@ function wrap_strings_in_arrays(&$strings)
 }
 
 /**
+ * Allows override of time for testing
+ *
+ * @return integer time
+ */
+function time() {
+    if (defined('TESTING') && TESTING) {
+        if (array_key_exists('time_override', $GLOBALS)) {
+            return $GLOBALS['time_override']++;
+        }
+        else {
+            return $GLOBALS['time_override'] = \time();
+        }
+    }
+    else {
+        return \time();
+    }
+}
+
+/**
  * Some internal utility functions.
  *
  * @package ActiveRecord
