@@ -122,8 +122,9 @@ class CallBack
 				if (!is_array($definition))
 					$definition = array($definition);
 
-				foreach ($definition as $method_name)
-					$this->register($name,$method_name);
+				foreach ($definition as $callback) {
+					$this->register($name, $callback);
+                }
 			}
 
 			// implicit callbacks that don't need to have a static definition
@@ -189,16 +190,31 @@ class CallBack
         }
 
 		if ($registry) {
-			foreach ($registry as $method) {
+			foreach ($registry as $callback) {
                 if (!$queue) {
+                    if (is_array($callback)) {
+                        $method = $callback['method'];
+                    }
+                    else {
+                        $method = $callback;
+                    }
+
     				$ret = ($method instanceof Closure ? $method($model) : $model->$method());
 
     				if (false === $ret && $first === 'before')
     					return false;
                 }
                 else {
+                    if (!is_array($callback)) {
+                        $callback = array('method' => $callback);
+                    }
+
+                    $method = $callback['method'];
+                    $delay = array_key_exists('delay', $callback) ? $callback['delay'] : 0;
+                    $priority = array_key_exists('priority', $callback) ? $callback['priority'] : 1024;
+
                     $job = new BeanstalkerJob;
-                    $response = $job->enqueue("CallbackDelayedJobQueue", $method, $model);
+                    $response = $job->enqueue("CallbackDelayedJobQueue", $method, $model, $priority, $delay);
                     return $response !== false;
                 }
 			}
@@ -220,7 +236,7 @@ class CallBack
 	 * @return void
 	 * @throws ActiveRecordException if invalid callback type or callback method was not found
 	 */
-	public function register($name, $closure_or_method_name=null, $options=array())
+	public function register($name, $closure_or_method_name = null, $options=array())
 	{
 		$options = array_merge(array('prepend' => false), $options);
 
@@ -232,22 +248,29 @@ class CallBack
 
 		if (!($closure_or_method_name instanceof Closure))
 		{
+            if (is_array($closure_or_method_name)) {
+                $method_name = $closure_or_method_name['method'];
+            }
+            else {
+                $method_name = $closure_or_method_name;
+            }
+
 			if (!isset($this->publicMethods))
 				$this->publicMethods = get_class_methods($this->klass->getName());
 
-			if (!in_array($closure_or_method_name, $this->publicMethods))
+			if (!in_array($method_name, $this->publicMethods))
 			{
-				if ($this->klass->hasMethod($closure_or_method_name))
+				if ($this->klass->hasMethod($method_name))
 				{
 					// Method is private or protected
 					throw new ActiveRecordException("Callback methods need to be public (or anonymous closures). " .
-						"Please change the visibility of " . $this->klass->getName() . "->" . $closure_or_method_name . "()");
+						"Please change the visibility of " . $this->klass->getName() . "->" . $method_name . "()");
 				}
 				else
 				{
 					// i'm a dirty ruby programmer
 					throw new ActiveRecordException("Unknown method for callback: $name" .
-						(is_string($closure_or_method_name) ? ": #$closure_or_method_name" : ""));
+						(is_string($method_name) ? ": #$method_name" : ""));
 				}
 			}
 		}

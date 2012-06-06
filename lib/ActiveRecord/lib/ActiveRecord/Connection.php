@@ -78,23 +78,10 @@ abstract class Connection
 	 * @return Connection
 	 * @see parse_connection_url
 	 */
-	public static function instance($connection_string_or_connection_name=null)
-	{
-		$config = Config::instance();
+	public static function instance($connection_string_or_connection_name=null) {
+        $config = Config::instance();
 
-		if (strpos($connection_string_or_connection_name, '://') === false)
-		{
-			$connection_string = $connection_string_or_connection_name ?
-				$config->get_connection($connection_string_or_connection_name) :
-				$config->get_default_connection_string();
-		}
-		else
-			$connection_string = $connection_string_or_connection_name;
-
-		if (!$connection_string)
-			throw new DatabaseException("Empty connection string");
-
-		$info = static::parse_connection_url($connection_string);
+        $info = static::get_connection_info($connection_string_or_connection_name);
 		$fqclass = static::load_adapter_class($info->protocol);
 
 		try {
@@ -110,6 +97,37 @@ abstract class Connection
 		}
 		return $connection;
 	}
+
+    /**
+	 * Get the info for a database connection
+	 *
+	 * @param string $connection_string_or_connection_name A database connection string (ex. mysql://user:pass@host[:port]/dbname)
+	 *   Everything after the protocol:// part is specific to the connection adapter.
+	 *   OR
+	 *   A connection name that is set in ActiveRecord\Config
+	 *   If null it will use the default connection specified by ActiveRecord\Config->set_default_connection
+	 * @return StdClass containing info data
+	 * @see parse_connection_url
+	 */
+    protected static function get_connection_info($connection_string_or_connection_name = null) {
+        $config = Config::instance();
+
+		if (strpos($connection_string_or_connection_name, '://') === false)
+		{
+			$connection_string = $connection_string_or_connection_name ?
+				$config->get_connection($connection_string_or_connection_name) :
+				$config->get_default_connection_string();
+		}
+		else
+			$connection_string = $connection_string_or_connection_name;
+
+		if (!$connection_string)
+			throw new DatabaseException("Empty connection string");
+
+		$info = static::parse_connection_url($connection_string);
+
+        return $info;
+    }
 
 	/**
 	 * Loads the specified class for an adapter.
@@ -222,9 +240,18 @@ abstract class Connection
 	 * @param array $info Array containing URL parts
 	 * @return Connection
 	 */
-	protected function __construct($info)
-	{
-		try {
+	protected function __construct($info) {
+        $this->connection = static::pdo_connection($info);
+	}
+
+    /**
+     * Creates a new PDO connection instance
+     *
+     * @param StdClass $info connection attributes
+     * @return PDO connection
+     */
+    protected static function pdo_connection($info) {
+        try {
 			// unix sockets start with a /
 			if ($info->host[0] != '/')
 			{
@@ -236,11 +263,11 @@ abstract class Connection
 			else
 				$host = "unix_socket=$info->host";
 
-			$this->connection = new PDO("$info->protocol:$host;dbname=$info->db", $info->user, $info->pass, static::$PDO_OPTIONS);
+            return new PDO("$info->protocol:$host;dbname=$info->db", $info->user, $info->pass, static::$PDO_OPTIONS);
 		} catch (PDOException $e) {
 			throw new DatabaseException($e);
 		}
-	}
+    }
 
 	/**
 	 * Retrieves column meta data for the specified table.
@@ -287,9 +314,11 @@ abstract class Connection
 	 *
 	 * @param string $sql Raw SQL string to execute.
 	 * @param array &$values Optional array of bind values
+     * @param boolean log Should the query be logged
+     * @param boolean retry Retry on MySQL server has gone away exception
 	 * @return mixed A result set object
 	 */
-	public function query($sql, &$values=array(), $log = true)
+	public function query($sql, &$values=array(), $log = true, $retry = true)
 	{
 		$this->last_query = $sql;
 
@@ -303,17 +332,21 @@ abstract class Connection
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 
 		try {
-            // $timer = new \Timer;
 			if (!$sth->execute($values))
 				throw new DatabaseException($this);
-            // $result = $timer->stop();
             $result = 0;
 		} catch (PDOException $e) {
 		    if ($this->logging && $log){
     		    $tag = (strpos($sql,'SHOW COLUMNS') !== false) ? "#columns" : "#query";
     			$this->logger->log($sql . '; VALUES: ' .json_encode($values) . "; ");
     		}
-			throw new DatabaseException($sth);
+            if ($retry == true && preg_match("/MySQL server has gone away/", $e->getMessage())) {
+                $this->reconnect();
+                return $this->query($sql, $values, $log, false);
+            }
+            else {
+			    throw new DatabaseException($sth);
+            }
 		}
 		
 		if ($this->logging && $log){
@@ -525,6 +558,15 @@ abstract class Connection
 	{
 		return false;
 	}
+
+    /**
+     * Creates a new connection to the database
+     *
+     * @return void
+     */
+    public function reconnect() {
+        $this->connection = static::pdo_connection(static::get_connection_info());
+    }
 
 }
 
