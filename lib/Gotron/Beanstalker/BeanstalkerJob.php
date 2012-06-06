@@ -32,20 +32,22 @@ class BeanstalkerJob extends Beanstalker {
 	 * @param Array/Object $data, the data provided to the worker class
 	 * @param $priority, priority of job (default 1024, 0 = most urgent)
 	 */
-	public function enqueue($queue, $class_or_method = null, $data, $priority = 1024, $delay=0) {
+	public function enqueue($queue, $class_or_method = null, $data, $priority = 1024, $delay = 0) {
 
         if(empty($queue)) {
             throw new Exception("A valid queue name is required");
         }
 
-        $payload = array("data" => $data);
+        $payload = [];
         if (is_object($data) && method_exists($data, $class_or_method)) {
             $payload["method"] = $class_or_method;
+            $payload["data"] = $data;
         }
         else {
             if(class_exists($class_or_method)) {
                 $payload["method"] = "perform";
                 $payload["class"] = $class_or_method;
+                $payload["data"] = $data;
             }
             else {
                 throw new Exception("Class does not exist: " . $class_or_method);
@@ -61,7 +63,7 @@ class BeanstalkerJob extends Beanstalker {
 
 		$this->useTube($queue);
 
-		$response = $this->put($this->getEncodedPayload(),$priority, $delay);
+		$response = $this->put($this->getEncodedPayload(), $priority, $delay);
 		return (!is_null($response)) ? $response : false;
 		
 	}
@@ -134,13 +136,17 @@ class BeanstalkerJob extends Beanstalker {
 	 * @return worker class instance
 	 */
 	private function getInstance() {
-        if (array_key_exists("method", $this->payload) && is_object($this->payload['data'])) {
-            $instance = $this->payload['data'];
-            if (method_exists($instance, $this->payload["method"])) {
-                if (method_exists($instance, "reload")) {
+        if (array_key_exists("method", $this->payload)) {
+            if (is_object($this->payload['data'])) {
+                $instance = $this->payload['data'];
+
+                if (method_exists($instance, 'reload')) {
                     $instance->reload();
                 }
-                return $instance;
+
+                if (method_exists($instance, $this->payload["method"])) {
+                    return $instance;
+                }
             }
         }
 
