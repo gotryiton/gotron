@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../vendor/Aura.Autoload/src.php";
 
 require __DIR__ . "/Singleton.php";
 require __DIR__ . "/Utility.php";

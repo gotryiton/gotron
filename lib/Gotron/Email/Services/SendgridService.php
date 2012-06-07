@@ -7,7 +7,7 @@ use Swift_Message,
     Swift_SmtpTransport,
     Gotron\Config;
 
-require_once __DIR__ . '/../../../../vendor/swiftmailer/swiftmailer/lib/swift_init.php';
+require_once __DIR__ . '/../../../../vendor/swiftmailer/lib/swift_init.php';
 
 /**
  * Sendgrid email service

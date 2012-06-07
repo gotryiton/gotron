@@ -21,6 +21,7 @@ class Application extends Singleton {
 	public static function initialize() {
 		$instance = static::instance();
         $instance->autoload_library();
+        $instance->autoload_vendors();
 		$config = Config::load_config(static::configuration());
 		$instance->config = $config;
         $instance->autoload_app();
@@ -46,6 +47,18 @@ class Application extends Singleton {
         $this->loader->setPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
             'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
+        ));
+    }
+
+    public function autoload_vendors() {
+        $this->loader->setPaths(array(
+            'Requests' => file_join(__DIR__, "/../../vendor/Requests/library"),
+            'Swift' => file_join(__DIR__, "/../../vendor/swiftmailer/lib/classes"),
+            'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes")
+        ));
+
+        $this->loader->setClasses(array(
+           'Spyc' => file_join(__DIR__, "/../../vendor/Spyc/spyc.php")
         ));
     }
 
