@@ -1,0 +1,3 @@
+[submodule "vendor/Aura.Autoload"]
+	path = vendor/Aura.Autoload
+	url = git://github.com/auraphp/Aura.Autoload.git
