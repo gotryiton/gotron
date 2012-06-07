@@ -1,0 +1,12 @@
+[submodule "vendor/Aura.Autoload"]
+	path = vendor/Aura.Autoload
+	url = git://github.com/auraphp/Aura.Autoload.git
+[submodule "vendor/Pheanstalk"]
+	path = vendor/Pheanstalk
+	url = git://github.com/pda/pheanstalk.git
+[submodule "vendor/Requests"]
+	path = vendor/Requests
+	url = git://github.com/rmccue/Requests.git
+[submodule "vendor/swiftmailer"]
+	path = vendor/swiftmailer
+	url = git://github.com/swiftmailer/swiftmailer.git
