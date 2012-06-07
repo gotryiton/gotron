@@ -4,3 +4,6 @@
 [submodule "vendor/Pheanstalk"]
 	path = vendor/Pheanstalk
 	url = git://github.com/pda/pheanstalk.git
+[submodule "vendor/Requests"]
+	path = vendor/Requests
+	url = git://github.com/rmccue/Requests.git
