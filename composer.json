@@ -29,10 +29,12 @@
   },
   "autoload": {
     "psr-0": {
-      "Requests": "vendor/rmccue/requests/library/",
-      "Swift": "vendor/swiftmailer/swiftmailer/lib/classes/",
-      "Spyc": "vendor/spyc/spyc/",
-      "Aura": "vendor/Aura/Autoload/src/"
+      "Gotron": "lib/",
+      "ActiveRecord": "lib/",
+      "Requests": "library/",
+      "Swift": "lib/classes/",
+      "Spyc": "spyc/",
+      "Aura": "src/"
     }
   }
 }
