@@ -15,6 +15,14 @@ class Cache extends \ActiveRecord\Cache {
 	}
 
     public static function get_key($key) {
+        return join("/", static::key_parts($key));
+    }
+
+    public static function md5_key($key) {
+        return md5(static::get_key($key));
+    }
+
+    protected static function key_parts($key) {
         if(!is_array($key)) {
             $key = array($key);
         }
@@ -38,7 +46,7 @@ class Cache extends \ActiveRecord\Cache {
             }
         }
 
-        return join("/", $key_pieces);
+        return $key_pieces;
     }
 
 }
