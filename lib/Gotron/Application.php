@@ -3,7 +3,6 @@
 namespace Gotron;
 
 use ActiveRecord,
-    Aura\Autoload\Loader,
     Gotron\Dispatch\Router;
 
 class Application extends Singleton {
@@ -22,13 +21,13 @@ class Application extends Singleton {
 	public static function initialize() {
 		$instance = static::instance();
         $instance->autoload_library();
+        $instance->autoload_vendors();
 		$config = Config::load_config(static::configuration());
 		$instance->config = $config;
         $instance->autoload_app();
 		$instance->check_maintenance();
         $instance->autoload_config();
         $instance->load_helpers();
-        $instance->autoload_vendor_plain_path();
 		self::initialize_active_record($config);
         self::initialize_routes();
 
@@ -43,28 +42,24 @@ class Application extends Singleton {
      */
     public function autoload_library() {
         $this->loader = new Loader;
+        $this->loader->setMode(0);
         $this->loader->register();
-        $this->loader->setNamespacedPaths(array(
+        $this->loader->setPaths(array(
             'Gotron\\' => file_join(__DIR__, ".."),
             'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
-            'Requests_' => file_join(__DIR__, "/../vendor/Requests"),
-            'Swift_' => file_join(__DIR__, "/../vendor/Swift/classes"),
-            'Pheanstalk_' => file_join(__DIR__, "/../vendor/Pheanstalk/classes")
-        ));
-
-        $this->loader->setClasses(array(
-           'Requests' => file_join(__DIR__, "/../vendor/Requests/Requests.php"),
-           'Swift' => file_join(__DIR__, "/../vendor/Swift/classes/Swift.php"),
-           'Pheanstalk' => file_join(__DIR__, "/../vendor/Pheanstalk/classes/Pheanstalk.php")
-        ));
-
-        $this->loader->setPlainPaths(array(
-            file_join(__DIR__, "/../vendor/"),
         ));
     }
 
-    public function autoload_vendor_plain_path() {
-        $this->loader->addPlainClassPath(file_join(Config::get('root_directory'), 'vendor'));
+    public function autoload_vendors() {
+        $this->loader->setPaths(array(
+            'Requests' => file_join(__DIR__, "/../../vendor/Requests/library"),
+            'Swift' => file_join(__DIR__, "/../../vendor/swiftmailer/lib/classes"),
+            'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes")
+        ));
+
+        $this->loader->setClasses(array(
+           'Spyc' => file_join(__DIR__, "/../../vendor/Spyc/spyc.php")
+        ));
     }
 
     /**

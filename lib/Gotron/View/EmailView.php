@@ -2,8 +2,7 @@
 
 namespace Gotron\View;
 
-use html2text,
-    Gotron\Exception;
+use Gotron\Exception;
 
 /**
  * View class used to generate email

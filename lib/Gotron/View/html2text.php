@@ -1,5 +1,7 @@
 <?php
 
+namespace Gotron\View;
+
 /*************************************************************************
  *                                                                       *
  * class.html2text.inc                                                   *
@@ -295,8 +297,7 @@ class html2text
      *  @access public
      *  @return void
      */
-    function html2text( $source = '', $from_file = false )
-    {
+    public function __construct( $source = '', $from_file = false ) {
         if ( !empty($source) ) {
             $this->set_html($source, $from_file);
         }
@@ -311,8 +312,7 @@ class html2text
      *  @access public
      *  @return void
      */
-    function set_html( $source, $from_file = false )
-    {
+    public function set_html( $source, $from_file = false ) {
         $this->html = $source;
 
         if ( $from_file && file_exists($source) ) {
@@ -330,8 +330,7 @@ class html2text
      *  @access public
      *  @return string
      */
-    function get_text()
-    {
+    public function get_text() {
         if ( !$this->_converted ) {
             $this->_convert();
         }
@@ -345,8 +344,7 @@ class html2text
      *  @access public
      *  @return void
      */
-    function print_text()
-    {
+    public function print_text() {
         print $this->get_text();
     }
 
@@ -357,8 +355,7 @@ class html2text
      *  @return void
      *  @see print_text()
      */
-    function p()
-    {
+    public function p() {
         print $this->get_text();
     }
 
@@ -370,8 +367,7 @@ class html2text
      *  @access public
      *  @return void
      */
-    function set_allowed_tags( $allowed_tags = '' )
-    {
+    public function set_allowed_tags( $allowed_tags = '' ) {
         if ( !empty($allowed_tags) ) {
             $this->allowed_tags = $allowed_tags;
         }
@@ -383,8 +379,7 @@ class html2text
      *  @access public
      *  @return void
      */
-    function set_base_url( $url = '' )
-    {
+    public function set_base_url( $url = '' ) {
         if ( empty($url) ) {
         	if ( !empty($_SERVER['HTTP_HOST']) ) {
 	            $this->url = 'http://' . $_SERVER['HTTP_HOST'];
@@ -412,8 +407,7 @@ class html2text
      *  @access private
      *  @return void
      */
-    function _convert()
-    {
+    public function _convert() {
         // Variables used for building the link list
         $this->_link_count = 0;
         $this->_link_list = '';
@@ -460,8 +454,7 @@ class html2text
      *  @access private
      *  @return string
      */
-    function _build_link_list( $link, $display )
-    {
+    public function _build_link_list( $link, $display ) {
 		if ( substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://' ||
              substr($link, 0, 7) == 'mailto:' ) {
             $this->_link_count++;
