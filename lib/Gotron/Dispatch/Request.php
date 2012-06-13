@@ -2,6 +2,8 @@
 
 namespace Gotron\Dispatch;
 
+use Gotron\Cache;
+
 /**
  * Represents a request received
  *
@@ -38,6 +40,13 @@ class Request {
     public $accept_header;
 
     /**
+     * All headers from the request
+     *
+     * @var string
+     */
+    public $headers = array();
+
+    /**
      * The parameters in the request
      *
      * @var array
@@ -70,7 +79,7 @@ class Request {
      *
      * @var string
      */
-    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'content_type', 'accept_header', 'app', 'method');
+    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'content_type', 'accept_header', 'app', 'method', 'headers');
 
     private static $mime_types = array(
         'application/json' => 'json',
@@ -140,6 +149,10 @@ class Request {
      */
     public function simple_content_type() {
         return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : 'html';
+    }
+
+    public function if_none_match() {
+        return array_key_exists('If-None-Match', $this->headers) ? $this->headers['If-None-Match'] : false;
     }
 
 }

@@ -2,12 +2,15 @@
 
 namespace TestApp;
 
-use Gotron\Config;
+use Gotron\Config,
+    Gotron\Cache,
+    Gotron\Dispatch\Request;
 
 class ControllerTest extends UnitTest {
 
     public static function setUpBeforeClass() {
         parent::setUpBeforeClass();
+        Cache::flush();
     }
 
     public function test_call_method_php_no_layout() {
@@ -73,6 +76,30 @@ class ControllerTest extends UnitTest {
 
         $controller->call_method('test_php_layout_set');
         $this->assertEquals($expected_output, $controller->response->body);
+    }
+
+    public function test_etag_caching() {
+        $controller = new SomeController;
+        $controller->params['id'] = 123456;
+        $controller->request = Request::build([]);
+
+        $expected_output = '{"text":"Etag cache was not found"}';
+
+        $controller->call_method('test_etag_caching');
+        $this->assertEquals($expected_output, $controller->response->body);
+        $this->assertEquals(200, $controller->response->status_code);
+        $this->assertNotNull($controller->response->headers['ETag']);
+
+        $etag = $controller->response->headers['ETag'];
+        
+        $controller = new SomeController;
+        $controller->request = Request::build(['headers' => ['If-None-Match' => $etag]]);
+        $controller->params['id'] = 123456;
+        $expected_output = null;
+        
+        $controller->call_method('test_etag_caching');
+        $this->assertEquals($expected_output, $controller->response->body);
+        $this->assertEquals(304, $controller->response->status_code);
     }
 
 }

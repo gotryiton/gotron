@@ -16,7 +16,7 @@ class Controller {
 
     public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false, 'status' => 200);
 
-	protected $dont_render = false;
+    public $headers = array();
 
     public $request = null;
 
@@ -69,7 +69,7 @@ class Controller {
                 $view = call_user_func(__NAMESPACE__ . "\\View\\$view_name::render", $parameters, $layout_path, false, $main_view);
             }
 
-			$this->response = Response::build_from_view($view, $this->options['status'], !$this->dont_render);
+			$this->response = Response::build_from_view($view, $this->options['status'], ['headers' => $this->headers]);
         }
         else {
             throw new Exception("$view has not been defined");
@@ -241,6 +241,39 @@ class Controller {
     protected function render_error($status_code = "500") {
         $this->rendered = true;
         Error::send($status_code, $this->request);
+    }
+
+    /**
+     * Renders an ETag 304
+     *
+     * @return void
+     */
+    protected function valid_etag_response() {
+        $this->rendered = true;
+        $this->response = Response::build(304);
+    }
+
+    /**
+     * Checks if a request's etag cache has expired, sets it if it has
+     *
+     * @param mixed $options_or_record Object, string, or array used to define the cache key
+     * @return bool
+     */
+    public function stale($options_or_record) {
+        if ($key = $this->request->if_none_match()) {
+            if ($cache = Cache::fetch($key)) {
+                $this->valid_etag_response();
+
+                return false;
+            }
+        }
+        else {
+            $this->etag = Cache::md5_key($options_or_record);
+            $this->headers['ETag'] = $this->etag;
+            $cache = Cache::set($this->etag, true);
+        }
+
+        return true;
     }
 
 }
