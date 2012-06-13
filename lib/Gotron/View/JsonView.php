@@ -32,20 +32,8 @@ class JsonView extends AbstractView{
      * @return void
      */
     public function get_headers() {
-        $this->add_header('Cache-Control', 'no-cache, must-revalidate');
-        $this->add_header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
 		return $this->headers;
     }
-
-    /**
-     * Sets the etag for 
-     *
-     * @param string $id 
-     * @return void
-     */
-    public function set_etag($id) {
-        $this->add_header('ETag', $etag);
-	}
 
 }
 
