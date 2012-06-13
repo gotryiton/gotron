@@ -96,9 +96,8 @@ class Cache
 	        return false;
 	        
 	    $key = static::get_namespace() . $key;
-	    
-	    if(empty($expire))
-	        $expire = static::$options['expire'];
+
+        $expire = (!is_null($expire)) ? $expire : static::$options['expire'];
 	    static::$adapter->write($key,$value,$expire);
 	}
 	

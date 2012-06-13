@@ -79,6 +79,13 @@ class SomeController extends Controller {
         $this->render(array('json' => $data));
     }
 
+    public function test_etag_caching() {
+        if ($this->stale("something")) {
+            $data = array("text" => "Etag cache was not found");
+            $this->render(array('json' => $data));
+        }
+    }
+
     protected function before_test() {
         $this->before_test_variable = 999999;
     }
