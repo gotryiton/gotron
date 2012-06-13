@@ -256,10 +256,11 @@ class Controller {
     /**
      * Checks if a request's etag cache has expired, sets it if it has
      *
-     * @param mixed $options_or_record Object, string, or array used to define the cache key
+     * @param mixed $keys Object, string, or array used to define the cache key
+     * @param integer $ttl The time to live, in seconds, for the cache (default is no expiry)
      * @return bool
      */
-    public function stale($options_or_record) {
+    public function stale($keys, $ttl = 0) {
         if ($key = $this->request->if_none_match()) {
             if ($cache = Cache::fetch($key)) {
                 $this->valid_etag_response();
@@ -267,11 +268,10 @@ class Controller {
                 return false;
             }
         }
-        else {
-            $this->etag = Cache::md5_key($options_or_record);
-            $this->headers['ETag'] = $this->etag;
-            $cache = Cache::set($this->etag, true);
-        }
+
+        $this->etag = Cache::md5_key($keys);
+        $this->headers['ETag'] = $this->etag;
+        $cache = Cache::set($this->etag, true, $ttl);
 
         return true;
     }
