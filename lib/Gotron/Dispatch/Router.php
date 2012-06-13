@@ -45,12 +45,7 @@ class Router {
 
 		$path_components = explode('/', $path);
 
-        if (function_exists('getallheaders')) {
-            $headers = getallheaders();
-        }
-        else {
-            $headers = [];
-        }
+        $headers = getallheaders();
 
         if (Config::bool('show_maintenance')){
             $request = Request::build(array(
