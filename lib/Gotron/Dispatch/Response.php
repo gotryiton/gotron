@@ -16,7 +16,7 @@ class Response {
      *
      * @var string
      */
-    public $content_type = "text/html";
+    public $content_type = null;
 
     /**
      * Status code sent for the response
@@ -38,13 +38,6 @@ class Response {
      * @var string
      */
 	public $body = null;
-
-    /**
-     * If the response should actually be rendered
-     *
-     * @var string
-     */
-	protected $render = true;
 
     /**
      * List of HTTP/1.1 status codes and definitions
@@ -98,16 +91,39 @@ class Response {
      *
      * @param View $view
      * @param int $status_code Status code of the response
-     * @param bool $render If the view should be rendered
+     * @param array $options
      * @return Response
      */
-	public static function build_from_view($view, $status_code = 200, $render = true) {
+	public static function build_from_view($view, $status_code = 200, $options = []) {
 		$instance = new self;
 		$instance->headers = $view->get_headers();
 		$instance->content_type = $view->content_type();
+
+        // Add to headers from options
+        if (array_key_exists('headers', $options)) {
+            $instance->headers = array_merge($options['headers']);
+        }
+
 		$instance->body = $view->content;
 		$instance->status_code = $status_code;
-		$instance->render = $render;
+
+		return $instance;
+	}
+
+    /**
+     * Build a Response object
+     *
+     * @param View $view
+     * @param int $status_code Status code of the response
+     * @param bool $render If the view should be rendered
+     * @return Response
+     */
+	public static function build($status_code = 200, $options = []) {
+		$instance = new self;
+		$instance->headers = array_key_exists('headers', $options) ? $options['headers'] : [];
+        $instance->content_type = array_key_exists('content_type', $options) ? $options['content_type'] : null;
+        $instance->body = array_key_exists('body', $options) ? $options['body'] : null;
+		$instance->status_code = $status_code;
 
 		return $instance;
 	}
@@ -119,9 +135,7 @@ class Response {
      */
 	public function send() {
 		$this->write_headers();
-		if ($this->render) {
-			echo $this->body;
-		}
+		echo $this->body;
 	}
 
     /**
@@ -131,7 +145,10 @@ class Response {
      */
 	protected function write_headers() {
 		Header::set("HTTP/1.1 {$this->status_code} " . self::$status_codes[$this->status_code], true, $this->status_code);
-		Header::set("Content-type: {$this->content_type}");
+        if (!is_null($this->content_type)) {
+		    Header::set("Content-type: {$this->content_type}");
+        }
+
 		foreach ($this->headers as $key => $value) {
 			Header::set("{$key}: {$value}");
 		}
