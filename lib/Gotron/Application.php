@@ -9,7 +9,7 @@ class Application extends Singleton {
 
     const VERSION = 1;
 
-	public $config;
+    public $config;
 
     public $version;
 	
@@ -126,7 +126,8 @@ class Application extends Singleton {
         $this->loader->register();
     }
 
-    public function version_by_request($version = self::VERSION) {
+    public function version_by_request($version = SELF::version) {
+
         $root_directory = $this->config->get('root_directory');
 
         $this->loader->addFrameworkClassPaths(array(
