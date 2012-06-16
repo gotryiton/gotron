@@ -126,7 +126,17 @@ class Application extends Singleton {
         $this->loader->register();
     }
 
-    public function version_by_request($version = self::VERSION) {
+    /**
+     * Allows for autoloading paths based on the requested version number
+     * defaults to the version number constant of the application. This
+     * should be overridden in config/application.php
+     *
+     * @param string $version
+     * @return void
+     */
+    public function version_by_request($version = null) {
+        $version = is_null($version) ? static::VERSION : $version;
+
         $root_directory = $this->config->get('root_directory');
 
         $this->loader->addFrameworkClassPaths(array(
