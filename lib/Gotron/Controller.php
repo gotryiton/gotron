@@ -14,7 +14,7 @@ class Controller {
 
     public $parameters = array();
 
-    public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false, 'status' => 200);
+    public $options = array('view' => 'index', 'layout' => 'layout', 'cache' => false, 'status' => 200, 'context' => null);
 
     public $headers = array();
 
@@ -132,7 +132,8 @@ class Controller {
 	 * @return string
 	 */
     protected function standard_view_path() {
-        return realpath(file_join(Config::get('root_directory'), Config::get('view_directory'), $this->controller_name()));
+        $context = is_null($this->options['context']) ? $this->controller_name() : $this->options['context'];
+        return realpath(file_join(Config::get('root_directory'), Config::get('view_directory'), $context));
     }
 
     protected static function get_layout($layout = "layout") {
@@ -230,7 +231,7 @@ class Controller {
      * @return mixed
      */
     protected function respond_to($respond_array) {
-        if ($content_type = $this->request->simple_content_type()) {
+        if ($content_type = $this->request->simple_accept_content_type()) {
             if (array_key_exists($content_type, $respond_array)) {
                 return $respond_array[$content_type]();
             }
