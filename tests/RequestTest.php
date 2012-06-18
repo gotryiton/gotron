@@ -6,37 +6,52 @@ use Gotron\Dispatch\Request;
 
 class RequestTest extends UnitTest {
 
-    public function test_load_content_type_and_version() {
+    public function test_load_content_type_and_version_single_versioned_accept() {
         $request = new Request;
-        $request->accept_header = "application/v3-json";
+        $request->headers = ["Accept" => "application/v3-json"];
         $request->load_content_type_and_version(array());
         $this->assertEquals(3, $request->version);
-        $this->assertEquals("application/json", $request->content_type);
+        $this->assertEquals("application/json", $request->accept_content_type);
+    }
+
+    public function test_load_content_type_and_version_versioned_with_multiple_types() {
+        $request = new Request;
+        $request->headers = ["Accept" => "application/v3-json, text/javascript, */*"];
+        $request->load_content_type_and_version(array());
+        $this->assertEquals(3, $request->version);
+        $this->assertEquals("application/json", $request->accept_content_type);
+    }
+
+    public function test_load_content_type_and_version_no_version_with_multiple_types() {
+        $request = new Request;
+        $request->headers = ["Accept" => "application/json, text/javascript, */*"];
+        $request->load_content_type_and_version(array());
+        $this->assertEquals(4, $request->version);
+        $this->assertEquals("application/json", $request->accept_content_type);
     }
 
     public function test_load_content_type_and_version_no_accept() {
         $request = new Request;
         $request->load_content_type_and_version(array());
         $this->assertEquals(4, $request->version);
-        $this->assertEquals("text/html", $request->content_type);
+        $this->assertEquals("text/html", $request->accept_content_type);
     }
 
-    public function test_load_content_type_and_version_content_type_set() {
+    public function test_load_content_type_and_version_accept_content_type_set() {
         $request = new Request;
-        $request->content_type = "application/json";
+        $request->accept_content_type = "application/json";
         $request->load_content_type_and_version(array());
         $this->assertEquals(4, $request->version);
-        $this->assertEquals("application/json", $request->content_type);
+        $this->assertEquals("application/json", $request->accept_content_type);
     }
 
     public function test_build_request() {
         $request = new Request;
-        $request->accept_header = "application/v5-json";
+        $request->headers = ["Accept" => "application/v5-json"];
         $request->load_content_type_and_version(array());
         $this->assertEquals(5, $request->version);
-        $this->assertEquals("application/json", $request->content_type);
+        $this->assertEquals("application/json", $request->accept_content_type);
     }
-    
 }
 
 ?>

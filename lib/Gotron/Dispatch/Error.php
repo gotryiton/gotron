@@ -15,7 +15,7 @@ class Error {
         $request = Request::build(array(
             "full_url" => $_SERVER['REQUEST_URI'],
             "params" => array('status' => $status),
-            'content_type' => $request->content_type,
+            'accept_content_type' => $request->accept_content_type,
             'accept_header' => $request->accept_header,
             'app' => $request->app
         ));
