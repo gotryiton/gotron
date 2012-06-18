@@ -130,7 +130,9 @@ class Request {
                     break;
                 }
                 else {
-                    $this->accept_content_type = $accept;
+                    if (empty($options['accept_content_type'])) {
+                        $this->accept_content_type = $accept;
+                    }
                 }
             }
         }
@@ -147,7 +149,7 @@ class Request {
      * @return void
      */
     public function load_json_header_body() {
-        if ($this->simple_content_type() == 'json'){
+        if ($this->body_content_type() == 'json'){
             $header_body = json_decode(file_get_contents('php://input'), true);
             if (is_array($header_body)) {
                 foreach ($header_body as $key => $value){
@@ -163,10 +165,33 @@ class Request {
      *
      * @return string
      */
-    public function simple_content_type() {
-        return array_key_exists($this->accept_content_type, static::$mime_types) ? static::$mime_types[$this->accept_content_type] : 'html';
+    public function simple_content_type($type) {
+        return array_key_exists($type, static::$mime_types) ? static::$mime_types[$type] : 'html';
     }
 
+    /**
+     * Simplified content type accepted by the client
+     *
+     * @return string
+     */
+    public function simple_accept_content_type() {
+        return $this->simple_content_type($this->accept_content_type);
+    }
+
+    /**
+     * Gets the simple content type of the request body
+     *
+     * @return mixed
+     */
+    public function body_content_type() {
+        return (array_key_exists("Content-Type", $this->headers)) ? $this->simple_content_type($this->headers["Content-Type"]) : null;
+    }
+
+    /**
+     * Checks for If-None-Match caching key
+     *
+     * @return mixed
+     */
     public function if_none_match() {
         return array_key_exists('If-None-Match', $this->headers) ? $this->headers['If-None-Match'] : false;
     }

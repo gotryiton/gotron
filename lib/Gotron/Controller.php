@@ -231,7 +231,7 @@ class Controller {
      * @return mixed
      */
     protected function respond_to($respond_array) {
-        if ($content_type = $this->request->simple_content_type()) {
+        if ($content_type = $this->request->simple_accept_content_type()) {
             if (array_key_exists($content_type, $respond_array)) {
                 return $respond_array[$content_type]();
             }
