@@ -2,7 +2,8 @@
 
 namespace Gotron\Dispatch;
 
-use Gotron\Cache;
+use Gotron\Cache,
+    Gotron\Logging;
 
 /**
  * Represents a request received
@@ -19,11 +20,18 @@ class Request {
     public $path;
 
     /**
-     * The content_type requested
+     * The content_type of the request body
      *
      * @var string
      */
     public $content_type = null;
+
+    /**
+     * The content_type to be sent in a response
+     *
+     * @var string
+     */
+    public $accept_content_type = null;
 
     /**
      * The version requested for the application
@@ -79,7 +87,7 @@ class Request {
      *
      * @var string
      */
-    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'content_type', 'accept_header', 'app', 'method', 'headers');
+    private static $allowed_options = array('full_url', 'path', 'params', 'files', 'accept_content_type', 'accept_header', 'app', 'method', 'headers');
 
     private static $mime_types = array(
         'application/json' => 'json',
@@ -110,17 +118,27 @@ class Request {
      * @return bool
      */
     public function load_content_type_and_version($options = array()) {
-        if (!is_null($this->accept_header)) {
-            if(preg_match("/v\d\-/", substr($this->accept_header, strpos($this->accept_header, "/") + 1 ), $matches)) {
-                $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
+        if (array_key_exists("Accept", $this->headers)) {
+            $accepts = explode(",", $this->headers["Accept"]);
+            foreach (array_reverse($accepts) as $accept) {
+                // Versioned content_type gets the highest priority, by the original order of string
+                if (preg_match("/v\d\-/", substr($accept, strpos($accept, "/") + 1 ), $matches)) {
+                    $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
+                    if (empty($options['accept_content_type'])) {
+                        $this->accept_content_type = preg_replace("/v\d\-/", "", $accept);
+                    }
+                    break;
+                }
+                else {
+                    if (empty($options['accept_content_type'])) {
+                        $this->accept_content_type = $accept;
+                    }
+                }
             }
-            if (empty($options['content_type'])) {
-                $this->content_type = preg_replace("/v\d\-/", "", $this->accept_header);
-            }            
-            
         }
-        if (is_null($this->content_type))
-            $this->content_type = 'text/html';
+        if (is_null($this->accept_content_type)) {
+            $this->accept_content_type = 'text/html';
+        }
 
         return true;
     }
@@ -130,8 +148,8 @@ class Request {
      *
      * @return void
      */
-    public function load_json_header_body(){
-        if ($this->simple_content_type()=='json'){
+    public function load_json_header_body() {
+        if ($this->body_content_type() == 'json'){
             $header_body = json_decode(file_get_contents('php://input'), true);
             if (is_array($header_body)) {
                 foreach ($header_body as $key => $value){
@@ -147,10 +165,33 @@ class Request {
      *
      * @return string
      */
-    public function simple_content_type() {
-        return array_key_exists($this->content_type, static::$mime_types) ? static::$mime_types[$this->content_type] : 'html';
+    public function simple_content_type($type) {
+        return array_key_exists($type, static::$mime_types) ? static::$mime_types[$type] : 'html';
     }
 
+    /**
+     * Simplified content type accepted by the client
+     *
+     * @return string
+     */
+    public function simple_accept_content_type() {
+        return $this->simple_content_type($this->accept_content_type);
+    }
+
+    /**
+     * Gets the simple content type of the request body
+     *
+     * @return mixed
+     */
+    public function body_content_type() {
+        return (array_key_exists("Content-Type", $this->headers)) ? $this->simple_content_type($this->headers["Content-Type"]) : null;
+    }
+
+    /**
+     * Checks for If-None-Match caching key
+     *
+     * @return mixed
+     */
     public function if_none_match() {
         return array_key_exists('If-None-Match', $this->headers) ? $this->headers['If-None-Match'] : false;
     }

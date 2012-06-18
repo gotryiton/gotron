@@ -51,8 +51,7 @@ class Router {
             $request = Request::build(array(
                 "full_url" => $_SERVER['REQUEST_URI'],
                 "path" => $path,
-                "content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
-                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
                 "headers" => $headers,
                 "app" => $app
             ));
@@ -64,8 +63,7 @@ class Router {
             $request = Request::build(array(
                 "full_url" => $_SERVER['REQUEST_URI'],
                 "path" => $path,
-                "content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
-                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
                 "headers" => $headers,
                 "app" => $app
             ));
@@ -155,8 +153,7 @@ class Router {
                 "params" => $parameters,
                 "files" => $_FILES,
                 "method" => $_SERVER['REQUEST_METHOD'],
-                "content_type" => $content_type,
-                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "accept_content_type" => $content_type,
                 "headers" => $headers,
                 "app" => $app
             ));
@@ -172,8 +169,7 @@ class Router {
                 "params" => array('path' => $path_components),
                 "method" => $_SERVER['REQUEST_METHOD'],
                 "files" => $_FILES,
-                "content_type" => $content_type,
-                "accept_header" => (array_key_exists('HTTP_ACCEPT', $_SERVER)) ? $_SERVER['HTTP_ACCEPT'] : null,
+                "accept_content_type" => $content_type,
                 "headers" => $headers,
                 "app" => $app
             ));
