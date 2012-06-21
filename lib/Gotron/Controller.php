@@ -277,6 +277,20 @@ class Controller {
         return true;
     }
 
+    /**
+     * Sends a redirect to the specified location
+     *
+     * @param string $location
+     * @param integer $code
+     * @return void
+     */
+    public function redirect_to($location, $code = 302) {
+        $this->rendered = true;
+        $this->response = Response::build($code, [
+                'redirect' => $location
+            ]);
+    }
+
 }
 
 ?>

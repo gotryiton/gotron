@@ -88,4 +88,16 @@ function select_tag($id = "", $start, $finish) {
     return $tag;
 }
 
+/**
+ * Checks if the key exists in the params array,
+ * returns value of key or empty string
+ *
+ * @param string $key
+ * @param array $params
+ * @return string
+ */
+function value_for($key, $params) {
+    return (array_key_exists($key, $params)) ? $params[$key] : "";
+}
+
 ?>
