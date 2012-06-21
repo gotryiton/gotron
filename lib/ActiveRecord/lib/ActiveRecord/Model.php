@@ -1937,7 +1937,7 @@ class Model
      *
      * @return string
      */
-    public function get_cache_key()
+    public function cache_key()
     {
         $class_name = strtolower(denamespace(get_called_class()));
         $updated_at = (array_key_exists('updated_at',$this->attributes)) ? "/{$this->updated_at}" : "";

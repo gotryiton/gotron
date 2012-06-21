@@ -262,7 +262,8 @@ class Controller {
      * @return bool
      */
     public function stale($keys, $ttl = 0) {
-        if ($key = $this->request->if_none_match()) {
+		$this->etag = Cache::md5_key($keys);
+        if (($key = $this->request->if_none_match()) && $key == $this->etag) {
             if ($cache = Cache::fetch($key)) {
                 $this->valid_etag_response();
 
@@ -270,7 +271,6 @@ class Controller {
             }
         }
 
-        $this->etag = Cache::md5_key($keys);
         $this->headers['ETag'] = $this->etag;
         $cache = Cache::set($this->etag, true, $ttl);
 

@@ -30,11 +30,11 @@ class Cache extends \ActiveRecord\Cache {
         foreach($key as $piece) {
             if(is_object($piece)) {
                 // check for the property 'cache_key' and the method 'cache_key()'
-                if(property_exists($piece, 'cache_key')) {
-                    $key_pieces[]= $piece->cache_key;
-                }
-                else if(method_exists($piece, 'cache_key')) {
+				if (method_exists($piece, 'cache_key')) {
                     $key_pieces[]= $piece->cache_key();
+                }
+                elseif (property_exists($piece, 'cache_key')) {
+                    $key_pieces[]= $piece->cache_key;
                 }
                 else {
                     // Just so that we can at least get something here

@@ -127,14 +127,14 @@ class ModelTest extends UnitTest {
         $fix = new Fixture(__DIR__ . "/fixtures/");
         $fix->create('book',array('id' => 13,'title' => 'whatever', 'publisher_id' => 22, 'updated_at' => 1234321));
         $book = Book::find(13);
-        $this->assertEquals("book/13/1234321", $book->cache_key);
+        $this->assertEquals("book/13/1234321", $book->cache_key());
     }
 
     public function testCacheKeyWithoutUpdatedAt() {
         $fix = new Fixture(__DIR__ . "/fixtures/");
         $fix->create('agent');
         $agent = Agent::find(1);
-        $this->assertEquals("agent/1", $agent->cache_key);
+        $this->assertEquals("agent/1", $agent->cache_key());
     }
 }
 
