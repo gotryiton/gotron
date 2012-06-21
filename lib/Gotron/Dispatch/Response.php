@@ -40,6 +40,13 @@ class Response {
 	public $body = null;
 
     /**
+     * The location this will be redirected to
+     *
+     * @var string
+     */
+    public $redirect = null;
+
+    /**
      * List of HTTP/1.1 status codes and definitions
      *
      * @var array
@@ -123,6 +130,10 @@ class Response {
 		$instance->headers = array_key_exists('headers', $options) ? $options['headers'] : [];
         $instance->content_type = array_key_exists('content_type', $options) ? $options['content_type'] : null;
         $instance->body = array_key_exists('body', $options) ? $options['body'] : null;
+        if (array_key_exists('redirect', $options)) {
+            $instance->redirect = true;
+            $instance->headers['Location'] = $options['redirect'];
+        }
 		$instance->status_code = $status_code;
 
 		return $instance;
@@ -135,7 +146,9 @@ class Response {
      */
 	public function send() {
 		$this->write_headers();
-		echo $this->body;
+        if (is_null($this->redirect)) {
+		    echo $this->body;
+        }
 	}
 
     /**
@@ -145,8 +158,11 @@ class Response {
      */
 	protected function write_headers() {
 		Header::set("HTTP/1.1 {$this->status_code} " . self::$status_codes[$this->status_code], true, $this->status_code);
-        if (!is_null($this->content_type)) {
-		    Header::set("Content-type: {$this->content_type}");
+
+        if (is_null($this->redirect)) {
+            if (!is_null($this->content_type)) {
+    		    Header::set("Content-type: {$this->content_type}");
+            }
         }
 
 		foreach ($this->headers as $key => $value) {
