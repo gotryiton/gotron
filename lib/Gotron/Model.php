@@ -102,7 +102,7 @@ class Model extends ActiveRecord\Model {
      * @return array
      */
      
-    public static function unique($objects,$attribute,$limit = 10){
+    public static function unique($objects, $attribute = 'id', $limit = null){
         $used_attributes = array();
         $returned_objects = array();
         foreach($objects as $object){
@@ -110,11 +110,12 @@ class Model extends ActiveRecord\Model {
             if(!in_array($value,$used_attributes)){
                 $used_attributes[] = $object->read_attribute($attribute);
                 $returned_objects[] = $object;
-                if(count($returned_objects) == $limit){
+                if(!is_null($limit) && count($returned_objects) == $limit){
                     return $returned_objects;
                 }
             }
         }
+
         return $returned_objects;
     }
     
