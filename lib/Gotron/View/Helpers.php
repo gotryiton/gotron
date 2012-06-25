@@ -8,6 +8,15 @@ use Gotron\Assets,
  * View helper methods included in the global namespace 
  */
 
+function build_attributes($attributes) {
+    return implode(
+                        " ",
+                        array_map(function($key, $value) { return "{$key}=\"{$value}\""; },
+                        array_keys($attributes),
+                        $attributes)
+                    );
+}
+
 /**
  * Creates JS tag inside of a view, does not validate the path exists. Uses the javascript path
  * specified in configuration
@@ -15,8 +24,10 @@ use Gotron\Assets,
  * @param string $name Name of the view, converted to $name.js
  * @return string
  */
-function javascript_tag($name) {
-    return "<script type=\"text/javascript\" src=\"" . Assets::javascript("$name.js") . "\" ></script>\n";
+function javascript_tag($name, $additional_attributes = []) {
+    $attributes = build_attributes($additional_attributes);
+
+    return "<script type=\"text/javascript\" src=\"" . Assets::javascript("$name.js") . "\" $attributes></script>\n";
 }
 
 /**
@@ -27,7 +38,20 @@ function javascript_tag($name) {
  * @return string
  */
 function css_tag($name) {
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Assets::css("$name.css") . "\" />\n";
+    $attributes = build_attributes($additional_attributes = []);
+
+    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Assets::css("$name.css") . "\" $attributes/>\n";
+}
+
+/**
+ * Creates CSS tag inside of a view, does not validate the path exists. Uses the CSS path
+ * specified in configuration
+ *
+ * @param string $name
+ * @return string
+ */
+function meta_tag($attributes = []) {
+    return "<meta " . build_attributes($attributes) . " />\n";
 }
 
 /**
@@ -55,6 +79,15 @@ function css_includes($includes) {
     foreach($includes['css'] as $include) {
         $tags .= css_tag($include);
     }
+    return $tags;
+}
+
+function meta_includes($includes) {
+    $tags = "";
+    foreach ($includes['meta'] as $include) {
+        $tags .= meta_tag($include);
+    }
+
     return $tags;
 }
 
