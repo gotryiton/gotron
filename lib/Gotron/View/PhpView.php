@@ -16,7 +16,7 @@ class PhpView extends AbstractView{
      *
      * @var string
      */
-	public $inject = array('includes' => array('css' => array(), 'js' => array()));
+	public $inject = array('includes' => array('css' => array(), 'js' => array(), 'meta' => array()));
 
     /**
      * Variables that are pulled from the injected view and sent to the layout
