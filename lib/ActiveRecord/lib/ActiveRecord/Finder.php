@@ -79,6 +79,10 @@ class Finder implements ArrayAccess, Iterator, Countable
     
     public function total() {
         return $this->contents['total'];
-    }    
+    }
+
+    public function map($function) {
+       return array_map($function, $this->contents['list']);
+    }
 }
 ?>
