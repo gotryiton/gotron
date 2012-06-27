@@ -215,7 +215,9 @@ class CallBack
 
                     $job = new BeanstalkerJob;
                     $response = $job->enqueue("CallbackDelayedJobQueue", $method, $model, $priority, $delay);
-                    return $response !== false;
+
+                    if ($response === false)
+                        return false;
                 }
 			}
 		}
