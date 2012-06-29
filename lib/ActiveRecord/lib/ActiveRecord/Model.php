@@ -820,8 +820,10 @@ class Model
 		{
 			$column = $table->get_column_by_inflected_name($pk);
 
-			if ($column->auto_increment || $use_sequence)
-				$this->attributes[$pk] = static::connection()->insert_id($table->sequence);
+			if ($column->auto_increment || $use_sequence) {
+                $connection = static::connection();
+				$this->attributes[$pk] = $column->cast($connection->insert_id($table->sequence), $connection);
+            }
 		}
 
 		$this->__new_record = false;
