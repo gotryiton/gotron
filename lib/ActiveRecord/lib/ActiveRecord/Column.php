@@ -18,6 +18,7 @@ class Column
 	const DATETIME	= 4;
 	const DATE		= 5;
 	const TIME		= 6;
+    const BOOLEAN   = 7;
 
 	/**
 	 * Map a type to an column type.
@@ -31,7 +32,6 @@ class Column
 		'time'		=> self::TIME,
 
 		'int'		=> self::INTEGER,
-		'tinyint'	=> self::INTEGER,
 		'smallint'	=> self::INTEGER,
 		'mediumint'	=> self::INTEGER,
 		'bigint'	=> self::INTEGER,
@@ -40,7 +40,9 @@ class Column
 		'double'	=> self::DECIMAL,
 		'numeric'	=> self::DECIMAL,
 		'decimal'	=> self::DECIMAL,
-		'dec'		=> self::DECIMAL);
+		'dec'		=> self::DECIMAL,
+
+        'tinyint'	=> self::BOOLEAN);
 
 	/**
 	 * The true name of this column.
@@ -119,6 +121,7 @@ class Column
 			case self::STRING:	return (string)$value;
 			case self::INTEGER:	return (int)$value;
 			case self::DECIMAL:	return (double)$value;
+            case self::BOOLEAN: return (bool)$value;
 			case self::DATETIME:
 			case self::DATE:
 				if (!$value)
