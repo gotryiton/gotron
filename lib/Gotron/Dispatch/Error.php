@@ -20,7 +20,7 @@ class Error {
             'app' => $request->app
         ));
 
-        Router::perform_controller_action('Error', 'error_page', $request, $request->app);
+        return Router::perform_controller_action('Error', 'error_page', $request, $request->app);
     }
 
     public static function error_401($request) {;

@@ -22,7 +22,13 @@ class JsonView extends AbstractView{
      * @return bool
      */
     public function generate(array $parameters, $injected_view = null) {
-		$this->content = Helper::json_encode($parameters);
+        if (!empty($parameters)) {
+            $this->content = Helper::json_encode($parameters);
+        }
+        else {
+            $this->content = "";
+        }
+
 		return $this;
     }
 
