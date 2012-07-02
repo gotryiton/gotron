@@ -218,17 +218,17 @@ class Router {
                         $exception_type = get_class($e);
                         if (array_key_exists($exception_type, self::$catchable_exceptions)) {
                             $error_status = self::$catchable_exceptions[$exception_type];
-                            static::render_error($error_status, $request);
+                            return static::render_error($error_status, $request);
                         }
                         else {
                             Logging::write($e, "ROUTER");
-                            static::render_error("500", $request);
+                            return static::render_error("500", $request);
                         }
                     }
                 }
             }
             else {
-                static::render_error('500', $request);
+                return static::render_error('500', $request);
             }
         }
 	}
@@ -246,7 +246,7 @@ class Router {
     }
 
     public static function render_error($status, $request) {
-        Error::send($status, $request);
+        return Error::send($status, $request);
     }
 
     /**
