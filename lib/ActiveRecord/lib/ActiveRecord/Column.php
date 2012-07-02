@@ -42,7 +42,10 @@ class Column
 		'decimal'	=> self::DECIMAL,
 		'dec'		=> self::DECIMAL,
 
-        'tinyint'	=> self::BOOLEAN);
+        'tinyint'	=> self::BOOLEAN,
+        'boolean'   => self::BOOLEAN,
+        'bool'      => self::BOOLEAN
+    );
 
 	/**
 	 * The true name of this column.
