@@ -130,7 +130,54 @@ function select_tag($id = "", $start, $finish) {
  * @return string
  */
 function value_for($key, $params) {
-    return (array_key_exists($key, $params)) ? $params[$key] : "";
+    if (is_array($params)) {
+        if (array_key_exists($key, $params)) {
+            return $params[$key];
+        }
+
+        foreach ($params as $param) {
+            if (is_array($param) && array_key_exists($key, $param)) {
+                return $param[$key];
+            }
+            elseif (is_object($param) && isset($param->$key)) {
+                return $param->$key;
+            }
+        }
+    }
+    elseif (is_object($params)) {
+        if (method_exists($params, $key)) {
+            return $params->$key;
+        }
+    }
+
+    return "";
+}
+
+function load_field_name($name, $namespace) {
+    $field_name = $name;
+    if (!is_null($namespace)) {
+        $field_name = "{$namespace}[{$name}]";
+    }
+
+    return $field_name;
+}
+
+function text_field($name, $params = [], $namespace, $additional_attributes = []) {
+    $attributes = build_attributes($additional_attributes);
+    $field_name = load_field_name($name, $namespace);
+
+    return "<input type=\"text\" id=\"$name\" name=\"$field_name\" value=\"" . value_for($name, $params) . "\" $attributes />";
+
+}
+
+function check_box($name, $params = [], $namespace, $additional_attributes = []) {
+    $attributes = build_attributes($additional_attributes);
+    $field_name = load_field_name($name, $namespace);
+
+    $value = value_for($name, $params);
+    $checked = ($value == true || $value == 1) ? " checked=\"true\"" : "";
+
+    return "<input type=\"hidden\" name=\"$field_name\" value=\"0\" />\n <input type=\"checkbox\" id=\"$name\" value=\"1\" name=\"$field_name\"" . $checked . " $attributes />";
 }
 
 ?>
