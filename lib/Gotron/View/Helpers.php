@@ -170,11 +170,19 @@ function text_field($name, $params = [], $namespace, $additional_attributes = []
 
 }
 
-function check_box($name, $params = [], $namespace, $additional_attributes = []) {
+function check_box($name, $params = null, $namespace, $additional_attributes = []) {
     $attributes = build_attributes($additional_attributes);
     $field_name = load_field_name($name, $namespace);
 
-    $value = value_for($name, $params);
+    if (!is_null($params)) {
+        if (is_array($params) || is_object($params)) {
+            $value = value_for($name, $params);
+        }
+        else {
+            $value = $params;
+        }
+    }
+
     $checked = ($value == true || $value == 1) ? " checked=\"true\"" : "";
 
     return "<input type=\"hidden\" name=\"$field_name\" value=\"0\" />\n <input type=\"checkbox\" id=\"$name\" value=\"1\" name=\"$field_name\"" . $checked . " $attributes />";
