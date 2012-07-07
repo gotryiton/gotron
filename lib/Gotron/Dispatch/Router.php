@@ -56,8 +56,7 @@ class Router {
                 "app" => $app
             ));
 
-            static::perform_controller_action("Error", "maintenance", $request, $app);
-            return;
+            return static::perform_controller_action("Error", "maintenance", $request, $app);
         }
         elseif (Config::bool('show_error')){
             $request = Request::build(array(
@@ -68,8 +67,7 @@ class Router {
                 "app" => $app
             ));
 
-            static::perform_controller_action("Error", "error_page", $request, $app);
-            return;
+            return static::perform_controller_action("Error", "error_page", $request, $app);
         }
         
         $parameters = array();
@@ -162,24 +160,19 @@ class Router {
                 return true;
             }
         }
-        if ($path_components[1] != '' && $path_components[1] != null) {
-            $request = Request::build(array(
-                "full_url" => $_SERVER['REQUEST_URI'],
-                "path" => $path,
-                "params" => array('path' => $path_components),
-                "method" => $_SERVER['REQUEST_METHOD'],
-                "files" => $_FILES,
-                "accept_content_type" => $content_type,
-                "headers" => $headers,
-                "app" => $app
-            ));
 
-			if(static::perform_controller_action('Static', 'index', $request, $app)) {
-                return true;
-            }
-        }
-        Error::error_404($request);
-        return false;
+        $request = Request::build(array(
+            "full_url" => $_SERVER['REQUEST_URI'],
+            "path" => $path,
+            "params" => array(),
+            "method" => $_SERVER['REQUEST_METHOD'],
+            "files" => $_FILES,
+            "accept_content_type" => $content_type,
+            "headers" => $headers,
+            "app" => $app
+        ));
+
+        return Error::error_404($request);
 	}
 
 	/**
