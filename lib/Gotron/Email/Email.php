@@ -69,6 +69,8 @@ class Email {
 
     public $view_path = null;
 
+    public $layout = "email";
+
     public function __construct($type, $to, $options = array()) {
 
         $this->type = $type;
@@ -99,6 +101,10 @@ class Email {
             $this->view_path = file_join(Config::get('root_directory'), "/app/views/emails/");
         }
 
+        if (isset($options['layout'])) {
+            $this->layout = $options['layout'];
+        }
+
         $this->subject = (isset($options['subject'])) ? $options['subject'] : null;
     }
     
@@ -107,8 +113,7 @@ class Email {
      *
      */
 
-    public static function get_instance($type, $to, $options = array())
-    {
+    public static function get_instance($type, $to, $options = array()) {
         return new self($type, $to, $options);
     }
     
@@ -118,20 +123,29 @@ class Email {
      * @return void
      * @author 
      */
-    public function create_views()
-    {
-        $email_view = new EmailView($this);
-        $this->html_content = $email_view->html_content();
-        $this->text_content = $email_view->text_content();
-        if($view_subject = $email_view->get_subject())
-            $this->subject = $view_subject;
+    public function create_views() {
+        $view_path = file_join($this->view_path, "{$this->type}.php");
+        $view = EmailView::render($this->data, $view_path, null);
+
+        $this->subject = (!empty($view->subject)) ? $view->subject : $this->subject;
+
+        if ($this->layout) {
+           $view = EmailView::render($this->data, $this->get_layout_path(), null, $view);
+        }
+
+        $this->html_content = $view->content;
+        $this->text_content = $view->text_content();
     }
 
-    public static function create($type, $options)
-    {
+    public static function create($type, $options) {
         $instance = self::get_instance($type, $options['to'], $options);
         $instance->create_views();
+
         return $instance;
+    }
+
+    protected function get_layout_path() {
+        return realpath(file_join(Config::get('root_directory'), Config::get('view_directory'), "layouts", "{$this->layout}.php"));
     }
 
 }
