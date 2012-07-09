@@ -172,9 +172,6 @@ class RouterTest extends UnitTest {
     }
 
     public function test_perform_controller_action() {
-        $json = "{\"test\":123456}";
-        $this->expectOutputString($json);
-
         $request = Request::build(array(
             "full_url" => "http://gotron.com/some/test_route",
             "path" => "/some/test_route",
@@ -182,13 +179,11 @@ class RouterTest extends UnitTest {
             "content_type" => "application/json"
         ));
 
-        Router::perform_controller_action("Some", "test_route", $request, $this->app);
+        $response = Router::perform_controller_action("Some", "test_route", $request, $this->app);
+        $this->assertEquals("{\"test\":123456}", $response->body);
     }
 
     public function test_perform_controller_action_with_params() {
-        $json = "{\"name\":\"someone\"}";
-        $this->expectOutputString($json);
-
         $request = Request::build(array(
             "full_url" => "http://gotron.com/some/test_route",
             "path" => "/some/test_json",
@@ -196,7 +191,8 @@ class RouterTest extends UnitTest {
             "content_type" => "application/json"
         ));
 
-        Router::perform_controller_action("Some", "test_json", $request, $this->app);
+        $response = Router::perform_controller_action("Some", "test_json", $request, $this->app);
+        $this->assertEquals("{\"name\":\"someone\"}", $response->body);
     }
 
     public function test_compile_route() {
