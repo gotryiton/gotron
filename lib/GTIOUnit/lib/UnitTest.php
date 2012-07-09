@@ -5,6 +5,7 @@ namespace GTIOUnit;
 use PHPUnit_Framework_TestCase,
     Pheanstalk,
     Gotron\Header,
+    Gotron\Dispatch\Router,
     PHPUnit_Framework_Constraint_IsTrue,
     __;
 
@@ -89,6 +90,15 @@ class UnitTest extends PHPUnit_Framework_TestCase {
 
     public static function isTrue() {
         return new PHPUnit_Framework_Constraint_IsTrue;
+    }
+
+    public static function application() {
+        return \Gotron\Application::instance();
+    }
+
+    public static function get($path, $params = [], $headers = ['Accept' => 'application/v4-json']) {
+        $app = static::application();
+        return Router::find_route_and_get_response($path, $app, ['params' => $params, 'headers' => $headers]);
     }
 
 }
