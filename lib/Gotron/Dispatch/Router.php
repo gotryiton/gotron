@@ -45,7 +45,7 @@ class Router {
         $options = [
               'headers' => getallheaders(),
               'full_url' => $_SERVER['REQUEST_URI'],
-              'parameters' => $parameters,
+              'params' => $parameters,
               'files' => $_FILES
             ];
 
