@@ -166,7 +166,16 @@ class Request {
      * @return string
      */
     public function simple_content_type($type) {
-        return array_key_exists($type, static::$mime_types) ? static::$mime_types[$type] : 'html';
+        if ( array_key_exists($type, static::$mime_types) ){
+            return static::$mime_types[$type];
+        }
+        elseif ( !is_null($type) ) {
+            foreach (static::$mime_types as $type_string => $mime_type){
+                if (stripos($type, $type_string)!==false)
+                    return $mime_type;
+            }
+        }
+        return 'html';
     }
 
     /**
