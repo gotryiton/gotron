@@ -149,6 +149,7 @@ class Request {
      * @return void
      */
     public function load_json_header_body() {
+        $log = new Logging("test",json_encode($this->headers));
         if ($this->body_content_type() == 'json'){
             $header_body = json_decode(file_get_contents('php://input'), true);
             if (is_array($header_body)) {
@@ -156,6 +157,7 @@ class Request {
                      $this->params[$key] = $value;
                 }    
             }
+
         }
     }
 
@@ -166,7 +168,16 @@ class Request {
      * @return string
      */
     public function simple_content_type($type) {
-        return array_key_exists($type, static::$mime_types) ? static::$mime_types[$type] : 'html';
+        if ( array_key_exists($type, static::$mime_types) ){
+            return static::$mime_types[$type];
+        }
+        elseif ( !is_null($type) ) {
+            foreach (static::$mime_types as $type_string => $mime_type){
+                if (stripos($type, $type_string)!==false)
+                    return $mime_type;
+            }
+        }
+        return 'html';
     }
 
     /**
