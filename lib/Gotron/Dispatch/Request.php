@@ -156,7 +156,6 @@ class Request {
                      $this->params[$key] = $value;
                 }    
             }
-
         }
     }
 
