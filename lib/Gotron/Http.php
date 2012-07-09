@@ -398,6 +398,7 @@ class Http extends Singleton {
                 if (!$this->_silentMode) {
                     throw new Http_Exception("http error: {$status} - {$error}", $status);
                 }
+                return NULL;
         }
         return $out;
     }
