@@ -96,9 +96,28 @@ class UnitTest extends PHPUnit_Framework_TestCase {
         return \Gotron\Application::instance();
     }
 
-    public static function get($path, $params = [], $headers = ['Accept' => 'application/v4-json']) {
+    public static function get($path, $params = [], $override_headers = []) {
+        return static::request($path, 'get', $params, $override_headers);
+    }
+
+    public static function post($path, $params = [], $override_headers = []) {
+        return static::request($path, 'post', $params, $override_headers);
+    }
+
+    public static function request($path, $method, $params, $override_headers) {
         $app = static::application();
-        return Router::find_route_and_get_response($path, $app, ['params' => $params, 'headers' => $headers]);
+
+        $headers = [
+                'Accept' => 'application/v4-json'
+            ];
+
+        foreach ($headers as $key => $option) {
+            if (array_key_exists($key, $override_headers)) {
+                $headers[$key] = $override_headers[$key];
+            }
+        }
+
+        return Router::find_route_and_get_response($path, $app, ['params' => $params, 'headers' => $headers, 'method' => $method]);
     }
 
 }
