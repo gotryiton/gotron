@@ -149,7 +149,6 @@ class Request {
      * @return void
      */
     public function load_json_header_body() {
-        $log = new Logging("test",json_encode($this->headers));
         if ($this->body_content_type() == 'json'){
             $header_body = json_decode(file_get_contents('php://input'), true);
             if (is_array($header_body)) {
