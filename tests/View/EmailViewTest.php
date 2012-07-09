@@ -14,23 +14,23 @@ class EmailViewTest extends UnitTest
     }
 
     public function testHtmlContent() {
-        $email_view = new EmailView($this->email);
-        $this->assertEquals("<div>This is a test email</div>\n<div>Hello</div>", $email_view->html_content());
+        $view = EmailView::render($this->email->data, file_join($this->email->view_path, $this->email->type . ".php"));
+        $this->assertEquals("<div>This is a test email</div>\n<div>Hello</div>", $view->content);
     }
 
     public function testTextContent() {
-        $email_view = new EmailView($this->email);
-        $this->assertEquals("This is a test email Hello", $email_view->text_content());
+        $view = EmailView::render($this->email->data, file_join($this->email->view_path, $this->email->type . ".php"));
+        $this->assertEquals("This is a test email Hello", $view->text_content());
     }
-    
+
     public function testOverridesSubject() {
-        $email_view = new EmailView($this->email);
-        $this->assertEquals($email_view->get_subject(), "Overriding the subject");
+        $view = EmailView::render($this->email->data, file_join($this->email->view_path, $this->email->type . ".php"));
+        $this->assertEquals($view->get_subject(), "Overriding the subject");
     }
     
     public function testDoesntOverrideSubject() {
-        $email_view = new EmailView($this->email2);
-        $this->assertEquals($email_view->get_subject(), false);
+        $view = EmailView::render($this->email2->data, file_join($this->email2->view_path, $this->email2->type . ".php"));
+        $this->assertEquals($view->get_subject(), false);
     }
 }
 
