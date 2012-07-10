@@ -19,26 +19,27 @@ class EmailView extends AbstractView{
 
     protected $data = array();
 
-    public function __construct($email) {
-
-        $this->data['showImage'] = false;
-		$this->data['emailGraphicType'] = 'blank';
-
-        foreach($email->data as $key => $value) {
-            $this->data[$key] = $value;
-        }
-
-        parent::__construct(file_join($email->view_path, $email->type . ".php"), false);
-    }
+    /**
+     * Array of variables that will be injected into a layout view
+     *
+     * @var string
+     */
+	public $inject = [];
 
     /**
      * Generates the view
      *
      * @return string
      */
-    public function generate(array $parameters, $injected_view = null)
-    {
+    public function generate(array $parameters, $injected_view = null) {
         if (is_file($this->view_path)) {
+
+            if ($injected_view instanceof EmailView) {
+                // Pulls the data from the injected_view view into the layout
+                extract($injected_view->inject);
+                $yield = $injected_view->content;
+            }
+
             extract($parameters);
 			ob_start();
 			include $this->view_path;
@@ -52,7 +53,8 @@ class EmailView extends AbstractView{
         else {
             throw new Exception("Cannot find view {$this->view_path}");
         }
-        return $this->content;
+
+        return $this;
     }
 
     /**
@@ -81,36 +83,22 @@ class EmailView extends AbstractView{
 	}
 
     /**
-     * Gets the HTML version of the view
-     *
-     * @return string
-     */
-    public function html_content()
-	{
-	    if(is_null($this->content)) {
-	        return $this->generate($this->data);
-        }
-        else {
-            return $this->content;
-        }
-	}
-
-    /**
      * Gets the text version of the view
      *
      * @return string
      */
     public function text_content(){
-	    if(is_null($this->text_content)) {
-	        if(is_null($this->content)) {
-	            $this->generate($this->data);
-	        }
-	        return $this->get_text();
-	    }
-	    else{
-	        return $this->text_content;
-	    }
-	}
+        if(is_null($this->text_content)) {
+            if(is_null($this->content)) {
+                $this->generate($this->data);
+            }
+
+            return $this->get_text();
+        }
+        else{
+            return $this->text_content;
+        }
+    }
 
     /**
      * Pulls out the text content in the view
