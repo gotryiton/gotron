@@ -9,6 +9,6 @@ namespace ActiveRecord;
  *
  * @package ActiveRecord
  */
-class RelationshipException extends ActiveRecordException {};
+class HasManyThroughAssociationException extends ActiveRecordException {};
 
 ?>
