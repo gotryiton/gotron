@@ -521,6 +521,7 @@ abstract class AbstractRelationship implements InterfaceRelationship
             }
         }
 
+        $used_models = [];
         foreach($records_by_parent as $record)
         {
             $parent = $record['parent'];
