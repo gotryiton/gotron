@@ -1,5 +1,5 @@
 <?php
-include 'helpers/config.php';
+
 use ActiveRecord\DateTime as DateTime;
 
 class DateTimeTest extends SnakeCase_PHPUnit_Framework_TestCase

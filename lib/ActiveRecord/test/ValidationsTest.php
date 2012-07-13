@@ -1,5 +1,4 @@
 <?php
-include 'helpers/config.php';
 
 use ActiveRecord as AR;
 
@@ -28,6 +27,11 @@ class ValidationsTest extends DatabaseTest
 		BookValidations::$validates_presence_of[0] = 'name';
 		BookValidations::$validates_uniqueness_of[0] = 'name';
 	}
+
+    public function tear_down() {
+        BookValidations::$validates_presence_of = [];
+		BookValidations::$validates_uniqueness_of = [];
+    }
 
 	public function test_is_valid_invokes_validations()
 	{

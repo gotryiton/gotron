@@ -1,6 +1,4 @@
 <?php
-include 'helpers/config.php';
-require '../lib/Serialization.php';
 
 use ActiveRecord\DateTime;
 
@@ -93,8 +91,8 @@ class SerializationTest extends DatabaseTest
 	public function test_datetime_values_get_converted_to_strings()
 	{
 		$now = new DateTime();
-		$a = $this->_a(array('only' => 'created_at'),new Author(array('created_at' => $now)));
-		$this->assert_equals($now->format(ActiveRecord\Serialization::$DATETIME_FORMAT),$a['created_at']);
+		$a = $this->_a(array('only' => 'datetime_created_at'),new Author(array('datetime_created_at' => $now)));
+		$this->assert_equals($now->format(ActiveRecord\Serialization::$DATETIME_FORMAT),$a['datetime_created_at']);
 	}
 
 	public function test_to_json()
@@ -149,12 +147,12 @@ class SerializationTest extends DatabaseTest
 		$this->assert_equals($book_attributes, $array);
   }
 
-	public function test_works_with_datetime()
-	{
-		Author::find(1)->update_attribute('created_at',new DateTime());
-		$this->assert_reg_exp('/<updated_at>[0-9]{4}-[0-9]{2}-[0-9]{2}/',Author::find(1)->to_xml());
-		$this->assert_reg_exp('/"updated_at":"[0-9]{4}-[0-9]{2}-[0-9]{2}/',Author::find(1)->to_json());
-	}
+    public function test_works_with_datetime()
+    {
+        Author::find(1)->update_attribute('datetime_created_at', new DateTime());
+        $this->assert_reg_exp('/<datetime_created_at>[0-9]{4}-[0-9]{2}-[0-9]{2}/',Author::find(1)->to_xml());
+        $this->assert_reg_exp('/"datetime_created_at":"[0-9]{4}-[0-9]{2}-[0-9]{2}/',Author::find(1)->to_json());
+    }
 
 	public function test_to_xml_skip_instruct()
 	{

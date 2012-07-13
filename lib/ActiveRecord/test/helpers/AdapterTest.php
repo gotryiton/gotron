@@ -1,4 +1,5 @@
 <?php
+
 use ActiveRecord\Column;
 
 class AdapterTest extends DatabaseTest
@@ -104,9 +105,9 @@ class AdapterTest extends DatabaseTest
 	public function test_date_time_type()
 	{
 		$columns = $this->conn->columns('authors');
-		$this->assert_equals('datetime',$columns['created_at']->raw_type);
-		$this->assert_equals(Column::DATETIME,$columns['created_at']->type);
-		$this->assert_true($columns['created_at']->length > 0);
+		$this->assert_equals('datetime',$columns['datetime_created_at']->raw_type);
+		$this->assert_equals(Column::DATETIME,$columns['datetime_created_at']->type);
+		$this->assert_true($columns['datetime_created_at']->length > 0);
 	}
 
 	public function test_date()
@@ -258,7 +259,7 @@ class AdapterTest extends DatabaseTest
 	public function test_columnsx()
 	{
 		$columns = $this->conn->columns('authors');
-		$names = array('author_id','parent_author_id','name','updated_at','created_at','some_date','some_time','some_text','encrypted_password','mixedCaseField');
+		$names = array('author_id','parent_author_id','name','updated_at','created_at', 'datetime_created_at', 'some_date','some_time','some_text','encrypted_password','mixedCaseField');
 
 		if ($this->conn instanceof ActiveRecord\OciAdapter)
 			$names = array_filter(array_map('strtolower',$names),function($s) { $s !== 'some_time'; });

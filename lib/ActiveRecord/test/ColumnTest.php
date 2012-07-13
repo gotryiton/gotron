@@ -1,5 +1,4 @@
 <?php
-include 'helpers/config.php';
 
 use ActiveRecord\Column;
 use ActiveRecord\DateTime;
@@ -39,10 +38,16 @@ class ColumnTest extends SnakeCase_PHPUnit_Framework_TestCase
 	{
 		$this->assert_mapped_type(Column::INTEGER,'integer');
 		$this->assert_mapped_type(Column::INTEGER,'int');
-		$this->assert_mapped_type(Column::INTEGER,'tinyint');
 		$this->assert_mapped_type(Column::INTEGER,'smallint');
 		$this->assert_mapped_type(Column::INTEGER,'mediumint');
 		$this->assert_mapped_type(Column::INTEGER,'bigint');
+	}
+
+    public function test_map_raw_type_bools()
+	{
+		$this->assert_mapped_type(Column::BOOLEAN,'tinyint');
+		$this->assert_mapped_type(Column::BOOLEAN,'boolean');
+		$this->assert_mapped_type(Column::BOOLEAN,'bool');
 	}
 
 	public function test_map_raw_type_decimals()
