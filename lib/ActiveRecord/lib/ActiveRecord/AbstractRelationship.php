@@ -524,13 +524,21 @@ abstract class AbstractRelationship implements InterfaceRelationship
         foreach($records_by_parent as $record)
         {
             $parent = $record['parent'];
-            if(!empty($record['related'])){
-                foreach($record['related'] as $related)
-                {
-                    $parent->set_relationship_from_eager_load($related, $this->attribute_name);
-                     if($include_belongs_to){
-                         $related->set_relationship_from_eager_load(clone($parent),strtolower(get_class($parent)));
-                     }
+            if(!empty($record['related'])) {
+                foreach($record['related'] as $related) {
+                    $hash = spl_object_hash($related);
+
+                    if (in_array($hash, $used_models)) {
+                        $parent->set_relationship_from_eager_load(clone($related), $this->attribute_name);
+                    }
+                    else {
+                        $parent->set_relationship_from_eager_load($related, $this->attribute_name);
+                        $used_models[] = $hash;
+                    }
+
+                    if($include_belongs_to){
+                        $related->set_relationship_from_eager_load(clone($parent), strtolower(get_class($parent)));
+                    }
                 }
             }
             else{
