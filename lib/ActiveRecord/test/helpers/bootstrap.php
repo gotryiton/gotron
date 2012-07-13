@@ -31,8 +31,8 @@ ActiveRecord\Config::initialize(function($cfg)
 {
 	$cfg->set_model_directory(realpath(__DIR__ . '/../models'));
 	$cfg->set_connections(array(
-		'mysql'  => getenv('PHPAR_MYSQL')  ?: 'mysql://test:test@127.0.0.1/test',
-		'pgsql'  => getenv('PHPAR_PGSQL')  ?: 'pgsql://test:test@127.0.0.1/test',
+		'mysql'  => getenv('PHPAR_MYSQL')  ?: 'mysql://test:test@127.0.0.1/artest',
+		'pgsql'  => getenv('PHPAR_PGSQL')  ?: 'pgsql://test:test@127.0.0.1/artest',
 		'oci'    => getenv('PHPAR_OCI')    ?: 'oci://test:test@127.0.0.1/dev',
 		'sqlite' => getenv('PHPAR_SQLITE') ?: 'sqlite://test.db'));
 
@@ -63,8 +63,8 @@ ActiveRecord\Config::initialize(function($cfg)
 	
 	if ($GLOBALS['show_warnings']  && !isset($GLOBALS['show_warnings_done']))
 	{ 
-		if (!extension_loaded('memcache'))
-			echo "(Cache Tests will be skipped, Memcache not found.)\n";
+		if (!extension_loaded('memcached'))
+			echo "(Cache Tests will be skipped, Memcached not found.)\n";
 	}
 
 	date_default_timezone_set('UTC');

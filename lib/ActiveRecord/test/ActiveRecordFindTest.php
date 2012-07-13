@@ -1,5 +1,4 @@
 <?php
-include 'helpers/config.php';
 
 class ActiveRecordFindTest extends DatabaseTest
 {
@@ -61,7 +60,7 @@ class ActiveRecordFindTest extends DatabaseTest
 	}
 
 	/**
-	 * @expectedException Exception
+	 * @expectedException ActiveRecord\RecordNotFound
 	 */
 	public function test_find_nothing_with_sql_in_string()
 	{
@@ -450,15 +449,16 @@ class ActiveRecordFindTest extends DatabaseTest
 		$this->assert_sql_has('SELECT * FROM authors WHERE author_id=?',Author::table()->last_sql);
 	}
 
-	public function test_find_by_datetime()
-	{
-		$now = new DateTime();
-		$arnow = new ActiveRecord\DateTime();
-		$arnow->setTimestamp($now->getTimestamp());
+    // No More DateTime usage
+    public function test_find_by_datetime()
+    {
+        $now = new DateTime();
+        $arnow = new ActiveRecord\DateTime();
+        $arnow->setTimestamp($now->getTimestamp());
 
-		Author::find(1)->update_attribute('created_at',$now);
-		$this->assert_not_null(Author::find_by_created_at($now));
-		$this->assert_not_null(Author::find_by_created_at($arnow));
-	}
+        Author::find(1)->update_attribute('datetime_created_at',$now);
+        $this->assert_not_null(Author::find_by_datetime_created_at($now));
+        $this->assert_not_null(Author::find_by_datetime_created_at($arnow));
+    }
 };
 ?>

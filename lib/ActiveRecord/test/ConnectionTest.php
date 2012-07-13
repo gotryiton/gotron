@@ -1,7 +1,6 @@
 <?php
-use ActiveRecord\Connection;
 
-include 'helpers/config.php';
+use ActiveRecord\Connection;
 
 // Only use this to test static methods in Connection that are not specific
 // to any database adapter.
