@@ -3,8 +3,9 @@ CREATE TABLE authors(
 	author_id INT NOT NULL PRIMARY KEY,
 	parent_author_id INT,
 	name VARCHAR(25) DEFAULT 'default_name' NOT NULL,
-	updated_at timestamp,
-	created_at timestamp,
+	updated_at INT,
+    created_at INT
+	datetime_created_at timestamp,
 	some_date date,
 	--some_time time,
 	some_text varchar2(100),

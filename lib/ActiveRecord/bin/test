@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+require 'PHPUnit/Autoload.php';
+require dirname(__FILE__) . "/../../GTIOUnit/lib/Command.php";
+require dirname(__FILE__) . "/../../GTIOUnit/lib/TestRunner.php";
+
+GtioTextUICommand::main();

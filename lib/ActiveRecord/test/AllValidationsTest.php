@@ -1,5 +1,4 @@
 <?php
-require_once 'helpers/config.php';
 
 foreach (glob('Validates*Test.php') as $file)
 	require $file;

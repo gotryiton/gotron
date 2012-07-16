@@ -80,6 +80,12 @@ class Model
 	 */
 	public $errors;
 
+    static $auto_load_associations_for_model = array();
+	static $auto_load_associations_for_finder = array();
+	static $auto_include_in_dump = array();
+	static $auto_exclude_in_dump = array();
+	static $finders = array();
+
 	/**
 	 * Contains model values as column_name => value
 	 *
@@ -1213,16 +1219,16 @@ class Model
 
 		if (($rel = $table->get_relationship($name)))
 		{
-			if ($rel->is_poly())
-			{
+			if ($rel->is_poly()) {
 				// if the related model is null and it is a poly then we should have an empty array
 				if (is_null($model))
 					return $this->__relationships[$name] = array();
 				else
 					return $this->__relationships[$name][] = $model;
 			}
-			else
-				return $this->__relationships[$name] = $model;
+			else {
+                return $this->__relationships[$name] = $model;
+            }
 		}
 
 		throw new RelationshipException("Relationship named $name has not been declared for class: {$table->class->getName()}");

@@ -1,5 +1,4 @@
 <?php
-include 'helpers/config.php';
 
 class ActiveRecordTest extends DatabaseTest
 {
@@ -438,7 +437,7 @@ class ActiveRecordTest extends DatabaseTest
 	{
 		$author = new Author();
 		$author->created_at = 'CURRENT_TIMESTAMP';
-		$this->assertNull($author->created_at);
+		$this->assertNull($author->datetime_created_at);
 	}
 
 	public function test_table_name()
@@ -486,15 +485,15 @@ class ActiveRecordTest extends DatabaseTest
 	public function test_assigning_php_datetime_gets_converted_to_ar_datetime()
 	{
 		$author = new Author();
-		$author->created_at = $now = new \DateTime();
-		$this->assert_is_a("ActiveRecord\\DateTime",$author->created_at);
-		$this->assert_datetime_equals($now,$author->created_at);
+		$author->datetime_created_at = $now = new \DateTime();
+		$this->assert_is_a("ActiveRecord\\DateTime", $author->datetime_created_at);
+		$this->assert_datetime_equals($now, $author->datetime_created_at);
 	}
 
 	public function test_assigning_from_mass_assignment_php_datetime_gets_converted_to_ar_datetime()
 	{
-		$author = new Author(array('created_at' => new \DateTime()));
-		$this->assert_is_a("ActiveRecord\\DateTime",$author->created_at);
+		$author = new Author(array('datetime_created_at' => new \DateTime()));
+		$this->assert_is_a("ActiveRecord\\DateTime",$author->datetime_created_at);
 	}
 
 	public function test_get_real_attribute_name()
