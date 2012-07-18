@@ -473,6 +473,12 @@ class ActiveRecordTest extends DatabaseTest
 		$author->save();
 		$this->assert_false($author->attribute_is_dirty('some_date'));
 	}
+
+    public function test_attribute_is_dirty_on_non_ditry_attribute()
+    {
+        $author = new Author();
+        $this->assert_false($author->attribute_is_dirty('some_date'));
+    }
 	
 	public function test_flag_dirty_attribute()
 	{
