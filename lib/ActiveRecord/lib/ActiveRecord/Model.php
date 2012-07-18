@@ -554,7 +554,7 @@ class Model
 	 */
 	public function attribute_is_dirty($attribute)
 	{
-		return $this->__dirty && $this->__dirty[$attribute] && array_key_exists($attribute, $this->attributes);
+		return $this->__dirty && isset($this->__dirty[$attribute]) && $this->__dirty[$attribute] && array_key_exists($attribute, $this->attributes);
 	}
 
 	/**
