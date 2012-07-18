@@ -106,6 +106,7 @@ class Email {
         }
 
         $this->subject = (isset($options['subject'])) ? $options['subject'] : null;
+        $this->subject_prefix = (isset($options['subject_prefix']) && !is_null($options['subject_prefix'])) ? $options['subject_prefix'] : null;
     }
     
     /**
@@ -128,6 +129,10 @@ class Email {
         $view = EmailView::render($this->data, $view_path, null);
 
         $this->subject = (!empty($view->subject)) ? $view->subject : $this->subject;
+
+        if (!is_null($this->subject_prefix)) {
+            $this->subject = "{$this->subject_prefix} {$this->subject}";
+        }
 
         if ($this->layout) {
            $view = EmailView::render($this->data, $this->get_layout_path(), null, $view);
