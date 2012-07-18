@@ -229,7 +229,7 @@ class Model extends ActiveRecord\Model {
 
     protected static function finder_cache_id($name,$conditions,$filters)
     {
-        return get_called_class().$name.md5(serialize($conditions) . serialize($filters));
+        return get_called_class().$name.md5(static::custom_serialize($conditions) . static::custom_serialize($filters));
     }
     
     /**
@@ -355,6 +355,19 @@ class Model extends ActiveRecord\Model {
 	    else
 	        return false;
 	}
+
+    public static function custom_serialize($arr) {
+        foreach ($arr as $key => $value) {
+            if (is_array($value)) {
+                static::custom_serialize($value);
+            }
+            else {
+                $arr[$key] = (string) $value;
+            }
+        }
+        return serialize($arr);
+    }
+
 }
 
 
