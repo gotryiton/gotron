@@ -229,7 +229,9 @@ class Model extends ActiveRecord\Model {
 
     protected static function finder_cache_id($name,$conditions,$filters)
     {
-        return get_called_class().$name.md5(static::custom_serialize($conditions) . static::custom_serialize($filters));
+        $conditions_string = serialize(static::type_cast_values_to_string_recursive($conditions));
+        $filters_string = serialize(static::type_cast_values_to_string_recursive($filters));
+        return get_called_class() . $name . md5($conditions_string . $filters_string);
     }
     
     /**
@@ -356,14 +358,10 @@ class Model extends ActiveRecord\Model {
 	        return false;
 	}
 
-    public static function custom_serialize($arr) {
-        return serialize(static::custom_serialize_helper($arr));
-    }
-
-    public static function custom_serialize_helper($arr) {
+    public static function type_cast_values_to_string_recursive($arr) {
         foreach ($arr as $key => $value) {
             if (is_array($value)) {
-                $arr[$key] = static::custom_serialize_helper($value);
+                $arr[$key] = static::type_cast_values_to_string_recursive($value);
             }
             else {
                 $arr[$key] = (string) $value;
