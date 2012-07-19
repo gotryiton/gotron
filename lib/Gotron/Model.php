@@ -357,15 +357,19 @@ class Model extends ActiveRecord\Model {
 	}
 
     public static function custom_serialize($arr) {
+        return serialize(static::custom_serialize_helper($arr));
+    }
+
+    public static function custom_serialize_helper($arr) {
         foreach ($arr as $key => $value) {
             if (is_array($value)) {
-                static::custom_serialize($value);
+                $arr[$key] = static::custom_serialize_helper($value);
             }
             else {
                 $arr[$key] = (string) $value;
             }
         }
-        return serialize($arr);
+        return $arr;
     }
 
 }
