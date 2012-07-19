@@ -162,7 +162,7 @@ function wrap_strings_in_arrays(&$strings)
 function time() {
     if (defined('TESTING') && TESTING) {
         if (array_key_exists('time_override', $GLOBALS)) {
-            return $GLOBALS['time_override']++;
+            return ++$GLOBALS['time_override'];
         }
         else {
             return $GLOBALS['time_override'] = \time();
