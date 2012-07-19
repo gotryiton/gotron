@@ -3,7 +3,8 @@
 namespace Gotron\Email\Services;
 
 use Gotron\Exception,
-    Gotron\Config;
+    Gotron\Config,
+    Gotron\Logging;
 
 abstract class EmailService {
 
@@ -23,10 +24,15 @@ abstract class EmailService {
         else {
             $instance = self::instance(self::SERVICE);
         }
+        Logging::write("Sending email with service: " . get_class($instance), 'EMAILTESTING');
+
         if (Config::bool('notifications.disabled')) {
+            Logging::write("Not sending email, notifications disabled", 'EMAILTESTING');
+
             return true;
         }
         else {
+            Logging::write("Sending email: " . json_encode(['type' => $email->type, 'from' => $email->from, 'to' => $email->to, 'subject' => $email->subject]), 'EMAILTESTING');
             return $instance->send($email);
         }
     }

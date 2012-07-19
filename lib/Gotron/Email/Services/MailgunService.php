@@ -3,7 +3,8 @@
 namespace Gotron\Email\Services;
 
 use Requests,
-    Gotron\Config;
+    Gotron\Config,
+    Gotron\Logging;
 
 /**
  * Mailgun email service
@@ -16,7 +17,12 @@ class MailgunService extends EmailService {
     const API_BASE = "https://api.mailgun.net/v2";
 
 	public function send($email) {
+        Logging::write("Sending email with mailgun", 'EMAILTESTING');
+
         $response = $this->send_request($email);
+
+        Logging::write("Mailgun response: " . json_encode(['status_code' => $response->status_code, 'body' => $response->body, 'success' => $response->success]), 'EMAILTESTING');
+
         return ($response->success === true);
 	}
 
