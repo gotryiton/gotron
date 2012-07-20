@@ -33,7 +33,7 @@ class Router {
      */
 	public static function route($app) {
 	    $url = explode('?', $_SERVER['REQUEST_URI']);
-		$path = mb_strtolower($url[0]);
+		$path = $url[0];
 
         $parameters = [];
         foreach ($_GET as $key => $value)
@@ -197,6 +197,7 @@ class Router {
      * @return array route
      */
     public static function find_best_route($routes, $path) {
+        $path = mb_strtolower($path);
         $routes = static::compile_routes($routes);
         $path = strlen($path) > 1 ? rtrim($path, "/") : $path;
         foreach ($routes as $route => $route_array) {
