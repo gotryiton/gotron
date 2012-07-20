@@ -41,6 +41,21 @@ class RouterTest extends UnitTest {
         Router::route($this->app);
     }
 
+    public function test_route_with_named_string_parameter() {
+        $_SERVER['REQUEST_URI'] = "/some/test_named_string_param/ABcDe13g";
+        $routes = array(
+            '/' => 'Homepage:index',
+            '/some/[action]/:named' => 'Some',
+            '/some/[action]' => 'Some'
+        );
+
+        TestApplication::define_routes($routes);
+
+        $json = "{\"test\":\"ABcDe13g\"}";
+        $this->expectOutputString($json);
+        Router::route($this->app);
+    }
+
     public function test_route_with_multiple_named_parameters() {
         $_SERVER['REQUEST_URI'] = "/some/test_named_two/654321/100001";
         $routes = array(

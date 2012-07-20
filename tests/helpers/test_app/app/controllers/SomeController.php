@@ -45,6 +45,10 @@ class SomeController extends Controller {
         $this->render(array('json' => array('test' => (int)$this->params['named'])));
     }
 
+    public function test_named_string_param() {
+        $this->render(array('json' => array('test' => $this->params['named'])));
+    }
+
     public function test_named_two() {
         $this->render(array('json' => array('test' => (int)$this->params['named'], 'test_two' => (int)$this->params['named_two'])));
     }
