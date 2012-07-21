@@ -62,6 +62,8 @@ class FinderCacheTest extends UnitTest {
     }
 
     public function testFinderCacheClearing() {
+        Cache::flush();
+
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(4,$books[0]->id);
@@ -82,6 +84,7 @@ class FinderCacheTest extends UnitTest {
         $this->assertEquals(3,count($books));
 
         Book::clear_finder_cache('title_string_in_order',array('title' => 'something'));
+        usleep(1);
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true, 'limit'=>1));
         $this->assertEquals(1,count($books));
@@ -90,10 +93,12 @@ class FinderCacheTest extends UnitTest {
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
         $this->assertEquals(4,count($books));
-        
+
     }
 
      public function testFinderSpecificCacheClearing() {
+        Cache::flush();
+
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(5,$books[0]->id);
@@ -114,7 +119,8 @@ class FinderCacheTest extends UnitTest {
         $this->assertEquals(4,count($books));
 
         Book::clear_specific_finder_cache('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
-
+        usleep(1);
+        
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true, 'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(6,$books[0]->id);
