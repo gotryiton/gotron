@@ -138,36 +138,39 @@ class Model extends ActiveRecord\Model {
             $cache_id = self::finder_cache_id($name,$conditions);
             $found_objects = false;
             if (!$ignore_cache) {
-                if ($cache_grouping = \ActiveRecord\Cache::fetch($cache_id)){
-                    if( ($finder = \ActiveRecord\Cache::fetch($specific_cache_id)) )
+                if ($cache_grouping = \ActiveRecord\Cache::fetch($cache_id))
+                {
+                    if($finder = \ActiveRecord\Cache::fetch($specific_cache_id) )
                     {
-                        $default_options = static::$finders[$name];
-                        if (!array_key_exists('include', $default_options )) {
-                            $default_options['include'] = static::$auto_load_associations_for_finder;  
-                        }
-                        $found_ids = $finder['ids'];
-                        $totals = $finder['totals'];
+                        if ($finder['cache_grouping'] == $cache_grouping) {
+                            $default_options = static::$finders[$name];
+                            if (!array_key_exists('include', $default_options )) {
+                                $default_options['include'] = static::$auto_load_associations_for_finder;  
+                            }
+                            $found_ids = $finder['ids'];
+                            $totals = $finder['totals'];
 
-                        $pk_options = $default_options;
+                            $pk_options = $default_options;
 
-                        $remove_primary_key_options = ['conditions', 'joins', 'order', 'limit', 'offset', 'group', 'sql', 'totals', 'having'];
+                            $remove_primary_key_options = ['conditions', 'joins', 'order', 'limit', 'offset', 'group', 'sql', 'totals', 'having'];
 
-                        foreach ($remove_primary_key_options as $option) {
-                            if(array_key_exists($option, $pk_options))
-                                unset($pk_options[$option]);
-                        }
+                            foreach ($remove_primary_key_options as $option) {
+                                if(array_key_exists($option, $pk_options))
+                                    unset($pk_options[$option]);
+                            }
 
-                        if (!empty($found_ids)) {
-                            $found_objects = static::find_by_pk($found_ids,$pk_options,true);
-                        }
-                        else {
-                            $found_objects = array();
-                        }
+                            if (!empty($found_ids)) {
+                                $found_objects = static::find_by_pk($found_ids,$pk_options,true);
+                            }
+                            else {
+                                $found_objects = array();
+                            }
 
-                        if (!is_array($found_objects))
-                            $found_objects = array($found_objects);
-                        if (!is_null($totals)){
-                            $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
+                            if (!is_array($found_objects))
+                                $found_objects = array($found_objects);
+                            if (!is_null($totals)){
+                                $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
+                            }
                         }
                     }
                 }
@@ -201,11 +204,10 @@ class Model extends ActiveRecord\Model {
                     $totals = $found_objects->total();
                 $cached_array = array('ids' => $object_ids, 'totals' => $totals);
                 if ($cache_ttl>0) {
-                    if (!isset($cache_grouping) || !$cache_grouping)
-                        $cache_grouping = md5(time());
+                    if (!isset($cache_grouping) || $cache_grouping===false)
+                        $cache_grouping = md5(microtime());
                     $cached_array['cache_grouping'] = $cache_grouping;
-                    $cached_array['cache_grouping'] = true;
-                    \ActiveRecord\Cache::set($cache_id, true, $cache_ttl);
+                    \ActiveRecord\Cache::set($cache_id, $cache_grouping, $cache_ttl);
                     \ActiveRecord\Cache::set($specific_cache_id, $cached_array, $cache_ttl);
                 }
             }
@@ -231,7 +233,6 @@ class Model extends ActiveRecord\Model {
         if(array_key_exists($name,static::$finders)){
             $specific_cache_id = self::finder_specific_cache_id($name,$conditions,$filters);
             $cache_id = self::finder_cache_id($name,$conditions);
-            \ActiveRecord\Cache::delete($specific_cache_id);
             return \ActiveRecord\Cache::delete($cache_id);
         }
         else{
