@@ -8,7 +8,7 @@ use ActiveRecord\ConnectionManager,
     Gotron\Config,
     Gotron\Cache;
 
-class ModelTest extends UnitTest {
+class FinderCacheTest extends UnitTest {
 
     public static function setUpBeforeClass() {
         parent::setUpBeforeClass();
