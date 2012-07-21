@@ -62,6 +62,8 @@ class FinderCacheTest extends UnitTest {
     }
 
     public function testFinderCacheClearing() {
+        Cache::flush();
+
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(4,$books[0]->id);
@@ -90,10 +92,12 @@ class FinderCacheTest extends UnitTest {
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
         $this->assertEquals(4,count($books));
-        
+
     }
 
      public function testFinderSpecificCacheClearing() {
+        Cache::flush();
+        
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(5,$books[0]->id);
