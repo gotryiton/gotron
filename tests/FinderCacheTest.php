@@ -96,39 +96,40 @@ class FinderCacheTest extends UnitTest {
 
     }
 
-    //  public function testFinderSpecificCacheClearing() {
-    //     Cache::flush();
+     public function testFinderSpecificCacheClearing() {
+        Cache::flush();
 
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
-    //     $this->assertEquals(1,count($books));
-    //     $this->assertEquals(5,$books[0]->id);
-    //     $this->assertEquals(4,$books->total());
+        $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
+        $this->assertEquals(1,count($books));
+        $this->assertEquals(5,$books[0]->id);
+        $this->assertEquals(4,$books->total());
 
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'));
-    //     $this->assertEquals(4,count($books));
+        $books = Book::finder('title_string_in_order',array('title' => 'something'));
+        $this->assertEquals(4,count($books));
 
-    //     $fix = new Fixture(__DIR__ . "/fixtures/");
-    //     $fix->create('book',array('id' => 6,'title' => 'something'));
+        $fix = new Fixture(__DIR__ . "/fixtures/");
+        $fix->create('book',array('id' => 6,'title' => 'something'));
 
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
-    //     $this->assertEquals(1,count($books));
-    //     $this->assertEquals(5,$books[0]->id);
-    //     $this->assertEquals(4,$books->total());
+        $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
+        $this->assertEquals(1,count($books));
+        $this->assertEquals(5,$books[0]->id);
+        $this->assertEquals(4,$books->total());
 
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'));
-    //     $this->assertEquals(4,count($books));
+        $books = Book::finder('title_string_in_order',array('title' => 'something'));
+        $this->assertEquals(4,count($books));
 
-    //     Book::clear_specific_finder_cache('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
-
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true, 'limit'=>1));
-    //     $this->assertEquals(1,count($books));
-    //     $this->assertEquals(6,$books[0]->id);
-    //     $this->assertEquals(5,$books->total());
-
-    //     $books = Book::finder('title_string_in_order',array('title' => 'something'));
-    //     $this->assertEquals(4,count($books));
+        Book::clear_specific_finder_cache('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
+        usleep(1);
         
-    // }
+        $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true, 'limit'=>1));
+        $this->assertEquals(1,count($books));
+        $this->assertEquals(6,$books[0]->id);
+        $this->assertEquals(5,$books->total());
+
+        $books = Book::finder('title_string_in_order',array('title' => 'something'));
+        $this->assertEquals(4,count($books));
+        
+    }
     
 }
 
