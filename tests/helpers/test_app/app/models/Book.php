@@ -23,7 +23,8 @@ class Book extends Model {
         'cache_test' => array('conditions' => array('id' => array(1,2,3)),'order' => 'id desc'),
         'title_array' => array('conditions' => array('title in (?) AND author = ?',array(),'john')),
         'multiple_ids' => array('conditions' => array('publisher_id = ? AND id != ?',array(),'john')),
-        'multiple_id_array' => array('conditions' => array('publisher_id = ? AND id != ? AND id != ?', 1, 1, 1))
+        'multiple_id_array' => array('conditions' => array('publisher_id = ? AND id != ? AND id != ?', 1, 1, 1)),
+        'title_string_in_order' => array('conditions' => array('title = ?',1), 'order' => 'id desc'),
     );
 
     public function test_after_create() {

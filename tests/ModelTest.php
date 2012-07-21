@@ -136,6 +136,9 @@ class ModelTest extends UnitTest {
         $agent = Agent::find(1);
         $this->assertEquals("agent/1", $agent->cache_key());
     }
+
+
+
 }
 
 ?>
