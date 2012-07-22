@@ -134,41 +134,39 @@ class Model extends ActiveRecord\Model {
      */
     public static function finder($name,$conditions = array(),$filters = array(), $ignore_cache = false){
         if(array_key_exists($name,static::$finders)){
-            $specific_cache_id = self::finder_specific_cache_id($name,$conditions,$filters);
-            $cache_id = self::finder_cache_id($name,$conditions);
             $found_objects = false;
-            if (!$ignore_cache && (\ActiveRecord\Cache::fetch($cache_id)!==false)) {
-                if($finder = \ActiveRecord\Cache::fetch($specific_cache_id))
-                {
-                    $default_options = static::$finders[$name];
-                    if (!array_key_exists('include', $default_options )) {
-                        $default_options['include'] = static::$auto_load_associations_for_finder;  
-                    }
-                    $found_ids = $finder['ids'];
-                    $totals = $finder['totals'];
+            if (!$ignore_cache) {
+			   $specific_cache_id = self::finder_specific_cache_id($name, $conditions, $filters);
+               if($finder = \ActiveRecord\Cache::fetch($specific_cache_id)) {
+                   $default_options = static::$finders[$name];
+                   if (!array_key_exists('include', $default_options )) {
+                       $default_options['include'] = static::$auto_load_associations_for_finder;
+                   }
+                   $found_ids = $finder['ids'];
+                   $totals = $finder['totals'];
 
-                    $pk_options = $default_options;
+                   $pk_options = $default_options;
 
-                    $remove_primary_key_options = ['conditions', 'joins', 'order', 'limit', 'offset', 'group', 'sql', 'totals', 'having'];
+                   $remove_primary_key_options = ['conditions', 'joins', 'order', 'limit', 'offset', 'group', 'sql', 'totals', 'having'];
 
-                    foreach ($remove_primary_key_options as $option) {
-                        if(array_key_exists($option, $pk_options))
-                            unset($pk_options[$option]);
-                    }
+                   foreach ($remove_primary_key_options as $option) {
+                       if(array_key_exists($option, $pk_options))
+                           unset($pk_options[$option]);
+                   }
 
-                    if (!empty($found_ids)) {
-                        $found_objects = static::find_by_pk($found_ids,$pk_options,true);
-                    }
-                    else {
-                        $found_objects = array();
-                    }
+                   if (!empty($found_ids)) {
+                       $found_objects = static::find_by_pk($found_ids,$pk_options,true);
+                   }
+                   else {
+                       $found_objects = array();
+                   }
 
-                    if (!is_array($found_objects))
-                        $found_objects = array($found_objects);
-                    if (!is_null($totals)){
-                        $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
-                    }
-                }
+                   if (!is_array($found_objects))
+                       $found_objects = array($found_objects);
+                   if (!is_null($totals)){
+                       $found_objects = new \ActiveRecord\Finder(array('list' => $found_objects,'total' => $totals));
+                   }
+               }
             }
             if ($found_objects === false){
                 $default_options = static::$finders[$name];
@@ -198,10 +196,13 @@ class Model extends ActiveRecord\Model {
                 if(isset($filters['totals']) && $filters['totals'] == true)
                     $totals = $found_objects->total();
                 $cached_array = array('ids' => $object_ids, 'totals' => $totals);
-                if ($cache_ttl>0) {
-                    \ActiveRecord\Cache::set($cache_id, true, $cache_ttl);
-                    \ActiveRecord\Cache::set($specific_cache_id, $cached_array, $cache_ttl);
-                }
+				if ($cache_ttl > 0) {
+					if (!isset($specific_cache_id)) {
+						$specific_cache_id = self::finder_specific_cache_id($name, $conditions, $filters);
+					}
+
+					\ActiveRecord\Cache::set($specific_cache_id, $cached_array, $cache_ttl);
+				}
             }
             return $found_objects;
 
@@ -223,10 +224,8 @@ class Model extends ActiveRecord\Model {
      */
     public static function clear_finder_cache($name,$conditions = array(),$filters = array()){
         if(array_key_exists($name,static::$finders)){
-            $specific_cache_id = self::finder_specific_cache_id($name,$conditions,$filters);
-            $cache_id = self::finder_cache_id($name,$conditions);
-            \ActiveRecord\Cache::delete($specific_cache_id);
-            return \ActiveRecord\Cache::delete($cache_id);
+            $cache_id = self::finder_cache_id($name, $conditions);
+            return \ActiveRecord\Cache::set($cache_id, md5(microtime()));
         }
         else{
             throw new Exception("Finder '$name' does not exist");
@@ -235,7 +234,7 @@ class Model extends ActiveRecord\Model {
 
     public static function clear_specific_finder_cache($name,$conditions = array(),$filters = array()){
         if(array_key_exists($name,static::$finders)){
-            $specific_cache_id = self::finder_specific_cache_id($name,$conditions,$filters);
+            $specific_cache_id = self::finder_specific_cache_id($name, $conditions, $filters);
             return \ActiveRecord\Cache::delete($specific_cache_id);
         }
         else{
@@ -243,15 +242,21 @@ class Model extends ActiveRecord\Model {
         }
     }
 
-    protected static function finder_specific_cache_id($name,$conditions,$filters)
-    {
+	public static function finder_cache_group($name, $conditions) {
+		$cache_id = static::finder_cache_id($name, $conditions);
+		return \ActiveRecord\Cache::get($cache_id, function() {
+			return md5(microtime());
+		});
+	}
+
+    protected static function finder_specific_cache_id($name, $conditions, $filters) {
+		$group = self::finder_cache_group($name, $conditions);
         $conditions_string = serialize(static::type_cast_values_to_string_recursive($conditions));
         $filters_string = serialize(static::type_cast_values_to_string_recursive($filters));
-        return get_called_class() . $name . md5($conditions_string) . md5($filters_string);
+        return get_called_class() . $name . $group . md5($conditions_string) . md5($filters_string);
     }
 
-    protected static function finder_cache_id($name,$conditions)
-    {
+    protected static function finder_cache_id($name,$conditions) {
         $conditions_string = serialize(static::type_cast_values_to_string_recursive($conditions));
         return get_called_class() . $name . md5($conditions_string);
     }
