@@ -108,7 +108,7 @@ class Response {
 
         // Add to headers from options
         if (array_key_exists('headers', $options)) {
-            $instance->headers = array_merge($options['headers']);
+            $instance->headers = array_merge($instance->headers, $options['headers']);
         }
 
 		$instance->body = $view->content;
