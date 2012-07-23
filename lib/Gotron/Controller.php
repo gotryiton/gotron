@@ -271,7 +271,7 @@ class Controller {
             }
         }
 
-        $this->headers['ETag'] = $this->etag;
+        $this->add_header('ETag', $this->etag);
         $cache = Cache::set($this->etag, true, $ttl);
 
         return true;
@@ -289,6 +289,17 @@ class Controller {
         $this->response = Response::build($code, [
                 'redirect' => $location
             ]);
+    }
+
+    /**
+     * Adds the headers to the headers array
+     *
+     * @param string $key 
+     * @param string $value
+     * @return void
+     */
+    public function add_header($key, $value) {
+        $this->headers[$key] = $value;
     }
 
 }
