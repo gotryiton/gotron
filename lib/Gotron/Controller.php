@@ -291,25 +291,6 @@ class Controller {
             ]);
     }
 
-    /**
-     * Adds the headers to the headers array
-     *
-     * @param string $key 
-     * @param string $value 
-     * @param bool $update Set to true to update existing keys
-     * @return void
-     */
-    public function add_header($key, $value, $update = true) {
-        if ($update) {
-            $this->headers[$key] = $value;
-        }
-        else {
-            if (!array_key_exists($key, $this->headers)) {
-                $this->headers[$key] = $value;
-            }
-        }
-    }
-
 }
 
 ?>
