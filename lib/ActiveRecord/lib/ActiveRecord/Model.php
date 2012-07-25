@@ -1972,5 +1972,115 @@ class Model
         return $return_list;
     }
 
+    /**
+     * Finds by batch
+     *
+     * runs queries in batches limited by batch_size and yields each record to
+     * the callback
+     *
+     * <code>
+	 * YourModel::find_each(function($your_model) {
+	 *    echo $your_model->id
+	 * });
+	 * </code>
+     *
+     * <code>
+	 * YourModel::find_each(['conditions' => 'hidden = ?', false], function($your_model) {
+	 *    echo $your_model->id
+	 * });
+	 * </code>
+	 *
+	 * You can set the batch_size in the options array
+	 * <code>
+	 * YourModel::find_each(['batch_size' => 50, function() {
+     *   echo $your_model->id
+	 * });
+	 *
+     * You cannot use a hash for conditions, this will throw an exception
+	 * YourModel::find_each(['hidden' => false], function() {
+     *   echo $your_model->id
+	 * });
+	 * </code>
+     *
+     * @param string $options finder options to pass to the find method
+     * @param Closure $callback callback to call with the record
+     * @return void
+     */
+    public static function find_each(/* $options, $callback */) {
+        if (func_num_args() <= 0)
+			throw new ActiveRecordException("find_each requires at least one parameter");
+
+		$args = func_get_args();
+
+        switch (count($args)) {
+			case 1:
+                if (is_callable($args[0])) {
+                    $callback = $args[0];
+                    $options = [];
+                }
+                else {
+                    throw new ActiveRecordException("find_each needs a callback function");
+                }
+
+				break;
+
+		 	case 2:
+                if (is_callable($args[1])) {
+                    $callback = $args[1];
+                    $options = $args[0];
+                }
+                else {
+                    throw new ActiveRecordException("find_each needs a callback function");
+                }
+
+                break;
+		}
+
+        $batch_size = array_key_exists('batch_size', $options) ? $options['batch_size'] : 1000;
+        $batch_options = $options;
+        unset($batch_options['batch_size']);
+
+        $key = static::table()->pk[0];
+
+        $batch_options['limit'] = $batch_size;
+        $batch_options['order'] = $key;
+
+        $records = static::all($batch_options);
+
+        $conditions = array_key_exists('conditions', $options) ? $options['conditions'] : [];
+
+        if (!is_hash($conditions)) {
+            if (!empty($conditions) && count($conditions) > 1) {
+                $conditions[0] = $conditions[0] . " AND $key > ?";
+                $conditions[count($conditions)] = 0;
+            }
+            else {
+                $conditions = ["$key > ?", 0];
+            }
+        }
+        else {
+            throw new ActiveRecordException("find_each only works with string conditions");
+        }
+
+        $batch_options['conditions'] = $conditions;
+
+        while (!empty($records)) {
+            $records_size = count($records);
+            $primary_key_offset = array_slice($records, -1, 1)[0]->$key;
+
+            foreach($records as $record) {
+                $callback($record);
+            }
+
+            if ($records_size < $batch_size) {
+                break;
+            }
+
+            $batch_options['conditions'][count($batch_options['conditions']) - 1] = $primary_key_offset;
+
+            $records = static::all($batch_options);
+        }
+    }
+
 };
 ?>
