@@ -460,5 +460,45 @@ class ActiveRecordFindTest extends DatabaseTest
         $this->assert_not_null(Author::find_by_datetime_created_at($now));
         $this->assert_not_null(Author::find_by_datetime_created_at($arnow));
     }
+
+    public function test_find_each() {
+        $venues = [];
+        Venue::find_each(function($venue) use(&$venues) {
+            $venues[]= $venue;
+        });
+
+        $this->assertCount(6, $venues);
+        $this->assert_sql_has('SELECT * FROM venues ORDER BY id LIMIT 1000', Venue::table()->last_sql);
+    }
+
+    public function test_find_each_with_conditions() {
+        $events = [];
+        Event::find_each(['conditions' => ["host_id = ?", 4], 'batch_size' => 2], function($event) use(&$events) {
+            $events[]= $event;
+        });
+
+        $this->assertCount(3, $events);
+        $this->assert_sql_has('SELECT * FROM events WHERE host_id = ? AND id > ? ORDER BY id LIMIT 2', Event::table()->last_sql);
+    }
+
+    public function test_find_each_with_size() {
+        $venues = [];
+        Venue::find_each(['batch_size' => 2], function($venue) use(&$venues) {
+            $venues[]= $venue;
+        });
+
+        $this->assertCount(6, $venues);
+        $this->assert_sql_has('SELECT * FROM venues WHERE id > ? ORDER BY id LIMIT 2', Venue::table()->last_sql);
+    }
+
+    /**
+	 * @expectedException ActiveRecord\ActiveRecordException
+	 */
+    public function test_find_each_with_hash() {
+        $events = [];
+        Event::find_each(['conditions' => ["host_id" => 4], 'batch_size' => 2], function($event) use(&$events) {
+            $events[]= $event;
+        });
+    }
 };
 ?>
