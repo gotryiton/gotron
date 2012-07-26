@@ -74,7 +74,7 @@ class Cache
 		if (!static::$adapter)
 			return $closure();
 
-		if (!($value = static::$adapter->read($key))){
+		if (!($value = static::$adapter->read($key)) && static::$adapter->res_notfound()){
             $expire = (!is_null($ttl)) ? $ttl : static::$options['expire'];
 			static::$adapter->write($key,($value = $closure()), $expire);
 		}

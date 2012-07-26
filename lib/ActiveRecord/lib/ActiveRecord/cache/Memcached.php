@@ -66,5 +66,9 @@ class Memcached
 	{
 		return $this->memcache->getMulti($list,$expire);
 	}
+
+    public function res_notfound() {
+        return $this->memcache->getResultCode() === \Memcached::RES_NOTFOUND;
+    }
 }
 ?>
