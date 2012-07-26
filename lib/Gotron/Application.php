@@ -20,6 +20,7 @@ class Application extends Singleton {
 	 */
 	public static function initialize() {
 		$instance = static::instance();
+        $instance->define_unique_id();
         $instance->autoload_library();
         $instance->autoload_vendors();
 		$config = Config::load_config(static::configuration());
@@ -244,6 +245,10 @@ class Application extends Singleton {
     public static function route() {
         static::initialize();
         Router::route(static::instance());
+    }
+
+    protected function define_unique_id() {
+        $GLOBALS['unique_id'] = md5(uniqid(gethostname(), true));
     }
 
 }
