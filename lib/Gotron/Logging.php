@@ -71,7 +71,8 @@ class Logging {
      */
 	public function lwrite($message, $level = 1){
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
-        $message = "[$script_name] $message";
+        $unique_id = $GLOBALS['unique_id'];
+        $message = "[{$unique_id}] [$script_name] $message";
         if($this->do_log && $level <= $this->log_level) {
             if($this->type == "STDOUT") {
                 echo $message . "\n";
