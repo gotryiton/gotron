@@ -374,7 +374,7 @@ class Model extends ActiveRecord\Model {
 
 
 	public function get_available(){
-		return $this->is_valid() && !$this->is_dirty();
+		return $this->is_valid() && !$this->is_new_record();
 	}
 
 	public static function available($object)
