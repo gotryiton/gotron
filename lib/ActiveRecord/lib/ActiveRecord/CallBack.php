@@ -213,6 +213,8 @@ class CallBack
                     $delay = array_key_exists('delay', $callback) ? $callback['delay'] : 0;
                     $priority = array_key_exists('priority', $callback) ? $callback['priority'] : 1024;
 
+                    $model->reload_relationships();
+
                     $job = new BeanstalkerJob;
                     $response = $job->enqueue("CallbackDelayedJobQueue", $method, $model, $priority, $delay);
 

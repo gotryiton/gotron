@@ -1250,6 +1250,13 @@ class Model
 		return $this;
 	}
 
+    public function reload_relationships()
+    {
+        $this->__relationships = array();
+
+        return $this;
+    }
+
 	public function __clone()
 	{
 		$this->__relationships = array();
