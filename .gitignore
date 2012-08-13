@@ -1,3 +1,4 @@
 .DS_Store
 /Gemfile.lock
 lib/ActiveRecord/test/log/query.log
+tags
