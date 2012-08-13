@@ -175,7 +175,7 @@ class BeanstalkerJob extends Beanstalker {
 				$instance->$method();
 			}
 		}
-		catch(Exception $e) {
+		catch(\Exception $e) {
             //release the job back to the queue
             Logging::write($e, 'beanstalker');
             return $e;
@@ -212,7 +212,7 @@ class BeanstalkerJob extends Beanstalker {
 				}
 			}
 		}
-		catch(Exception $e) {
+		catch(\Exception $e) {
 			return false;
 		}
 		return false;
