@@ -4,7 +4,8 @@ namespace TestApp;
 
 use Gotron\Config,
     Gotron\Cache,
-    Gotron\Dispatch\Request;
+    Gotron\Dispatch\Request,
+    Gotron\Cookie;
 
 class ControllerTest extends UnitTest {
 
@@ -100,6 +101,21 @@ class ControllerTest extends UnitTest {
         $controller->call_method('test_etag_caching');
         $this->assertEquals($expected_output, $controller->response->body);
         $this->assertEquals(304, $controller->response->status_code);
+    }
+
+    public function test_flash_message() {
+        $controller = new SomeController;
+        $controller->request = Request::build([]);
+        $message = "This is my test flash message";
+        $controller->redirect_to("/test/path", ['flash' => $message]);
+
+        $this->assertEquals($message, Cookie::read('flash'));
+
+        $controller = new SomeController;
+        $controller->request = Request::build([]);
+        $controller->call_method("test_route");
+        $this->assertEquals($message, $controller->flash_message);
+        $this->assertNull(Cookie::read('flash'));
     }
 
 }

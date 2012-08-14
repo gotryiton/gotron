@@ -20,6 +20,8 @@ class Controller {
 
     public $request = null;
 
+    public $flash_message = null;
+
     /**
      * Empty filters
      *
@@ -157,6 +159,7 @@ class Controller {
 	 * @return void
 	 */
 	public function call_method($method = 'index') {
+        $this->recover_flash_message_from_cookie();
         $this->before();
 		$this->invoke_filter('before', $method, true);
 		if (is_callable(array($this, $method))) {
@@ -284,11 +287,18 @@ class Controller {
      * @param integer $code
      * @return void
      */
-    public function redirect_to($location, $code = 302) {
-        $this->rendered = true;
-        $this->response = Response::build($code, [
-                'redirect' => $location
-            ]);
+    public function redirect_to($location, $options = []) {
+        if (!$this->rendered) {
+            $code = isset($options['code']) ? $options['code'] : 302;
+            if (array_key_exists('flash', $options)) {
+                $flash = $options['flash'];
+                $this->set_flash_message_in_cookie($options['flash']);
+            }
+            $this->rendered = true;
+            $this->response = Response::build($code, [
+                    'redirect' => $location
+                ]);
+        }
     }
 
     /**
@@ -300,6 +310,23 @@ class Controller {
      */
     public function add_header($key, $value) {
         $this->headers[$key] = $value;
+    }
+
+    /**
+     * Sets a flash message to be passed to the next page
+     *
+     * @param string $message
+     */
+    protected function set_flash_message_in_cookie($message) {
+        Cookie::set('flash', $message);
+    }
+
+    /**
+     * Recovers the flash message from the cookie
+     */
+    protected function recover_flash_message_from_cookie() {
+        $this->flash_message = Cookie::read('flash');
+        Cookie::delete('flash');
     }
 
 }
