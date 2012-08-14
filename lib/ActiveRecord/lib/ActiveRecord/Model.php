@@ -2089,5 +2089,27 @@ class Model
         }
     }
 
+    /*
+     * Set or add a model as a relationship to this model
+     *
+     * @param string $name The name of the relationship to set
+     * @param Model $object The object to set to the named relationship
+     * @param boolean $add If the model should be added to the existing relationship (only for poly relationships)
+     */
+    public function attach_model($name, $object, $add = true) {
+        $rel = static::table()->get_relationship($name);
+        if ($rel->is_poly()) {
+            if ($add && array_key_exists($name, $this->__relationships)) {
+                $this->__relationships[$name][] = $object;
+            }
+            else {
+                $this->__relationships[$name] = [$object];
+            }
+        }
+        else {
+            $this->__relationships[$name] = $object;
+        }
+    }
+
 };
 ?>
