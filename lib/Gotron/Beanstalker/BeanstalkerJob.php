@@ -63,7 +63,14 @@ class BeanstalkerJob extends Beanstalker {
 
 		$this->useTube($queue);
 
-		$response = $this->put($this->getEncodedPayload(), $priority, $delay);
+        try {
+            $response = $this->put($this->getEncodedPayload(), $priority, $delay);
+        }
+        catch (\Exception $e) {
+            Logging::write($e, 'beanstalker');
+            return false;
+        }
+
 		return (!is_null($response)) ? $response : false;
 		
 	}
