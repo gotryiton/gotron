@@ -173,8 +173,8 @@ class Application extends Singleton {
 	 *
 	 * @return void
 	 */
-	public function check_maintenance() {
-		if(file_exists(file_join(Config::get('root_directory'), '../MAINTENANCE'))){
+    public function check_maintenance() {
+		if(file_exists(file_join(Config::get('root_directory'), '../../MAINTENANCE'))){
 			$this->config->set('show_maintenance', true);
 		}
         else {

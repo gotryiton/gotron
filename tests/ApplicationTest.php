@@ -7,7 +7,7 @@ use Gotron\Config;
 class ApplicationTest extends UnitTest {
 
     public function testCheckMaintenance() {
-        $maintenance_file = file_join(Config::get('root_directory'), "../MAINTENANCE");
+        $maintenance_file = file_join(Config::get('root_directory'), "../../MAINTENANCE");
         $this->assertFalse(Config::bool('show_maintenance'));
         touch($maintenance_file);
         $app = TestApplication::instance();
