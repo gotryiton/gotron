@@ -49,29 +49,6 @@ class Router {
               'files' => $_FILES
             ];
 
-        if (Config::bool('show_maintenance')){
-            $request = Request::build(array(
-                "full_url" => $options['full_url'],
-                "path" => $path,
-                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
-                "headers" => $options['headers'],
-                "app" => $app
-            ));
-
-            return static::output_response(static::perform_controller_action("Error", "maintenance", $request, $app));
-        }
-        elseif (Config::bool('show_error')){
-            $request = Request::build(array(
-                "full_url" => $options['full_url'],
-                "path" => $path,
-                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $content_type,
-                "headers" => $options['headers'],
-                "app" => $app
-            ));
-        
-            return static::output_response(static::perform_controller_action("Error", "error_page", $request, $app));
-        }
-
         $response = static::find_route_and_get_response($path, $app, $options);
 
         return self::output_response($response);
@@ -277,9 +254,33 @@ class Router {
         if (preg_match("/\.json/", $path)) {
             $options['accept_content_type'] = "application/json";
             $path = preg_replace("/\.json/", "", $path);
+            $content_type = "application/json";
         }
 
         $path_components = explode('/', $path);
+
+        if (Config::bool('show_maintenance')){
+            $request = Request::build(array(
+                "full_url" => $options['full_url'],
+                "path" => $path,
+                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $options['accept_content_type'],
+                "headers" => $options['headers'],
+                "app" => $app
+            ));
+
+            return static::perform_controller_action("Error", "maintenance", $request, $app);
+        }
+        elseif (Config::bool('show_error')){
+            $request = Request::build(array(
+                "full_url" => $options['full_url'],
+                "path" => $path,
+                "accept_content_type" => (array_search('rest', $path_components) !== false) ? "application/json" : $options['accept_content_type'],
+                "headers" => $options['headers'],
+                "app" => $app
+            ));
+
+            return static::perform_controller_action("Error", "error_page", $request, $app);
+        }
 
         if ($route = static::find_best_route($routes, $path)) {
             $controller = $routes[$route];
