@@ -39,13 +39,20 @@ class MailgunService extends EmailService {
 	}
 
 	public function build_request($email) {
-	    return array(
+                   
+	    $request = array(
                 'from' => $email->from,
                 'to' => $email->to,
     	        'subject' => $email->subject,
     	        'text' => $email->text_content,
     	        'html' => $email->html_content,
 	        );
+
+        if (isset($email->data['email'])){
+            $request['v:email_id'] = $email->data['email']->id;
+            $request['o:tag' ] = $email->data['email']->email_type;
+        }
+        return $request;
 	}
 	
 }
