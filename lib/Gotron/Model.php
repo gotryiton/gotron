@@ -242,6 +242,14 @@ class Model extends ActiveRecord\Model {
         }
     }
 
+    public static function finder_is_cached($name,$conditions = array(),$filters = array()){
+        if(array_key_exists($name,static::$finders)){
+            $specific_cache_id = self::finder_specific_cache_id($name, $conditions, $filters);
+            return (false !== \ActiveRecord\Cache::fetch($specific_cache_id));
+        }
+        return false;
+    }
+
 	public static function finder_cache_group($name, $conditions) {
 		$cache_id = static::finder_cache_id($name, $conditions);
 		return \ActiveRecord\Cache::get($cache_id, function() {
