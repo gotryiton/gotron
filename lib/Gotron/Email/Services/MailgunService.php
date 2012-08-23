@@ -49,7 +49,7 @@ class MailgunService extends EmailService {
 	        );
 
         if (isset($email->data['email'])){
-            $request['v:email_id'] = $email->data['email']->id;
+            $request['h:X-Mailgun-Variables'] = json_encode($email->data['email']->to_array());
             $request['o:tag' ] = $email->data['email']->email_type;
         }
         return $request;
