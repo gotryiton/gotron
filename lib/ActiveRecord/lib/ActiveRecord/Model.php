@@ -4,6 +4,8 @@
  */
 namespace ActiveRecord;
 
+use Gotron\Logging;
+
 /**
  * The base class for your models.
  *
@@ -1187,6 +1189,7 @@ class Model
 				try {
 					$this->$name = $value;
 				} catch (UndefinedPropertyException $e) {
+                    Logging::write("UndefinedProperty $name for " . get_called_class() . " Columns: " . json_encode(array_keys($table->columns)));
 					$exceptions[] = $e->getMessage();
 				}
 			}
