@@ -41,6 +41,13 @@ class Request {
     public $version = 4;
 
     /**
+     * The point version requested for the application
+     *
+     * @var integer
+     */
+    public $point_version = '4';
+
+    /**
      * The accept header from the request
      *
      * @var string
@@ -122,10 +129,11 @@ class Request {
             $accepts = explode(",", $this->headers["Accept"]);
             foreach (array_reverse($accepts) as $accept) {
                 // Versioned content_type gets the highest priority, by the original order of string
-                if (preg_match("/v\d\-/", substr($accept, strpos($accept, "/") + 1 ), $matches)) {
-                    $this->version = (int)str_replace(array("v", "-"), "", $matches[0]);
+                if (preg_match("/(v((\d)(.*))\-)/", substr($accept, strpos($accept, "/") + 1 ), $matches)) {
+                    $this->version = (int)$matches[3];
+                    $this->point_version = $matches[2];
                     if (empty($options['accept_content_type'])) {
-                        $this->accept_content_type = preg_replace("/v\d\-/", "", $accept);
+                        $this->accept_content_type = str_replace($matches[0], "", $accept);
                     }
                     break;
                 }
