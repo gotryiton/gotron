@@ -1941,8 +1941,10 @@ class Model
             if($rel->touch){
                 $attribute = $rel->attribute_name;
                 $model = $this->$attribute;
-                if(!is_null($model))
+                if (!is_null($model)) {
+                    $model->readonly(false);
                     $model->touch();
+                }
             }
         }
     }
