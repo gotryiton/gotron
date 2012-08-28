@@ -46,8 +46,8 @@ class BeanstalkerTests extends UnitTest {
         $result = $job->enqueue($this->queueName, $this->className, array('name' => 'UnitTestName'));
         $this->assertInternalType('integer', $result);
         
-        $unique = $GLOBALS['unique_id'];
-        $this->expectOutputString("[$unique] [test] Worker started...\n[$unique] [test] Performing Job Id: $result\nThis is the output from UnitTestName\n[$unique] [test] Successfully performed Job Id: $result\n[$unique] [test] Worker stopped...\n");
+        $unique = "(\w+)";
+        $this->expectOutputRegex("/\[$unique\]\ \[test\]\ Worker\ started\.\.\.\n\[$unique\]\ \[test\]\ Performing\ Job\ Id\:\ $result\nThis is the output from UnitTestName\n\[$unique\]\ \[test\]\ Successfully\ performed\ Job\ Id\:\ $result\n\[$unique\]\ \[test\]\ Worker\ stopped\.\.\.\n/");
         $worker = new BeanstalkerWorker(array($this->queueName));
         $worker->setLog("STDOUT");
         $worker->work(0);
@@ -88,7 +88,8 @@ class BeanstalkerTests extends UnitTest {
                 "author" => "Some author",
                 "publisher_id" => 1
             ));
-        $unique = $GLOBALS['unique_id'];
+
+        $unique = "(\w+)";
         $this->expectOutputRegex("/\[$unique\] \[test\] Worker started\.\.\.\n\[$unique\] \[test\] Performing Job Id: \d+\n\[$unique\] \[test\] Successfully performed Job Id\: \d+\n\[$unique\] \[test\] Worker stopped\.\.\./");
 
         $worker = new BeanstalkerWorker(array("CallbackDelayedJobQueue"));
