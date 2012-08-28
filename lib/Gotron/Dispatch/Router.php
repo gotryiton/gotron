@@ -88,7 +88,7 @@ class Router {
                     }
                     else {
                         $exception_type = get_class($e);
-                        newrelic_exception($e);
+                        self::newrelic_exception($e);
                         if (array_key_exists($exception_type, self::$catchable_exceptions)) {
                             $error_status = self::$catchable_exceptions[$exception_type];
                             return static::render_error($error_status, $request);
