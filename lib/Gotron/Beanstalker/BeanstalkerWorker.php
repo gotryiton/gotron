@@ -121,21 +121,22 @@ class BeanstalkerWorker extends Beanstalker {
 	 */
 	private function perform(BeanstalkerJob $job) {
         try {
-            $this->log->lwrite("Performing Job Id: " . $job->getJobId());
+            $job_id = $job->getJobId();
+            $this->reset_unique_id($job_id);
+            $this->log->lwrite("Performing Job Id: " . $job_id);
             $result = $job->perform();
             if($result === true) {
-                $this->log->lwrite("Successfully performed Job Id: " . $job->getJobId());
+                $this->log->lwrite("Successfully performed Job Id: " . $job_id);
                 return true;
             }
             else {
-                $this->log->lwrite("Exception: $result");
-                $this->releaseJob($job->getJobId());
                 return false;
             }
         }
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             $this->log->lwrite("Exception: $e");
-            $this->releaseJob($job->getJobId());
+
+            $this->releaseJob($job_id);
             return false;
         }
 
@@ -164,12 +165,12 @@ class BeanstalkerWorker extends Beanstalker {
 	    }
 		return true;
 	}	
+
   /**
    * Fork the child worker
    *
    * @return void
    */
-	
 	private function fork() {
         if(Config::bool('beanstalk.testing')) {
             return 0;
@@ -260,6 +261,10 @@ class BeanstalkerWorker extends Beanstalker {
 	  $this->log->lwrite('SIGCONT Signal Received, unpausing processing');
 	  $this->paused = false;
 	}
+
+    public function reset_unique_id($job_id) {
+        $GLOBALS['unique_id'] = $job_id;
+    }
 	
 }
 ?>
