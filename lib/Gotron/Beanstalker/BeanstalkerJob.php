@@ -176,17 +176,10 @@ class BeanstalkerJob extends Beanstalker {
 	 */
 	public function perform() {
 		$instance = $this->getInstance();
-		try {
-			if($instance) {
-                $method = $this->payload["method"];
-				$instance->$method();
-			}
-		}
-		catch(\Exception $e) {
-            //release the job back to the queue
-            Logging::write($e, 'beanstalker');
-            return $e;
-		}
+        if($instance) {
+            $method = $this->payload["method"];
+            $instance->$method();
+        }
    		if (!(Config::bool('beanstalk.disabled'))) {
             $this->deleteJob();
         }
