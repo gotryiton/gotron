@@ -8,7 +8,7 @@ require __DIR__ . "/../../../../lib/Gotron/bootstrap.php";
 
 class TestApplication extends Application {
 
-    const VERSION = 4;
+    const VERSION = '4.1.1';
 
 	public static function configuration() {
         return function($config){
