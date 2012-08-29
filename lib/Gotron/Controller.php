@@ -241,28 +241,31 @@ class Controller {
                     return $respond_array[$content_type]();
                 }
                 else {
-                    $respond_to_for_type = Version::parse_keys($respond_array[$content_type]);
+                    $respond_to_for_type = [];
+                    foreach ($respond_array[$content_type] as $version => $value) {
+                        $respond_to_for_type[Version::parse_version($version)->to_s()] = $value;
+                    }
 
-                    if (array_key_exists($this->request->version->full, $respond_to_for_type)) {
-                        return $respond_to_for_type[$this->request->version->full]();
+                    if (array_key_exists($this->request->version->to_s(), $respond_to_for_type)) {
+                        return $respond_to_for_type[$this->request->version->to_s()]();
                     }
                     else {
                         $all_versions = $respond_to_for_type;
                         $all_versions_parsed = Version::parse_versions(array_keys($all_versions));
-                        $parsed_request_version = Version::parse_version($this->request->version->full);
+                        $parsed_request_version = Version::parse_version($this->request->version->to_s());
 
                         $versions = array_filter($all_versions_parsed, function($version) use($parsed_request_version) {
-                            return Version::compare_versions($version, $parsed_request_version) >= 0;
+                            return $version->lt_eq($parsed_request_version);
                         });
 
                         $respond_to_for_type = [];
                         foreach ($versions as $version) {
-                            $respond_to_for_type[$version->full] = $all_versions[$version->full];
+                            $respond_to_for_type[$version->to_s()] = $all_versions[$version->to_s()];
                         }
                     }
 
                     $version = Version::find_largest_version(array_keys($respond_to_for_type));
-                    return $respond_to_for_type[$version->full]();
+                    return $respond_to_for_type[$version->to_s()]();
                 }
             }
 		}

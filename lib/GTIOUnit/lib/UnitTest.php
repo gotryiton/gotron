@@ -19,6 +19,11 @@ class UnitTest extends PHPUnit_Framework_TestCase {
         Header::flush();
     }
 
+    public function run(\PHPUnit_Framework_TestResult $result = null) {
+        $this->setPreserveGlobalState(false);
+        return parent::run($result);
+    }
+
     /**
      * Clears a folder of all files
      *

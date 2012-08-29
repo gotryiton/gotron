@@ -3,7 +3,8 @@
 namespace Gotron;
 
 use ActiveRecord,
-    Gotron\Dispatch\Router;
+    Gotron\Dispatch\Router,
+    Gotron\Util\Version;
 
 class Application extends Singleton {
 
@@ -135,14 +136,26 @@ class Application extends Singleton {
      * @param string $version
      * @return void
      */
-    public function version_by_request($version = null) {
-        $version = is_null($version) ? static::VERSION : $version;
+    public function version_by_request($request_version = null) {
+        $request_version = is_null($request_version) ? Version::parse_version(static::VERSION) : $request_version;
 
         $root_directory = $this->config->get('root_directory');
+        $presenter_directory = file_join($this->config->get('root_directory'), "app", "presenters");
+        $directories = glob("{$presenter_directory}/*", GLOB_ONLYDIR);
 
-        $this->loader->addFrameworkClassPaths(array(
-            file_join($root_directory, "app", "presenters", "v{$version}")
-        ), $this->config->get('namespace'));
+        $all_versions = [];
+        foreach ($directories as $directory) {
+            $name = str_replace("v", "", basename($directory));
+            $all_versions[$name] = Version::parse_version($name);
+        }
+
+        $versions = array_filter($all_versions, function($version) use ($request_version) { return $version->lt_eq($request_version); });
+
+        $this->loader->addFrameworkClassPaths(
+            array_map(function($version) use ($presenter_directory) {
+                return file_join($presenter_directory, "v{$version}");
+            }, array_keys($versions))
+        , $this->config->get('namespace'));
     }
 
 	/**

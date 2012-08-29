@@ -165,6 +165,33 @@ class ControllerTest extends UnitTest {
         $controller->call_method('test_respond_to_version');
         $this->assertEquals($expected_output, $controller->response->body);
     }
+
+    public function test_presenter_version_exact() {
+        $app = TestApplication::instance();
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['headers' => ["Accept" => "application/v4-json"]]);
+        $controller->app = $app;
+        $controller->app->version_by_request($controller->request->version);
+
+        $expected_output = "{\"name\":\"4\"}";
+        $controller->call_method('test_respond_to_version_presenter');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
+
+    public function test_presenter_version_greater_than() {
+        $app = TestApplication::instance();
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['headers' => ["Accept" => "application/v4.0.1-json"]]);
+        $controller->app = $app;
+        $controller->app->version_by_request($controller->request->version);
+
+        $expected_output = "{\"name\":\"4\"}";
+        $controller->call_method('test_respond_to_version_presenter');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
+
 }
 
 ?>

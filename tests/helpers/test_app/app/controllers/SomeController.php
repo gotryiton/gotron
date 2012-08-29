@@ -54,6 +54,26 @@ class SomeController extends Controller {
         ]);
     }
 
+    public function test_respond_to_version_presenter() {
+		$data = array("name" => $this->params['name']);
+        $this->respond_to([
+            'html' => function() use($data){
+                $this->render($data, array('view' => 'test', 'layout' => false));
+            },
+            'json' => [
+                '4.0.0' => function() {
+                    $this->render(['json' => VersionPresenter::to_array([])]);
+                },
+                '4.0.1' => function() {
+                    $this->render(['json' => VersionPresenter::to_array([])]);
+                },
+                '3.0.0' => function() {
+                    $this->render(['json' => SomeVersionPresenter::to_array([])]);
+                }
+            ]
+        ]);
+    }
+
     public function test_php_no_layout() {
 		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => false));

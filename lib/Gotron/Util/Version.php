@@ -9,12 +9,103 @@ class Version {
     public $patch;
     public $full;
 
+    /**
+     * Magic method to render this version as a string
+     *
+     * @return string
+     */
+    public function __toString() {
+        return $this->to_s();
+    }
+
+    /*
+     * Render this version as a string
+     *
+     * @return string
+     */
+    public function to_s() {
+        if (isset ($this->full)) {
+            return $this->full;
+        }
+        else {
+            $this->full = "{$this->major}.{$this->minor}.{$this->patch}";
+            return $this->full;
+        }
+    }
+
+    /*
+     * Check if this version is equal to the one passed
+     *
+     * @param Version $version
+     * @return bool
+     */
+    public function eq($version) {
+        return static::compare_versions($this, $version) === 0;
+    }
+
+    /*
+     * Check if this version is greater than the one passed
+     *
+     * @param Version $version
+     * @return bool
+     */
+    public function gt($version) {
+        return static::compare_versions($this, $version) < 0;
+    }
+
+    /*
+     * Check if this version is greater than or equal to the one passed
+     *
+     * @param Version $version
+     * @return bool
+     */
+    public function gt_eq($version) {
+        return static::compare_versions($this, $version) <= 0;
+    }
+
+    /*
+     * Check if this version is less than the one passed
+     *
+     * @param Version $version
+     * @return bool
+     */
+    public function lt($version) {
+        return static::compare_versions($this, $version) > 0;
+    }
+
+    /*
+     * Check if this version is less than or equal to the one passed
+     *
+     * @param Version $version
+     * @return bool
+     */
+    public function lt_eq($version) {
+        return static::compare_versions($this, $version) >= 0;
+    }
+
+    /*
+     * Find the largest version in a list of string keys
+     *
+     * @param array $keys
+     * @return Version
+     */
     public static function find_largest_version($keys) {
         $versions = static::parse_versions($keys);
         usort($versions, 'static::compare_versions');
         return $versions[0];
     }
 
+    /*
+     * Compare two versions, follows requirements for a usort cmp_function
+     *
+     * returns  0 if a and b are equal
+     * returns -1 if a is larger
+     * returns  1 if b is larger
+     *
+     * @param Version $a
+     * @param Version $b
+     * @return int
+     */
     public static function compare_versions($a, $b) {
         switch (true) {
             case ($a->major < $b->major):
@@ -34,17 +125,6 @@ class Version {
         return 0;
     }
 
-
-    public static function parse_keys($versions) {
-        $compiled = [];
-        foreach ($versions as $version => $value) {
-            $version = static::parse_version($version);
-            $compiled[$version->full] = $value;
-        }
-
-        return $compiled;
-    }
-
     public static function parse_versions($versions) {
         $compiled = [];
         foreach ($versions as $version) {
@@ -62,13 +142,8 @@ class Version {
         $instance->major = array_key_exists(0, $version_matches) ? $version_matches[0] : 0;
         $instance->minor = array_key_exists(1, $version_matches) ? $version_matches[1] : 0;
         $instance->patch = array_key_exists(2, $version_matches) ? $version_matches[2] : 0;
-        $instance->full = "{$instance->major}.{$instance->minor}.{$instance->patch}"; 
 
         return $instance;
-    }
-
-    public function __toString() {
-        return $this->full;
     }
 
 }
