@@ -10,8 +10,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/v3-json"];
         $request->load_content_type_and_version(array());
-        $this->assertEquals(3, $request->version);
-        $this->assertEquals('3', $request->point_version);
+        $this->assertEquals("3.0.0", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 
@@ -19,8 +18,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/v3-json, text/javascript, */*"];
         $request->load_content_type_and_version(array());
-        $this->assertEquals(3, $request->version);
-        $this->assertEquals('3', $request->point_version);
+        $this->assertEquals("3.0.0", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 
@@ -28,8 +26,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/v3.1.2-json, text/javascript, */*"];
         $request->load_content_type_and_version(array());
-        $this->assertEquals(3, $request->version);
-        $this->assertEquals('3.1.2', $request->point_version);
+        $this->assertEquals("3.1.2", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 
@@ -37,15 +34,14 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/json, text/javascript, */*"];
         $request->load_content_type_and_version(array());
-        $this->assertEquals(4, $request->version);
-        $this->assertEquals('4', $request->point_version);
+        $this->assertEquals("4.0.0", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 
     public function test_load_content_type_and_version_no_accept() {
         $request = new Request;
         $request->load_content_type_and_version(array());
-        $this->assertEquals(4, $request->version);
+        $this->assertEquals("4.0.0", $request->version);
         $this->assertEquals("text/html", $request->accept_content_type);
     }
 
@@ -53,7 +49,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->accept_content_type = "application/json";
         $request->load_content_type_and_version(array());
-        $this->assertEquals(4, $request->version);
+        $this->assertEquals("4.0.0", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 
@@ -61,8 +57,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/v5.1-json"];
         $request->load_content_type_and_version(array());
-        $this->assertEquals(5, $request->version);
-        $this->assertEquals('5.1', $request->point_version);
+        $this->assertEquals("5.1.0", $request->version);
         $this->assertEquals("application/json", $request->accept_content_type);
     }
 

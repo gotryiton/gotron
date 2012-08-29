@@ -4,7 +4,8 @@ namespace Gotron;
 
 use ReflectionClass,
     Gotron\Dispatch\Error,
-	Gotron\Dispatch\Response;
+    Gotron\Dispatch\Response,
+    Gotron\Util\Version;
 
 class Controller {
 
@@ -236,7 +237,36 @@ class Controller {
     protected function respond_to($respond_array) {
         if ($content_type = $this->request->simple_accept_content_type()) {
             if (array_key_exists($content_type, $respond_array)) {
-                return $respond_array[$content_type]();
+                if (is_callable($respond_array[$content_type])) {
+                    return $respond_array[$content_type]();
+                }
+                else {
+                    $respond_to_for_type = [];
+                    foreach ($respond_array[$content_type] as $version => $value) {
+                        $respond_to_for_type[Version::parse($version)->to_s()] = $value;
+                    }
+
+                    if (array_key_exists($this->request->version->to_s(), $respond_to_for_type)) {
+                        return $respond_to_for_type[$this->request->version->to_s()]();
+                    }
+                    else {
+                        $all_versions = $respond_to_for_type;
+                        $all_versions_parsed = Version::parse_multiple(array_keys($all_versions));
+                        $parsed_request_version = Version::parse($this->request->version->to_s());
+
+                        $versions = array_filter($all_versions_parsed, function($version) use($parsed_request_version) {
+                            return $version->lt_eq($parsed_request_version);
+                        });
+
+                        $respond_to_for_type = [];
+                        foreach ($versions as $version) {
+                            $respond_to_for_type[$version->to_s()] = $all_versions[$version->to_s()];
+                        }
+                    }
+
+                    $version = Version::find_largest_version(array_keys($respond_to_for_type));
+                    return $respond_to_for_type[$version->to_s()]();
+                }
             }
 		}
 		$this->render_error('406');
