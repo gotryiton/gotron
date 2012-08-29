@@ -111,9 +111,10 @@ class UnitTest extends PHPUnit_Framework_TestCase {
 
     public static function request($path, $method, $params, $override_headers) {
         $app = static::application();
+        $version = constant(get_class($app) . "::VERSION");
 
         $headers = [
-                'Accept' => 'application/v4-json'
+                'Accept' => "application/v{$version}-json"
             ];
 
         foreach ($headers as $key => $option) {
