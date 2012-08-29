@@ -118,6 +118,53 @@ class ControllerTest extends UnitTest {
         $this->assertNull(Cookie::read('flash'));
     }
 
+    public function test_respond_to_no_version_in_request_and_respond_to() {
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['accept_content_type' => 'application/json']);
+        $expected_output = "{\"name\":\"somebody\"}";
+
+        $controller->call_method('test_respond_to');
+        $this->assertEquals($expected_output, $controller->response->body);
+
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['accept_content_type' => 'text/html']);
+        $expected_output = "<div>\n    This is a test view created by somebody \n</div>";
+
+        $controller->call_method('test_respond_to');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
+
+    public function test_respond_to_no_version_in_request() {
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['accept_content_type' => 'application/json']);
+        $expected_output = "{\"name\":\"4.0.0\"}";
+
+        $controller->call_method('test_respond_to_version');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
+
+    public function test_respond_to_version_in_request_and_respond_to_exact() {
+        foreach (['4.0.1', '4.0.0', '3.0'] as $version) {
+            $controller = new SomeController;
+            $controller->params['name'] = 'somebody';
+            $controller->request = Request::build(['headers' => ["Accept" => "application/v{$version}-json"]]);
+            $expected_output = "{\"name\":\"{$version}\"}";
+            $controller->call_method('test_respond_to_version');
+            $this->assertEquals($expected_output, $controller->response->body);
+        }
+    }
+
+    public function test_respond_to_version_in_request_and_respond_to_not_exact() {
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['headers' => ["Accept" => "application/v3.0.5-json"]]);
+        $expected_output = "{\"name\":\"3.0\"}";
+        $controller->call_method('test_respond_to_version');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
 }
 
 ?>

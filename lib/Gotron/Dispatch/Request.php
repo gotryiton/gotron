@@ -3,7 +3,8 @@
 namespace Gotron\Dispatch;
 
 use Gotron\Cache,
-    Gotron\Logging;
+    Gotron\Logging,
+    Gotron\Util\Version;
 
 /**
  * Represents a request received
@@ -11,6 +12,8 @@ use Gotron\Cache,
  * @package Gotron
  */
 class Request {
+
+    const DEFAULT_VERSION = "4.0.0";
 
     /**
      * The path requested
@@ -38,14 +41,7 @@ class Request {
      *
      * @var integer
      */
-    public $version = 4;
-
-    /**
-     * The point version requested for the application
-     *
-     * @var integer
-     */
-    public $point_version = '4';
+    public $version = null;
 
     /**
      * The accept header from the request
@@ -130,8 +126,7 @@ class Request {
             foreach (array_reverse($accepts) as $accept) {
                 // Versioned content_type gets the highest priority, by the original order of string
                 if (preg_match("/(v((\d)(.*))\-)/", substr($accept, strpos($accept, "/") + 1 ), $matches)) {
-                    $this->version = (int)$matches[3];
-                    $this->point_version = $matches[2];
+                    $this->version = Version::parse_version($matches[2], true);
                     if (empty($options['accept_content_type'])) {
                         $this->accept_content_type = str_replace($matches[0], "", $accept);
                     }
@@ -146,6 +141,15 @@ class Request {
         }
         if (is_null($this->accept_content_type)) {
             $this->accept_content_type = 'text/html';
+        }
+
+        if (is_null($this->version)) {
+            if (isset($this->app)) {
+                $this->version = Version::parse_version(constant(get_class($this->app) . "::VERSION"));
+            }
+            else {
+                $this->version = Version::parse_version(static::DEFAULT_VERSION);
+            }
         }
 
         return true;

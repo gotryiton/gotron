@@ -22,6 +22,38 @@ class SomeController extends Controller {
         $this->render(array('json' => $data));
     }
 
+    public function test_respond_to() {
+		$data = array("name" => $this->params['name']);
+        $this->respond_to([
+            'html' => function() use($data){
+                $this->render($data, array('view' => 'test', 'layout' => false));
+            },
+            'json' => function() use($data) {
+                $this->render(array('json' => $data));
+            }    
+        ]);
+    }
+
+    public function test_respond_to_version() {
+		$data = array("name" => $this->params['name']);
+        $this->respond_to([
+            'html' => function() use($data){
+                $this->render($data, array('view' => 'test', 'layout' => false));
+            },
+            'json' => [
+                '4.0' => function() {
+                    $this->render(['json' => ['name' => '4.0.0']]);
+                },
+                '4.0.1' => function() {
+                    $this->render(['json' => ['name' => '4.0.1']]);
+                },
+                '3.0.0' => function() {
+                    $this->render(['json' => ['name' => '3.0']]);
+                }
+            ]
+        ]);
+    }
+
     public function test_php_no_layout() {
 		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => false));

@@ -4,7 +4,8 @@ namespace Gotron;
 
 use ReflectionClass,
     Gotron\Dispatch\Error,
-	Gotron\Dispatch\Response;
+    Gotron\Dispatch\Response,
+    Gotron\Util\Version;
 
 class Controller {
 
@@ -236,7 +237,33 @@ class Controller {
     protected function respond_to($respond_array) {
         if ($content_type = $this->request->simple_accept_content_type()) {
             if (array_key_exists($content_type, $respond_array)) {
-                return $respond_array[$content_type]();
+                if (is_callable($respond_array[$content_type])) {
+                    return $respond_array[$content_type]();
+                }
+                else {
+                    $respond_to_for_type = Version::parse_keys($respond_array[$content_type]);
+
+                    if (array_key_exists($this->request->version->full, $respond_to_for_type)) {
+                        return $respond_to_for_type[$this->request->version->full]();
+                    }
+                    else {
+                        $all_versions = $respond_to_for_type;
+                        $all_versions_parsed = Version::parse_versions(array_keys($all_versions));
+                        $parsed_request_version = Version::parse_version($this->request->version->full);
+
+                        $versions = array_filter($all_versions_parsed, function($version) use($parsed_request_version) {
+                            return Version::compare_versions($version, $parsed_request_version) >= 0;
+                        });
+
+                        $respond_to_for_type = [];
+                        foreach ($versions as $version) {
+                            $respond_to_for_type[$version->full] = $all_versions[$version->full];
+                        }
+                    }
+
+                    $version = Version::find_largest_version(array_keys($respond_to_for_type));
+                    return $respond_to_for_type[$version->full]();
+                }
             }
 		}
 		$this->render_error('406');
