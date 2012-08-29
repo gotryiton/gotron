@@ -137,7 +137,7 @@ class Application extends Singleton {
      * @return void
      */
     public function version_by_request($request_version = null) {
-        $request_version = is_null($request_version) ? Version::parse_version(static::VERSION) : $request_version;
+        $request_version = is_null($request_version) ? Version::parse(static::VERSION) : $request_version;
 
         $root_directory = $this->config->get('root_directory');
         $presenter_directory = file_join($this->config->get('root_directory'), "app", "presenters");
@@ -146,7 +146,7 @@ class Application extends Singleton {
         $all_versions = [];
         foreach ($directories as $directory) {
             $name = str_replace("v", "", basename($directory));
-            $all_versions[$name] = Version::parse_version($name);
+            $all_versions[$name] = Version::parse($name);
         }
 
         $versions = array_filter($all_versions, function($version) use ($request_version) { return $version->lt_eq($request_version); });

@@ -90,7 +90,7 @@ class Version {
      * @return Version
      */
     public static function find_largest_version($keys) {
-        $versions = static::parse_versions($keys);
+        $versions = static::parse_multiple($keys);
         usort($versions, 'static::compare_versions');
         return $versions[0];
     }
@@ -125,16 +125,28 @@ class Version {
         return 0;
     }
 
-    public static function parse_versions($versions) {
+    /*
+     * Parse an array of string versions to Version objects
+     *
+     * @param array $versions
+     * @return array
+     */
+    public static function parse_multiple($versions) {
         $compiled = [];
         foreach ($versions as $version) {
-            $compiled[$version] = static::parse_version($version);
+            $compiled[$version] = static::parse($version);
         }
 
         return $compiled;
     }
 
-    public static function parse_version($version) {
+    /*
+     * Parse a string version to a Version object
+     *
+     * @param string $version
+     * @return Version
+     */
+    public static function parse($version) {
         preg_match_all("/(\d+)(\.*)/", $version, $matches);
         $version_matches = $matches[1];
 

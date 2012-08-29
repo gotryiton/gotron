@@ -126,7 +126,7 @@ class Request {
             foreach (array_reverse($accepts) as $accept) {
                 // Versioned content_type gets the highest priority, by the original order of string
                 if (preg_match("/(v((\d)(.*))\-)/", substr($accept, strpos($accept, "/") + 1 ), $matches)) {
-                    $this->version = Version::parse_version($matches[2], true);
+                    $this->version = Version::parse($matches[2], true);
                     if (empty($options['accept_content_type'])) {
                         $this->accept_content_type = str_replace($matches[0], "", $accept);
                     }
@@ -145,10 +145,10 @@ class Request {
 
         if (is_null($this->version)) {
             if (isset($this->app)) {
-                $this->version = Version::parse_version(constant(get_class($this->app) . "::VERSION"));
+                $this->version = Version::parse(constant(get_class($this->app) . "::VERSION"));
             }
             else {
-                $this->version = Version::parse_version(static::DEFAULT_VERSION);
+                $this->version = Version::parse(static::DEFAULT_VERSION);
             }
         }
 

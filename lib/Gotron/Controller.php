@@ -243,7 +243,7 @@ class Controller {
                 else {
                     $respond_to_for_type = [];
                     foreach ($respond_array[$content_type] as $version => $value) {
-                        $respond_to_for_type[Version::parse_version($version)->to_s()] = $value;
+                        $respond_to_for_type[Version::parse($version)->to_s()] = $value;
                     }
 
                     if (array_key_exists($this->request->version->to_s(), $respond_to_for_type)) {
@@ -251,8 +251,8 @@ class Controller {
                     }
                     else {
                         $all_versions = $respond_to_for_type;
-                        $all_versions_parsed = Version::parse_versions(array_keys($all_versions));
-                        $parsed_request_version = Version::parse_version($this->request->version->to_s());
+                        $all_versions_parsed = Version::parse_multiple(array_keys($all_versions));
+                        $parsed_request_version = Version::parse($this->request->version->to_s());
 
                         $versions = array_filter($all_versions_parsed, function($version) use($parsed_request_version) {
                             return $version->lt_eq($parsed_request_version);
