@@ -150,6 +150,7 @@ class Application extends Singleton {
         }
 
         $versions = array_filter($all_versions, function($version) use ($request_version) { return $version->lt_eq($request_version); });
+        uasort($versions, "Gotron\Util\Version::compare_versions");
 
         $this->loader->addFrameworkClassPaths(
             array_map(function($version) use ($presenter_directory) {

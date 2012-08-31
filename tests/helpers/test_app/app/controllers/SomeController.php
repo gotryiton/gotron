@@ -74,6 +74,18 @@ class SomeController extends Controller {
         ]);
     }
 
+    public function test_respond_to_version_multi_presenter() {
+		$data = array("name" => $this->params['name']);
+        $this->respond_to([
+            'html' => function() use($data){
+                $this->render($data, array('view' => 'test', 'layout' => false));
+            },
+            'json' => function() {
+                $this->render(['json' => MultiVersionPresenter::to_array([])]);
+            }
+        ]);
+    }
+
     public function test_php_no_layout() {
 		$data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => false));
