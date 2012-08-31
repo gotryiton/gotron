@@ -118,6 +118,19 @@ class ControllerTest extends UnitTest {
         $this->assertNull(Cookie::read('flash'));
     }
 
+    public function test_presenter_version_multiple_files() {
+        $app = TestApplication::instance();
+        $controller = new SomeController;
+        $controller->params['name'] = 'somebody';
+        $controller->request = Request::build(['headers' => ["Accept" => "application/v4.0.1-json"]]);
+        $controller->app = $app;
+        $controller->app->version_by_request($controller->request->version);
+
+        $expected_output = "{\"name\":\"multi_4.0.1\"}";
+        $controller->call_method('test_respond_to_version_multi_presenter');
+        $this->assertEquals($expected_output, $controller->response->body);
+    }
+
     public function test_respond_to_no_version_in_request_and_respond_to() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
