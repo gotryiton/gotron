@@ -5,25 +5,28 @@ namespace Gotron;
 class Assets {
 
     public static function javascript($object) {
-        return static::get_filename($object, 'js');
+        return static::get_filename($object, 'js', 'js');
     }
 
     public static function css($object) {
-        return static::get_filename($object, 'css');
+        return static::get_filename($object, 'css', 'css');
     }
 
     public static function image($object) {
-        $file_info = pathinfo($object);
-        $filename = $file_info['filename'];
-        if (array_key_exists('dirname', $file_info)) {
-            $filename = file_join($file_info['dirname'], $filename);
-        }
-
-        return static::get_filename($filename, $file_info['extension'], 'images');
+        return static::get_filename($object, 'images');
     }
 
-    public static function get_filename($object, $extension, $prefix = null) {
-        $prefix = is_null($prefix) ? $extension : $prefix;
+    public static function get_filename($object, $prefix, $extension = null) {
+        $file_info = pathinfo($object);
+        $object = $file_info['filename'];
+        if (array_key_exists('dirname', $file_info) && $file_info['dirname'] !== ".") {
+            $object = file_join($file_info['dirname'], $object);
+        }
+
+        if (is_null($extension)) {
+            $extension = $file_info['extension'];
+        }
+
         if($path = Config::get("assets.{$prefix}_location", true)) {
             if (Config::get('assets.hashed', true)) {
                 $object = static::hash_object($object, $extension, $prefix);
