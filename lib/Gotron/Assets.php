@@ -14,7 +14,12 @@ class Assets {
 
     public static function image($object) {
         $file_info = pathinfo($object);
-        return static::get_filename($file_info['filename'], $file_info['extension'], 'images');
+        $filename = $file_info['filename'];
+        if (array_key_exists('dirname', $file_info)) {
+            $filename = file_join($file_info['dirname'], $filename);
+        }
+
+        return static::get_filename($filename, $file_info['extension'], 'images');
     }
 
     public static function get_filename($object, $extension, $prefix = null) {
