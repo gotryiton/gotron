@@ -11,6 +11,7 @@ class HelperTest extends UnitTest {
         $config = Config::instance();
         $config->set('assets.js_location', '/test/assets/directory/javascripts');
         $config->set('assets.css_location', '/test/assets/directory/css');
+        $config->set('assets.images_location', '/test/assets/directory/images');
     }
 
     public function test_javascript_tag() {
@@ -31,6 +32,10 @@ class HelperTest extends UnitTest {
         $includes = array('test_css', 'test_css_two');
         $equals = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/test/assets/directory/css/test_css.css\" />\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/test/assets/directory/css/test_css_two.css\" />\n";
         $this->assertEquals($equals, css_includes(array('css' => $includes)));
+    }
+
+    public function test_img_tag() {
+        $this->assertEquals("<img src=\"/test/assets/directory/images/an_image.jpg\" />\n", img_tag('an_image.jpg'));
     }
 
 }

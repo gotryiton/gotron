@@ -27,7 +27,7 @@ function build_attributes($attributes) {
 function javascript_tag($name, $additional_attributes = []) {
     $attributes = build_attributes($additional_attributes);
 
-    return "<script type=\"text/javascript\" src=\"" . Assets::javascript("$name.js") . "\" $attributes></script>\n";
+    return "<script type=\"text/javascript\" src=\"" . Assets::javascript($name) . "\" $attributes></script>\n";
 }
 
 /**
@@ -37,10 +37,23 @@ function javascript_tag($name, $additional_attributes = []) {
  * @param string $name
  * @return string
  */
-function css_tag($name) {
-    $attributes = build_attributes($additional_attributes = []);
+function css_tag($name, $additional_attributes = []) {
+    $attributes = build_attributes($additional_attributes);
 
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Assets::css("$name.css") . "\" $attributes/>\n";
+    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . Assets::css($name) . "\" $attributes/>\n";
+}
+
+/**
+ * Creates img tag inside of a view, does not validate the path exists. Uses the images path
+ * specified in configuration
+ *
+ * @param string $name Filename of the image
+ * @return string
+ */
+function img_tag($filename, $additional_attributes = []) {
+    $attributes = build_attributes($additional_attributes);
+
+    return "<img src=\"" . Assets::image($filename) . "\" $attributes/>\n";
 }
 
 /**
