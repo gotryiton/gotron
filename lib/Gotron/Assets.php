@@ -18,13 +18,14 @@ class Assets {
 
     public static function get_filename($object, $prefix, $extension = null) {
         $file_info = pathinfo($object);
-        $object = $file_info['filename'];
-        if (array_key_exists('dirname', $file_info) && $file_info['dirname'] !== ".") {
-            $object = file_join($file_info['dirname'], $object);
-        }
 
         if (is_null($extension)) {
             $extension = $file_info['extension'];
+            $object = $file_info['filename'];
+        }
+
+        if (array_key_exists('dirname', $file_info) && $file_info['dirname'] !== ".") {
+            $object = file_join($file_info['dirname'], $object);
         }
 
         if($path = Config::get("assets.{$prefix}_location", true)) {
