@@ -57,6 +57,10 @@ class Fixture extends UnitDB {
                 if (!is_string($k)) {
                     unset($attributes[$k]);
                 }
+
+                if (preg_match("/\@unique\@/", $v) !== 0) {
+                    $attributes[$k] = str_replace("@unique@", uniqid(), $v);
+                }
             }
 
             //iterate through the attributes to check if the column exists
