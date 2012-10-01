@@ -74,7 +74,13 @@ class Fixture extends UnitDB {
             //get the column names and values for the query
             $column_names = __($attributes)->map(function($value, $column) { return $column; });
             $parameter_names = __($attributes)->map(function($value, $column) { return ":" . $column; });
-           
+
+            foreach ($attributes as $key => $value) {
+                if (preg_match("/\@unique_id\@/", $value) !== 0) {
+                    $attributes[$key] = str_replace("@unique_id@", uniqid(), $value);
+                }
+            }
+
             $query = "INSERT INTO $table_name (" . implode(",", $column_names) . ") VALUES (" . implode(",", $parameter_names) . ") ";
 
             $this->run_query($query, false, $attributes);
