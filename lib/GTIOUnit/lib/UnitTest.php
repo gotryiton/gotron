@@ -96,11 +96,13 @@ class UnitTest extends PHPUnit_Framework_TestCase {
         return \Gotron\Application::instance();
     }
 
-    public static function get($path, $params = [], $override_headers = []) {
+    public static function get($url, $params = [], $override_headers = []) {
+        $path = parse_url($url)['path'];
         return static::request($path, 'get', $params, $override_headers);
     }
 
-    public static function post($path, $params = [], $override_headers = []) {
+    public static function post($url, $params = [], $override_headers = []) {
+        $path = parse_url($url)['path'];
         return static::request($path, 'post', $params, $override_headers);
     }
 
