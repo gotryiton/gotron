@@ -2053,9 +2053,10 @@ class Model
         unset($batch_options['batch_size']);
 
         $key = static::table()->pk[0];
+        $sql_key = static::table()->table . "." . $key;
 
         $batch_options['limit'] = $batch_size;
-        $batch_options['order'] = $key;
+        $batch_options['order'] = $sql_key;
 
         $records = static::all($batch_options);
 
@@ -2063,11 +2064,11 @@ class Model
 
         if (!is_hash($conditions)) {
             if (!empty($conditions) && count($conditions) > 1) {
-                $conditions[0] = $conditions[0] . " AND $key > ?";
+                $conditions[0] = $conditions[0] . " AND $sql_key > ?";
                 $conditions[count($conditions)] = 0;
             }
             else {
-                $conditions = ["$key > ?", 0];
+                $conditions = ["$sql_key > ?", 0];
             }
         }
         else {
