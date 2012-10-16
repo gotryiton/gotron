@@ -12,4 +12,4 @@
 	url = git://github.com/swiftmailer/swiftmailer.git
 [submodule "vendor/elasticsearch"]
 	path = vendor/elasticsearch
-	url = git://github.com/nervetattoo/elasticsearch.git
+	url = git://github.com/gotryiton/elasticsearch.git
