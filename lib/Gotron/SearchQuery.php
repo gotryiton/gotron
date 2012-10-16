@@ -99,16 +99,6 @@ class SearchQuery {
         return $this;
     }
 
-    // public function has_child($filter = []) {
-    //     $this->has_child = $filter;
-    //     return $this;
-    // }
-
-    // public function has_parent($filter = []) {
-    //     $this->has_parent = $filter;
-    //     return $this;
-    // }
-
     public function run() {
         $query = [];
 
@@ -116,27 +106,21 @@ class SearchQuery {
             $query['query'] = $this->query;
         }
 
-        if (!is_null($this->term)) {
-            $query['query']['term'] = $this->search;
-        }
-
         if (!is_null($this->query_string)) {
             $query['query']['query_string'] = $this->query_string;
         }
 
-
         $additional_params = [
             'size',
             'from',
-            'filter',
-            'sort',
-            // 'has_child',
-            // 'has_parent'
+            'sort'
         ];
 
         foreach ($additional_params as $param) {
             $query = $this->check_null($param, $query);
         }
+
+        $this->last_query = $query;
 
         $result = $this->connection()->search($query);
         return SearchResult::from_search($result);
