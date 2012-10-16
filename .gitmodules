@@ -10,3 +10,6 @@
 [submodule "vendor/swiftmailer"]
 	path = vendor/swiftmailer
 	url = git://github.com/swiftmailer/swiftmailer.git
+[submodule "vendor/elasticsearch"]
+	path = vendor/elasticsearch
+	url = git://github.com/gotryiton/elasticsearch.git

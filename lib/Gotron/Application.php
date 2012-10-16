@@ -56,7 +56,8 @@ class Application extends Singleton {
         $this->loader->setPaths(array(
             'Requests' => file_join(__DIR__, "/../../vendor/Requests/library"),
             'Swift' => file_join(__DIR__, "/../../vendor/swiftmailer/lib/classes"),
-            'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes")
+            'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes"),
+            'ElasticSearch\\' => file_join(__DIR__, "/../../vendor/elasticsearch/src")
         ));
 
         $this->loader->setClasses(array(
