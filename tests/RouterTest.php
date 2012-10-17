@@ -66,7 +66,7 @@ class RouterTest extends UnitTest {
 
         TestApplication::define_routes($routes);
 
-        $json = "{\"test\":\"ABcDe13g%2012345\"}";
+        $json = "{\"test\":\"ABcDe13g 12345\"}";
         $this->expectOutputString($json);
         Router::route($this->app);
     }

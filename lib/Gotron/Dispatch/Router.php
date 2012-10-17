@@ -318,7 +318,7 @@ class Router {
 
             foreach ($standard_components as $i => $component) {
                 if (substr($component, 0, 1) == ":") {
-                    $parameters[substr($component, 1)] = $path_components[$i];
+                    $parameters[substr($component, 1)] = urldecode($path_components[$i]);
                 }
                 elseif ($component == "[action]") {
                     $action = str_replace("-", "_", $path_components[$i]);
@@ -330,7 +330,7 @@ class Router {
             foreach ($optional_components as $i => $component) {
                 $path_key = $i + count($standard_components) - 1;
                 if (substr($component, 0, 1) == ":" && array_key_exists($path_key, $path_components)) {
-                    $parameters[substr($component, 1)] = $path_components[$path_key];
+                    $parameters[substr($component, 1)] = urldecode($path_components[$path_key]);
                 }
                 elseif (substr($component, 0, 1) == "~") {
                     $custom_parameters[] = substr($component, 1);
@@ -345,13 +345,13 @@ class Router {
 
             foreach ($path_components as $i => $component) {
                 if (($custom_location = array_search($component, $custom_parameters)) !== false) {
-                    $parameters[$custom_parameters[$custom_location]] = $path_components[$i + 1];
+                    $parameters[$custom_parameters[$custom_location]] = urldecode($path_components[$i + 1]);
                 }
                 elseif (($bool_location = array_search($component, $boolean_parameters)) !== false) {
                     $parameters[$boolean_parameters[$bool_location]] = true;
                 }
                 elseif (isset($array_parameter) && !in_array($component, $standard_components)) {
-                    $parameters[$array_parameter][] = $path_components[$i];
+                    $parameters[$array_parameter][] = urldecode($path_components[$i]);
                 }
             }
 
