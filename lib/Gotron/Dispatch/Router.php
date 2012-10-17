@@ -147,7 +147,7 @@ class Router {
             "(\/\*\:\w+|\/\~\w+|\/\=\:\w+)" => '(${0})?', // Adds ()? to each optional param
             "(\/\*\:)(\w+)" => '(/\w+)*', // Catch-all array parameter
             "(\/\=\:\w+)" => "/\w+", // Boolean parameter
-            "\:\w+" => "[\w\-\%]+", // Named parameter (:name)
+            "\:\w+" => "[\w\-\%\.]+", // Named parameter (:name)
             "\[\w+\]" => "[\w\-]+", // Variable action ([action])
             "(\/\~)(\w+)" => '(/${2}/\w+)', // Custom Parameters (~parameter)
             "\/" => '\/'
