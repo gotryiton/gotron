@@ -42,7 +42,7 @@ class SearchQuery {
             $app_config = Config::instance();
             $app_config = $app_config['es'];
             $config = [
-                'server' => $app_config['server'],
+                'servers' => $app_config['server'],
                 'protocol' => $app_config['protocol'],
                 'index' => $this->index,
                 'type' => $this->types
