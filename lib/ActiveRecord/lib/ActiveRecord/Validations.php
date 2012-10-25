@@ -253,6 +253,7 @@ class Validations
 		foreach ($attrs as $attr)
 		{
 			$options = array_merge($configuration, $attr);
+            $options['message'] = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($options[0]) . ' ' . $configuration['message'];
 			$attribute = $options[0];
 			$var = $this->model->$attribute;
 
@@ -418,6 +419,7 @@ class Validations
 		foreach ($attrs as $attr)
 		{
 			$options = array_merge($configuration, $attr);
+            $options['message'] = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($options[0]) . ' ' . $configuration['message'];
 			$attribute = $options[0];
 			$var = $this->model->$attribute;
 

@@ -210,12 +210,12 @@ class Errors implements IteratorAggregate
 		{
 			foreach ($this->errors as $attribute => $messages)
 			{
-				foreach ($messages as $msg)
+				foreach ($messages as $message)
 				{
-					if (is_null($msg))
+					if (is_null($message))
 						continue;
 
-					$errors[$attribute][] = ($message = $msg);
+					$errors[$attribute][] = $message;
 
 					if ($closure)
 						$closure($attribute,$message);
