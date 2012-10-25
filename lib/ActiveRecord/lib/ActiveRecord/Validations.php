@@ -177,7 +177,8 @@ class Validations
 		foreach ($attrs as $attr)
 		{
 			$options = array_merge($configuration, $attr);
-			$this->record->add_on_blank($options[0], $options['message']);
+            $error_message = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($options[0]) . ' ' . $configuration['message'];
+			$this->record->add_on_blank($options[0], $error_message);
 		}
 	}
 

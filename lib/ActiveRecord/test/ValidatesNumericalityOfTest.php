@@ -156,7 +156,7 @@ class ValidatesNumericalityOfTest extends DatabaseTest
 		);
 		$book = new BookNumericality(array('numeric_test' => 'NaN'));
 		$book->is_valid();
-		$this->assert_equals(array('Numeric test Hello'),$book->errors->full_messages());
+		$this->assert_equals(array('Hello'),$book->errors->full_messages());
 	}
 };
 
