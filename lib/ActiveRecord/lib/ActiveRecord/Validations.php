@@ -519,7 +519,7 @@ class Validations
                     else {
                         $message = $options[$messageOptions[$range_option]];
                         if (!isset($attr[$messageOptions[$range_option]])) {
-                            $message =  Utils::human_attribute($attribute) . ' ' . $message;
+                            $message = Utils::human_attribute($attribute) . ' ' . $message;
                         }
                     }
 					
