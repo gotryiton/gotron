@@ -177,6 +177,7 @@ class Validations
 		foreach ($attrs as $attr)
 		{
 			$options = array_merge($configuration, $attr);
+            $options['message'] = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($options[0]) . ' ' . $configuration['message'];
             $error_message = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($options[0]) . ' ' . $configuration['message'];
 			$this->record->add_on_blank($options[0], $error_message);
 		}
@@ -520,7 +521,7 @@ class Validations
 						$message = $options[$messageOptions[$range_option]];
 					
 
-					$message = str_replace('%d', $option, $message);
+					$message = Utils::human_attribute($attribute) . ' ' . str_replace('%d', $option, $message);
 					$attribute_value = $this->model->$attribute;
 					$len = strlen($attribute_value);
 					$value = (int)$attr[$range_option];
