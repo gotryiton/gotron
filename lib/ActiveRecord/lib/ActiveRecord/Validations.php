@@ -516,10 +516,13 @@ class Validations
 
 					if (isset($options['message']))
 						$message = $options['message'];
-					else
-						$message = Utils::human_attribute($attribute) . ' ' . $options[$messageOptions[$range_option]];
+                    else {
+                        $message = $options[$messageOptions[$range_option]];
+                        if (!isset($attr[$messageOptions[$range_option]])) {
+                            $message =  Utils::human_attribute($attribute) . ' ' . $message;
+                        }
+                    }
 					
-
 					$message = str_replace('%d', $option, $message);
 					$attribute_value = $this->model->$attribute;
 					$len = strlen($attribute_value);
