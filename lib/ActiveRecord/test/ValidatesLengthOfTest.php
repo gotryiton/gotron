@@ -50,11 +50,11 @@ class ValidatesLengthOfTest extends DatabaseTest
 		$book = new BookLength();
 		$book->name = '1';
 		$book->is_valid();
-		$this->assert_equals(array('Name is not between 2 and 5 characters'),$book->errors->full_messages());
+		$this->assert_equals(array('is not between 2 and 5 characters'),$book->errors->full_messages());
 
 		$book->name = '123456';
 		$book->is_valid();
-		$this->assert_equals(array('Name is not between 2 and 5 characters'),$book->errors->full_messages());
+		$this->assert_equals(array('is not between 2 and 5 characters'),$book->errors->full_messages());
 	}
 	
 	public function test_valid_in()
@@ -308,12 +308,12 @@ class ValidatesLengthOfTest extends DatabaseTest
 		BookLength::$validates_length_of[0] = array('name', 'maximum' => 10, 'message' => 'is far too long');
 		$book = new BookLength(array('name' => '12345678901'));
 		$book->is_valid();
-		$this->assert_equals(array("Name is far too long"),$book->errors->full_messages());
+		$this->assert_equals(array("is far too long"),$book->errors->full_messages());
 
 		BookLength::$validates_length_of[0] = array('name', 'minimum' => 10, 'message' => 'is far too short');
 		$book = new BookLength(array('name' => '123456789'));
 		$book->is_valid();
-		$this->assert_equals(array("Name is far too short"),$book->errors->full_messages());
+		$this->assert_equals(array("is far too short"),$book->errors->full_messages());
 	}
 	
 	public function test_validates_length_of_min_max_custom_message_overridden()
@@ -321,7 +321,7 @@ class ValidatesLengthOfTest extends DatabaseTest
 		BookLength::$validates_length_of[0] = array('name', 'minimum' => 10, 'too_short' => 'Name is too short', 'message' => 'is custom message');
 		$book = new BookLength(array('name' => '123456789'));
 		$book->is_valid();
-		$this->assert_equals(array("Name is custom message"),$book->errors->full_messages());
+		$this->assert_equals(array("is custom message"),$book->errors->full_messages());
 	}
 
 	public function test_validates_length_of_is()
