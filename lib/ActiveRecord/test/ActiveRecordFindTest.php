@@ -468,7 +468,7 @@ class ActiveRecordFindTest extends DatabaseTest
         });
 
         $this->assertCount(6, $venues);
-        $this->assert_sql_has('SELECT * FROM venues ORDER BY id LIMIT 1000', Venue::table()->last_sql);
+        $this->assert_sql_has('SELECT * FROM venues ORDER BY venues.id LIMIT 1000', Venue::table()->last_sql);
     }
 
     public function test_find_each_with_conditions() {
@@ -478,7 +478,7 @@ class ActiveRecordFindTest extends DatabaseTest
         });
 
         $this->assertCount(3, $events);
-        $this->assert_sql_has('SELECT * FROM events WHERE host_id = ? AND id > ? ORDER BY id LIMIT 2', Event::table()->last_sql);
+        $this->assert_sql_has('SELECT * FROM events WHERE host_id = ? AND events.id > ? ORDER BY events.id LIMIT 2', Event::table()->last_sql);
     }
 
     public function test_find_each_with_size() {
@@ -488,7 +488,7 @@ class ActiveRecordFindTest extends DatabaseTest
         });
 
         $this->assertCount(6, $venues);
-        $this->assert_sql_has('SELECT * FROM venues WHERE id > ? ORDER BY id LIMIT 2', Venue::table()->last_sql);
+        $this->assert_sql_has('SELECT * FROM venues WHERE venues.id > ? ORDER BY venues.id LIMIT 2', Venue::table()->last_sql);
     }
 
     /**

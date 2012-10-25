@@ -584,6 +584,8 @@ class Validations
 				$fields = array($options[0]);
 			}
 
+            $options['message'] = isset($attr['message']) ? $attr['message'] : Utils::human_attribute($add_record) . ' ' . $configuration['message'];
+
 			$sql = "";
 			$conditions = array("");
 
