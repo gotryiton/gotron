@@ -196,7 +196,7 @@ class Model extends ActiveRecord\Model {
                 if(isset($filters['totals']) && $filters['totals'] == true)
                     $totals = $found_objects->total();
                 $cached_array = array('ids' => $object_ids, 'totals' => $totals);
-				if ($cache_ttl > 0) {
+				if ($cache_ttl >= 0) {
 					if (!isset($specific_cache_id)) {
 						$specific_cache_id = self::finder_specific_cache_id($name, $conditions, $filters);
 					}
