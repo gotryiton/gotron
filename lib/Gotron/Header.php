@@ -9,16 +9,16 @@ namespace Gotron;
  */
 class Header {
 
-	/**
-	 * Sets a header as header() method. Puts it in GLOBALS array if headers.disable is true 
-	 *
-	 * @param string $header 
-	 * @param string $replace 
-	 * @param string $http_response_code 
-	 * @return void
-	 */
+    /**
+     * Sets a header as header() method. Puts it in GLOBALS array if headers.disable is true
+     *
+     * @param string $header
+     * @param string $replace
+     * @param string $http_response_code
+     * @return void
+     */
     public static function set($header, $replace = true, $http_response_code = null) {
-        if(Config::bool('headers.disabled')) {
+        if (Config::bool('headers.disabled')) {
             return static::set_header_in_globals($header, $replace, $http_response_code);
         }
         else {
@@ -32,7 +32,7 @@ class Header {
      * @return void
      */
     public static function flush() {
-        if(Config::bool('headers.disabled')) {
+        if (Config::bool('headers.disabled')) {
             $GLOBALS['headers'] = array();
         }
     }
@@ -41,12 +41,13 @@ class Header {
      * Sets header in globals array
      *  used in testing
      *
-     * @param string $name 
-     * @param string $value 
+     * @param string $name
+     * @param string $value
      * @return bool
      */
     protected static function set_header_in_globals($header) {
         $GLOBALS['headers'][] = $header;
+
         return true;
     }
 

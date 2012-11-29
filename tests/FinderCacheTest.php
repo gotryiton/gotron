@@ -24,15 +24,14 @@ class FinderCacheTest extends UnitTest {
         $connection->query(Book::$create_query);
         $connection->query(Publisher::$create_query);
         $connection->query(Agent::$create_query);
-        
+
         $fix = new Fixture(__DIR__ . "/fixtures/");
         $fix->create('book',array('id' => 1,'author' => 'jon'));
         $fix->create('book',array('id' => 2,'author' => 'paul'));
         $fix->create('book',array('id' => 3,'title' => 'nothing'));
     }
-    
-    public static function tearDownAfterClass()
-    {
+
+    public static function tearDownAfterClass() {
         parent::tearDownAfterClass();
 
         $connection = ConnectionManager::get_connection();
@@ -40,11 +39,11 @@ class FinderCacheTest extends UnitTest {
         $connection->query("DROP TABLE IF EXISTS publishers");
         $connection->query("DROP TABLE IF EXISTS agents");
     }
-        
+
     public function setUp(){
         $this->expectOutputString('');
     }
-    
+
     public function testFinderCacheWithOneConditionString() {
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
         $this->assertEquals(2,count($books));
@@ -54,7 +53,7 @@ class FinderCacheTest extends UnitTest {
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
         $this->assertEquals(2,count($books));
-        
+
         Book::clear_finder_cache('title_string_in_order',array('title' => 'something'));
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
@@ -120,7 +119,7 @@ class FinderCacheTest extends UnitTest {
 
         Book::clear_specific_finder_cache('title_string_in_order',array('title' => 'something'), array('totals' => true,  'limit'=>1));
         usleep(1);
-        
+
         $books = Book::finder('title_string_in_order',array('title' => 'something'), array('totals' => true, 'limit'=>1));
         $this->assertEquals(1,count($books));
         $this->assertEquals(6,$books[0]->id);
@@ -128,9 +127,8 @@ class FinderCacheTest extends UnitTest {
 
         $books = Book::finder('title_string_in_order',array('title' => 'something'));
         $this->assertEquals(4,count($books));
-        
     }
-    
+
 }
 
 ?>

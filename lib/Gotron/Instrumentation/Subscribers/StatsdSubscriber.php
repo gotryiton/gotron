@@ -10,10 +10,11 @@ use Gotron\Instrumentation\StatsD;
  * @package Gotron;
  */
 class StatsdSubscriber extends AbstractSubscriber{
-    
+
     public function publish($tag, $start, $end, $params = array()) {
         StatsD::timing($tag, ($end - $start) * 1000);
     }
+
 }
 
 ?>

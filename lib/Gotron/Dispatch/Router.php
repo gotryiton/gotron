@@ -21,7 +21,7 @@ class Router {
      *
      * @var array
      */
-	private static $catchable_exceptions = array(
+    private static $catchable_exceptions = array(
         "ActiveRecord\RecordNotFound" => 404,
     );
 
@@ -31,16 +31,16 @@ class Router {
      * @param Application $app
      * @return bool
      */
-	public static function route($app) {
-	    $url = explode('?', $_SERVER['REQUEST_URI']);
-		$path = $url[0];
+    public static function route($app) {
+        $url = explode('?', $_SERVER['REQUEST_URI']);
+        $path = $url[0];
 
         $parameters = [];
         foreach ($_GET as $key => $value)
-		    $parameters[$key] = $value;
+            $parameters[$key] = $value;
 
-		foreach ($_POST as $key => $value)
-		  	$parameters[$key] = $value;
+        foreach ($_POST as $key => $value)
+            $parameters[$key] = $value;
 
         $options = [
               'headers' => getallheaders(),
@@ -52,18 +52,18 @@ class Router {
         $response = static::find_route_and_get_response($path, $app, $options);
 
         return self::output_response($response);
-	}
+    }
 
-	/**
-	 * Look for a controller file matching the request, and failing that, a view
-	 *
-	 * @param string $controller 
-	 * @param string $action
-	 * @param Request $request 
-     * @param Application $app 
-	 * @return bool
-	 */
-	public static function perform_controller_action($controller, $action, $request, $app) {
+    /**
+     * Look for a controller file matching the request, and failing that, a view
+     *
+     * @param string $controller
+     * @param string $action
+     * @param Request $request
+     * @param Application $app
+     * @return bool
+     */
+    public static function perform_controller_action($controller, $action, $request, $app) {
         $reflector = new ReflectionClass($app);
         $namespace = $reflector->getNamespaceName();
 
@@ -82,7 +82,7 @@ class Router {
 
                     return $controller->response;
                 }
-                catch(\Exception $e) {
+                catch (\Exception $e) {
                     if (Config::bool('show_errors')) {
                         throw $e;
                     }
@@ -104,7 +104,7 @@ class Router {
                 return static::render_error('500', $request);
             }
         }
-	}
+    }
 
     /**
      * Sends the response
@@ -196,12 +196,12 @@ class Router {
      * @return bool
      */
     public static function load_newrelic($request, $controller, $action) {
-        if(function_exists('newrelic_name_transaction')) {
+        if (function_exists('newrelic_name_transaction')) {
             newrelic_name_transaction($controller . "/" . $action);
         }
-        if(function_exists('newrelic_add_custom_parameter')){
-            if(is_array($request->params)){
-                foreach($request->params as $key => $value){
+        if (function_exists('newrelic_add_custom_parameter')){
+            if (is_array($request->params)){
+                foreach ($request->params as $key => $value){
                     newrelic_add_custom_parameter($key,$value);
                 }
             }
@@ -216,7 +216,7 @@ class Router {
      * @return void
      */
     public static function newrelic_exception($exception) {
-        if(function_exists('newrelic_notice_error')) {
+        if (function_exists('newrelic_notice_error')) {
             newrelic_notice_error(null, $exception);
         }
     }

@@ -8,7 +8,7 @@ development: &development
   password:
   host: localhost
 
-test: 
+test:
   <<: *development
   database: test
 

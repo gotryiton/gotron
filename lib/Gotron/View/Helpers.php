@@ -10,11 +10,11 @@ use Gotron\Assets,
 
 function build_attributes($attributes) {
     return implode(
-                        " ",
-                        array_map(function($key, $value) { return "{$key}=\"{$value}\""; },
-                        array_keys($attributes),
-                        $attributes)
-                    );
+            " ",
+            array_map(function($key, $value) { return "{$key}=\"{$value}\""; },
+            array_keys($attributes),
+            $attributes)
+        );
 }
 
 /**
@@ -75,9 +75,10 @@ function meta_tag($attributes = []) {
  */
 function javascript_includes($includes) {
     $tags = "";
-    foreach($includes['js'] as $include) {
+    foreach ($includes['js'] as $include) {
         $tags .= javascript_tag($include);
     }
+
     return $tags;
 }
 
@@ -89,9 +90,10 @@ function javascript_includes($includes) {
  */
 function css_includes($includes) {
     $tags = "";
-    foreach($includes['css'] as $include) {
+    foreach ($includes['css'] as $include) {
         $tags .= css_tag($include);
     }
+
     return $tags;
 }
 
@@ -115,6 +117,7 @@ function meta_includes($includes) {
 function render_partial($name, $context, $data = array()) {
     $path = realpath(file_join(Config::get('root_directory'), Config::get('view_directory'), $context, "_{$name}.php"));
     $view_data = PhpView::render($data, $path);
+
     return $view_data->content;
 }
 

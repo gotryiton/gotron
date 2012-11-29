@@ -8,14 +8,14 @@ namespace Gotron\Instrumentation;
  * @package Gotron;
  */
 class Notifier {
-    
+
     /**
      * Array of subscribers grouped by tag
      *
      * @var array
      */
     public $subscribers = array();
-    
+
     /**
      * Cached Singleton Instance
      */
@@ -37,13 +37,14 @@ class Notifier {
     /**
      * Adds a subscriber to the list used for the tag
      *
-     * @param string $tag 
-     * @param Subscriber $subscriber 
+     * @param string $tag
+     * @param Subscriber $subscriber
      */
     public static function add_subscriber($tag, $subscriber) {
         $instance = self::instance();
         $subscriber = "Subscribers\\$subscriber";
-        if(array_key_exists($tag, $instance->subscribers)) {
+
+        if (array_key_exists($tag, $instance->subscribers)) {
             $instance->subscribers[$tag][] = new $subscriber;
         }
         else {
@@ -54,21 +55,21 @@ class Notifier {
     /**
      * Publishes messages with subscribers
      *
-     * @param string $tag 
+     * @param string $tag
      * @param float $start
      * @param float $end
-     * @param array $params 
+     * @param array $params
      * @return void
-     * @author 
+     * @author
      */
     public static function notify_subscribers($tag, $start, $end, $params = array()) {
-        if(defined('UNIQUE_ID')) {
+        if (defined('UNIQUE_ID')) {
             $params["unique"] = UNIQUE_ID;
         }
 
         $instance = self::instance();
-        if(array_key_exists($tag, $instance->subscribers)) {
-            foreach($instance->subscribers[$tag] as $subscriber) {
+        if (array_key_exists($tag, $instance->subscribers)) {
+            foreach ($instance->subscribers[$tag] as $subscriber) {
                 $subscriber->publish($tag, $start, $end, $params);
             }
         }

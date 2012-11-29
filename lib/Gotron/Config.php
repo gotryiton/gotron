@@ -6,27 +6,27 @@ use ArrayAccess,
     Spyc;
 
 class Config extends Singleton implements ArrayAccess {
-	/**
-	 * Constants
-	 */
-	const DEFAULT_ENVIRONMENT 		        = "development";
-	const DEFAULT_HOST 	                    = "localhost";
-	const DEFAULT_PORT           	        = "3306";
-	const DEFAULT_USERNAME                  = "root";
-	const DEFAULT_PASSWORD                  = "";
-	const DEFAULT_DATABASE 			        = "gtioStage";
-	const DEFAULT_APP_VERSION 		        = "0ad335cdbc6611da404f80266f2d5b7cf199150d";
+    /**
+     * Constants
+     */
+    const DEFAULT_ENVIRONMENT               = "development";
+    const DEFAULT_HOST                      = "localhost";
+    const DEFAULT_PORT                      = "3306";
+    const DEFAULT_USERNAME                  = "root";
+    const DEFAULT_PASSWORD                  = "";
+    const DEFAULT_DATABASE                  = "gtioStage";
+    const DEFAULT_APP_VERSION               = "0ad335cdbc6611da404f80266f2d5b7cf199150d";
     const DEFAULT_CONFIG_DIRECTORY          = "config";
     const DEFAULT_MODEL_DIRECTORY           = "app/models";
     const DEFAULT_VIEW_DIRECTORY            = "app/views";
     const DEFAULT_LOCALIZATION_DIRECTORY    = "config/localization";
 
-	/**
-	 * The application environment
-	 *
-	 * @var string
-	 */
-	public $environment;
+    /**
+     * The application environment
+     *
+     * @var string
+     */
+    public $environment;
 
     /**
      * Used for ArrayAccess behavior
@@ -35,141 +35,144 @@ class Config extends Singleton implements ArrayAccess {
      */
     private $access_array = array();
 
-	/**
-	 * Array of routes
-	 *
-	 * @var array
-	 */
-	public $routes = array();
+    /**
+     * Array of routes
+     *
+     * @var array
+     */
+    public $routes = array();
 
-	/**
-	 * Calls the Closure function with the config instance
-	 *
-	 * @param Closure $initializer 
-	 * @return void
-	 */
-	public static function initialize($function) {
-		$function(parent::instance());
-	}
+    /**
+     * Calls the Closure function with the config instance
+     *
+     * @param Closure $initializer
+     * @return void
+     */
+    public static function initialize($function) {
+        $function(parent::instance());
+    }
 
-	/**
-	 * Loads all the necessary config settings
-	 *
-	 * @param Closure $config 
-	 * @return Config
-	 */
-	public static function load_config($config) {
-		$instance = self::instance();
+    /**
+     * Loads all the necessary config settings
+     *
+     * @param Closure $config
+     * @return Config
+     */
+    public static function load_config($config) {
+        $instance = self::instance();
         $instance->load_default_directories();
         $instance->set_environment(self::get_environment());
         $instance->set_root_directory(realpath(__DIR__ . "/../../../../"));
         static::initialize($config);
         $instance->define_app_version();
-		$instance->load_environment_config($instance->environment);
-		$instance->load_database_config($instance->environment);
-		return $instance;
-	}
+        $instance->load_environment_config($instance->environment);
+        $instance->load_database_config($instance->environment);
+        return $instance;
+    }
 
-	/**
-	 * Loads the application configuration for the environment
-	 *
-	 * @param string $environment 
-	 * @return void
-	 */
-	public function load_environment_config($environment) {
-		$this->load_environment_file($environment);
-	}
+    /**
+     * Loads the application configuration for the environment
+     *
+     * @param string $environment
+     * @return void
+     */
+    public function load_environment_config($environment) {
+        $this->load_environment_file($environment);
+    }
 
-	/**
-	 * Loads the extended environment to allow configuration inheritance 
-	 *
-	 * @param string $environment 
-	 * @return void
-	 */
-	public function extends_environment($environment) {
-		$this->load_environment_file($environment);
-	}
-	
-	/**
-	 * Requires the environment file with name $environment.php
-	 *
-	 * @param string $environment 
-	 * @return void
-	 */
-	protected function load_environment_file($environment) {
-		require file_join($this->root_directory, $this->config_directory, "environments", $environment . ".php");
-	}
-	
-	/**
-	 * Sets the application environment
-	 *
-	 * @param string $environment 
-	 * @return void
-	 */
-	public function set_environment($environment) {
-		$this->environment = $environment;
-	}
-	
-	/**
-	 * Sets the root directory of the app
-	 *
-	 * @param string $root_directory 
-	 * @return void
-	 */
-	public function set_root_directory($root_directory) {
-		$this->root_directory = $root_directory;
-	}
-	
-	/**
-	 * Checks for the APP_ENVIRONMENT variable
-	 *
-	 * @return string
-	 */
-	public static function get_environment() {
-		if(array_key_exists("APP_ENVIRONMENT", $_ENV)) {
-			return $_ENV["APP_ENVIRONMENT"];
+    /**
+     * Loads the extended environment to allow configuration inheritance
+     *
+     * @param string $environment
+     * @return void
+     */
+    public function extends_environment($environment) {
+        $this->load_environment_file($environment);
+    }
+
+    /**
+     * Requires the environment file with name $environment.php
+     *
+     * @param string $environment
+     * @return void
+     */
+    protected function load_environment_file($environment) {
+        require file_join($this->root_directory, $this->config_directory, "environments", $environment . ".php");
+    }
+
+    /**
+     * Sets the application environment
+     *
+     * @param string $environment
+     * @return void
+     */
+    public function set_environment($environment) {
+        $this->environment = $environment;
+    }
+
+    /**
+     * Sets the root directory of the app
+     *
+     * @param string $root_directory
+     * @return void
+     */
+    public function set_root_directory($root_directory) {
+        $this->root_directory = $root_directory;
+    }
+
+    /**
+     * Checks for the APP_ENVIRONMENT variable
+     *
+     * @return string
+     */
+    public static function get_environment() {
+        if(array_key_exists("APP_ENVIRONMENT", $_ENV)) {
+            return $_ENV["APP_ENVIRONMENT"];
         }
-		else if(defined("APP_ENVIRONMENT")) {
+        elseif (defined("APP_ENVIRONMENT")) {
             return APP_ENVIRONMENT;
         }
-        else{
+        else {
             return self::DEFAULT_ENVIRONMENT;
         }
-	}
+    }
 
-	/**
-	 * Sets the configuration for the application version
-	 *  uses the capistrano revision file if possible
-	 *
-	 * @return string app_version
-	 */
-	public function define_app_version() {
-		$asset_revision_file = file_join(static::get('root_directory'), 'ASSET_REVISION');
-		if(file_exists($asset_revision_file)) {
+    /**
+     * Sets the configuration for the application version
+     *  uses the capistrano revision file if possible
+     *
+     * @return string app_version
+     */
+    public function define_app_version() {
+        $asset_revision_file = file_join(static::get('root_directory'), 'ASSET_REVISION');
+        if (file_exists($asset_revision_file)) {
             $version = file_get_contents($asset_revision_file);
             $this->set_constant('APPLICATION_VERSION', $version);
-			return $this->set('app_version', $version);
-		}
-		else if(array_key_exists("Gotron_APP_VERSION", $_ENV)) {
+
+            return $this->set('app_version', $version);
+        }
+        elseif (array_key_exists("Gotron_APP_VERSION", $_ENV)) {
             $this->set_constant('APPLICATION_VERSION', $_ENV["APP_ENVIRONMENT"]);
-			return $this->set('app_version', $_ENV["APP_ENVIRONMENT"]);
-		}
-		else {
+
+            return $this->set('app_version', $_ENV["APP_ENVIRONMENT"]);
+        }
+        else {
             $this->set_constant('APPLICATION_VERSION', static::DEFAULT_APP_VERSION);
-			return $this->set('app_version', static::DEFAULT_APP_VERSION);
-		}
-	}
-	
-	/**
-	 * Loads the database settings into the config instance
-	 *
-	 * @return void
-	 */
-	public function load_database_config() {
-		$database_parameters = array("database", "username", "password", "host", "port");
-		$this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/database.yml"));
+
+            return $this->set('app_version', static::DEFAULT_APP_VERSION);
+        }
+    }
+
+    /**
+     * Loads the database settings into the config instance
+     *
+     * @return void
+     */
+    public function load_database_config() {
+        $database_parameters = array("database", "username", "password", "host", "port");
+        $this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/database.yml"));
         $this->load_from_yaml($database_parameters, file_join(static::get('root_directory'), "config/ci.yml"), false, false);
-	}
+    }
 
     /**
      * Sets the default directories
@@ -183,19 +186,18 @@ class Config extends Singleton implements ArrayAccess {
         $this->localization_directory = self::DEFAULT_LOCALIZATION_DIRECTORY;
     }
 
-	/**
-	 * Loads variables from either Yaml file or class constants
-	 *
-	 * @param string $params 
-	 * @return void
-	 */
-	public function load_from_yaml($params, $yaml_file, $environment = true, $default = true) {
-		
-		if(!is_array($params)) {
-			$params = array($params);
+    /**
+     * Loads variables from either Yaml file or class constants
+     *
+     * @param string $params
+     * @return void
+     */
+    public function load_from_yaml($params, $yaml_file, $environment = true, $default = true) {
+        if (!is_array($params)) {
+            $params = array($params);
         }
 
-        if(file_exists($yaml_file)) {
+        if (file_exists($yaml_file)) {
             $yaml = Spyc::YAMLLoad($yaml_file);
             if ($environment) {
                 $config = $yaml[$this->environment];
@@ -203,8 +205,8 @@ class Config extends Singleton implements ArrayAccess {
             else {
                 $config = $yaml;
             }
-            foreach($params as $param) {
-                if(array_key_exists($param, $config)) {
+            foreach ($params as $param) {
+                if (array_key_exists($param, $config)) {
                     $this->set($param, $config[$param]);
                 }
                 elseif ($default) {
@@ -212,123 +214,124 @@ class Config extends Singleton implements ArrayAccess {
                 }
             }
         }
-	}
+    }
 
-	/**
-	 * Gets the value of $property
-	 *
-	 * @param string $property 
+    /**
+     * Gets the value of $property
+     *
+     * @param string $property
      * @param bool $bool set to true to return false if key is not set
      *  use of this can have odd circumstances as a property might have a boolean value
-	 * @return mixed Value of property for config
-	 */
-	public static function get($property, $bool = false) {
-        if($value = static::get_key($property)) {
-			return $value;
-		}
+     * @return mixed Value of property for config
+     */
+    public static function get($property, $bool = false) {
+        if ($value = static::get_key($property)) {
+            return $value;
+        }
         else {
-            if($bool) {
+            if ($bool) {
                 return false;
             }
             else {
                 throw new Exception("Configuration property $property is not set");
             }
         }
-	}
+    }
 
-	/**
-	 * Returns boolean value of a configuration key
-	 *   (returns false if the key does not exist)
-	 *
-	 * @param string $property 
-	 * @return bool
-	 */
-	public static function bool($property) {
-		if($value = static::get_key($property)) {
-			return (bool) $value;
-		}
-		else {
-			return false;
-		}
-	}
+    /**
+     * Returns boolean value of a configuration key
+     *   (returns false if the key does not exist)
+     *
+     * @param string $property
+     * @return bool
+     */
+    public static function bool($property) {
+        if ($value = static::get_key($property)) {
+            return (bool) $value;
+        }
+        else {
+            return false;
+        }
+    }
 
-	/**
-	 * Gets the value for a key
-	 *
-	 * @param string $key 
-	 * @return void
-	 */
-	protected static function get_key($property) {
-		$instance = self::instance();
-        if(property_exists($instance, $property)){
+    /**
+     * Gets the value for a key
+     *
+     * @param string $key
+     * @return void
+     */
+    protected static function get_key($property) {
+        $instance = self::instance();
+        if (property_exists($instance, $property)){
             return $instance->$property;
         }
 
         $namespaced = explode('.', $property);
         $value = $instance->access_array;
 
-		$break = false;
-        foreach($namespaced as $key) {
-			if(array_key_exists($key, $value)) {
-				$value = $value[$key];
-			}
-			else {
-				$break = true;
-				break;
-			}
+        $break = false;
+        foreach ($namespaced as $key) {
+            if (array_key_exists($key, $value)) {
+                $value = $value[$key];
+            }
+            else {
+                $break = true;
+                break;
+            }
         }
 
-        if(isset($value) && !$break) {
+        if (isset($value) && !$break) {
             return $value;
         }
-        else if(property_exists($instance, strtoupper($property))) {
+        elseif (property_exists($instance, strtoupper($property))) {
             $property = strtoupper($property);
             return $instance->$property;
         }
-		else {
-			return false;
-		}
-	}
+        else {
+            return false;
+        }
+    }
 
     /**
      * Sets the key (namespaced) to value (as used in Propel Orm)
      *
-     * @param string $key 
-     * @param string $value 
+     * @param string $key
+     * @param string $value
      * @return value
      */
     public function set($key, $value) {
         $access = &$this->access_array;
         $parts = explode('.', $key);
-        foreach($parts as $part) {
+        foreach ($parts as $part) {
             $access = &$access[$part];
         }
         $access = $value;
+
         return $value;
     }
 
-	/**
-	 * Sets a constant in the global namespace
-	 *
-	 * @param string $name 
-	 * @param string $value 
-	 * @return string
-	 */
-	public function set_constant($name, $value) {
-		if(!defined($name)) {
-			define($name, $value);
-			return $value;
-		}
-		else {
-			return constant($name);
-		}
-	}
+    /**
+     * Sets a constant in the global namespace
+     *
+     * @param string $name
+     * @param string $value
+     * @return string
+     */
+    public function set_constant($name, $value) {
+        if (!defined($name)) {
+            define($name, $value);
+            return $value;
+        }
+        else {
+            return constant($name);
+        }
+    }
 
     /**
      * Magic method to set the access_array properly
      *
-     * @param string $key 
-     * @param string $value 
+     * @param string $key
+     * @param string $value
      * @return void
      */
     public function __set($key, $value) {
@@ -338,15 +341,15 @@ class Config extends Singleton implements ArrayAccess {
     /**
      * Magic method to get the key using access array
      *
-     * @param string $key 
+     * @param string $key
      * @return void
-     * @author 
+     * @author
      */
     public function __get($key) {
-        if(property_exists($this, $key)) {
+        if (property_exists($this, $key)) {
             return $this->$key;
         }
-        else if(array_key_exists($key, $this->access_array)) {
+        elseif (array_key_exists($key, $this->access_array)) {
             return $this->access_array[$key];
         }
         else{
@@ -357,35 +360,36 @@ class Config extends Singleton implements ArrayAccess {
     /**
      * ArrayAccess method, checks if offset exists
      *
-     * @param string $index 
+     * @param string $index
      * @return bool
      */
     public function offsetExists($index) {
         return isset($this->access_array[$index]);
     }
- 
+
     /**
      * ArrayAccess method, returns value at offset
      *
-     * @param string $index 
-     * @return mixed 
+     * @param string $index
+     * @return mixed
      */
     public function offsetGet($index) {
-        if($this->offsetExists($index)) {
+        if ($this->offsetExists($index)) {
             return $this->access_array[$index];
         }
+
         return false;
     }
- 
+
     /**
      * ArrayAccess method, sets value at offset
      *
-     * @param string $index 
-     * @param string $value 
-     * @return bool 
+     * @param string $index
+     * @param string $value
+     * @return bool
      */
     public function offsetSet($index, $value) {
-        if(is_null($index)) {
+        if (is_null($index)) {
             $this->access_array[] = $value;
             return true;
         }
@@ -394,11 +398,11 @@ class Config extends Singleton implements ArrayAccess {
             return true;
         }
     }
- 
+
     /**
      * ArrayAccess method, unset the offset
      *
-     * @param string $index 
+     * @param string $index
      * @return bool
      */
     public function offsetUnset($index) {

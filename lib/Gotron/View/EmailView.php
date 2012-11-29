@@ -13,9 +13,9 @@ class EmailView extends AbstractView{
 
     public $text_content = null;
 
-	public $content = null;
+    public $content = null;
 
-	public $subject = null;
+    public $subject = null;
 
     protected $data = array();
 
@@ -24,7 +24,7 @@ class EmailView extends AbstractView{
      *
      * @var string
      */
-	public $inject = [];
+    public $inject = [];
 
     /**
      * Generates the view
@@ -33,7 +33,6 @@ class EmailView extends AbstractView{
      */
     public function generate(array $parameters, $injected_view = null) {
         if (is_file($this->view_path)) {
-
             if ($injected_view instanceof EmailView) {
                 // Pulls the data from the injected_view view into the layout
                 extract($injected_view->inject);
@@ -41,15 +40,14 @@ class EmailView extends AbstractView{
             }
 
             extract($parameters);
-			ob_start();
-			include $this->view_path;
-			$this->content = ob_get_clean();
-            
-            if(!empty($subject)) {
-		        $this->subject = $subject;
-            }
+            ob_start();
+            include $this->view_path;
+            $this->content = ob_get_clean();
 
-		}
+            if (!empty($subject)) {
+                $this->subject = $subject;
+            }
+        }
         else {
             throw new Exception("Cannot find view {$this->view_path}");
         }
@@ -63,24 +61,23 @@ class EmailView extends AbstractView{
      * @return void
      */
     public function get_headers() {
-		return $this->headers;
+        return $this->headers;
     }
 
-    public function get_subject()
-	{
-	    if(is_null($this->subject)){
-	        if(is_null($this->content))
-	            $this->generate($this->data);
+    public function get_subject() {
+        if (is_null($this->subject)){
+            if (is_null($this->content))
+                $this->generate($this->data);
 
-	        if(!is_null($this->subject))
-	            return $this->subject;
-	        else
-	            return false;
-	    }
-	    else{
-	        return $this->subject;
-	    }
-	}
+            if (!is_null($this->subject))
+                return $this->subject;
+            else
+                return false;
+        }
+        else{
+            return $this->subject;
+        }
+    }
 
     /**
      * Gets the text version of the view
@@ -88,8 +85,8 @@ class EmailView extends AbstractView{
      * @return string
      */
     public function text_content(){
-        if(is_null($this->text_content)) {
-            if(is_null($this->content)) {
+        if (is_null($this->text_content)) {
+            if (is_null($this->content)) {
                 $this->generate($this->data);
             }
 
@@ -106,17 +103,17 @@ class EmailView extends AbstractView{
      * @return void
      */
     private function get_text(){
-		$html = $this->content;
-		
-		$h2t = new html2text($html);
-		
-		// Simply call the get_text() method for the class to convert 
-		// the HTML to the plain text. Store it into the variable. 
-		$this->text_content = $h2t->get_text();
-		
-		return $this->text_content;
+        $html = $this->content;
 
-	}
+        $h2t = new html2text($html);
+
+        // Simply call the get_text() method for the class to convert
+        // the HTML to the plain text. Store it into the variable.
+        $this->text_content = $h2t->get_text();
+
+        return $this->text_content;
+
+    }
 
 }
 
