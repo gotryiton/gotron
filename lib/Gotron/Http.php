@@ -2,52 +2,6 @@
 
 namespace Gotron;
 
-class Http_Exception extends Exception{
-    const NOT_MODIFIED = 304; 
-    const BAD_REQUEST = 400; 
-    const NOT_FOUND = 404; 
-    const NOT_ALOWED = 405; 
-    const CONFLICT = 409; 
-    const PRECONDITION_FAILED = 412; 
-    const INTERNAL_ERROR = 500; 
-}
-
-class Http_Multiple_Error
-{
-    private $_status = null;
-    private $_type   = null;
-    private $_url    = null;
-    private $_params = null;
-    
-    function __construct($status, $type, $url, $params)
-    {
-        $this->_status = $status;
-        $this->_type   = $type;
-        $this->_url    = $url;
-        $this->_params = $params;
-    }
-    
-    function getStatus()
-    {
-        return $this->_status;
-    }
-    
-    function getType()
-    {
-        return $this->_type;
-    }
-    
-    function getUrl()
-    {
-        return $this->_url;
-    }
-    
-    function getParams()
-    {
-        return $this->_params;
-    }
-}
-
 class Http extends Singleton {
 
     private $_host = null;
@@ -396,7 +350,7 @@ class Http extends Singleton {
                 break;
             default:
                 if (!$this->_silentMode) {
-                    throw new Http_Exception("http error: {$status} - {$error}", $status);
+                    throw new HttpException("http error: {$status} - {$error}", $status);
                 }
                 return NULL;
         }
@@ -489,7 +443,7 @@ class Http extends Singleton {
                         break;
                     default:
                         if (!$this->_silentMode) {
-                            $result[$id] = new Http_Multiple_Error($status, $type, $url, $params);
+                            $result[$id] = new HttpMultipleError($status, $type, $url, $params);
                         }
                 }
                 curl_multi_remove_handle($mh, $c);
