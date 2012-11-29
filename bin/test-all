@@ -1,0 +1,6 @@
+#!/bin/bash
+BASEDIR=$(dirname $0)
+printf "\nGotron tests\n"
+$BASEDIR/test
+printf "\nActiveRecord tests\n"
+$BASEDIR/test-active-record
