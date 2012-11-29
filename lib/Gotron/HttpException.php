@@ -2,7 +2,7 @@
 
 namespace Gotron;
 
-class Http_Exception extends Exception
+class HttpException extends Exception
 {
     const NOT_MODIFIED = 304; 
     const BAD_REQUEST = 400; 
