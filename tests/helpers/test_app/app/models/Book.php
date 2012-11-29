@@ -2,7 +2,7 @@
 
 namespace TestApp;
 
-use Gotron\Model;
+use ActiveRecord\Model;
 
 class Book extends Model {
 
