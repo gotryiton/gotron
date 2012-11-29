@@ -193,6 +193,7 @@ class ActiveRecordWriteTest extends DatabaseTest
 	{
 		$book = $this->make_new_book_and(false);
 		$this->assert_equals(array('name','special'),array_keys($book->dirty_attributes()));
+        $this->assert_null($book->dirty_attributes_before_save());
 	}
 
 	public function test_dirty_attributes_cleared_after_saving()
@@ -201,20 +202,24 @@ class ActiveRecordWriteTest extends DatabaseTest
 		$this->assert_true(strpos($book->table()->last_sql,'name') !== false);
 		$this->assert_true(strpos($book->table()->last_sql,'special') !== false);
 		$this->assert_equals(null,$book->dirty_attributes());
+		$this->assert_equals(array('name','special'),array_keys($book->dirty_attributes_before_save()));
 	}
 
 	public function test_dirty_attributes_cleared_after_inserting()
 	{
 		$book = $this->make_new_book_and();
 		$this->assert_equals(null,$book->dirty_attributes());
+        $this->assert_not_null($book->dirty_attributes_before_save());
 	}
 
 	public function test_no_dirty_attributes_but_still_insert_record()
 	{
 		$book = new Book;
 		$this->assert_equals(null,$book->dirty_attributes());
+		$this->assert_equals(null,$book->dirty_attributes_before_save());
 		$book->save();
 		$this->assert_equals(null,$book->dirty_attributes());
+		$this->assert_equals(null,$book->dirty_attributes_before_save());
 		$this->assert_not_null($book->id);
 	}
 
@@ -224,6 +229,7 @@ class ActiveRecordWriteTest extends DatabaseTest
 		$book->name = 'rivers cuomo';
 		$book->save();
 		$this->assert_equals(null,$book->dirty_attributes());
+		$this->assert_equals(array('name'),array_keys($book->dirty_attributes_before_save()));
 	}
 
 	public function test_dirty_attributes_after_reloading()
@@ -232,6 +238,23 @@ class ActiveRecordWriteTest extends DatabaseTest
 		$book->name = 'rivers cuomo';
 		$book->reload();
 		$this->assert_equals(null,$book->dirty_attributes());
+		$this->assert_equals(null,$book->dirty_attributes_before_save());
+	}
+
+	public function test_dirty_attributes_after_multiple_saves()
+	{
+		$book = Book::first();
+		$book->name = 'cuomo rivers';
+		$this->assert_equals(array('name'),array_keys($book->dirty_attributes()));
+        $this->assert_equals(null,$book->dirty_attributes_before_save());
+
+        $book->save();
+        $this->assert_equals(null,$book->dirty_attributes());
+        $this->assert_equals(array('name'),array_keys($book->dirty_attributes_before_save()));
+
+        $book->save();
+        $this->assert_equals(null,$book->dirty_attributes());
+        $this->assert_equals(null,$book->dirty_attributes_before_save());
 	}
 
 	public function test_dirty_attributes_with_mass_assignment()
