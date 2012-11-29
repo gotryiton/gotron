@@ -1,6 +1,6 @@
 <?php
 
-class Http_Multiple_Error
+class HttpMultipleError
 {
     private $_status = null;
     private $_type   = null;
