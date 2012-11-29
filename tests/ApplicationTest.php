@@ -42,7 +42,7 @@ class ApplicationTest extends UnitTest {
 
         TestApplication::define_routes($routes);
         $this->assertEquals($routes, Config::get('routes'));
-        
+
         TestApplication::initialize_routes();
         $this->assertNotEquals($routes, Config::get('routes'));
     }

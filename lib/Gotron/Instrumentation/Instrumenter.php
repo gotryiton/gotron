@@ -23,7 +23,7 @@ class Instrumenter {
      * @var string
      */
     private $notifier;
-    
+
 
     public function __construct($name) {
         $this->name = $name;
@@ -41,7 +41,7 @@ class Instrumenter {
     /**
      * Starts the timer and returns the instance
      *
-     * @param string $name 
+     * @param string $name
      * @return Instrumenter
      */
     public static function start($name = "instrumenter") {
@@ -53,7 +53,7 @@ class Instrumenter {
     /**
      * Ends the timer and sends the time and params to notifier
      *
-     * @param array $params 
+     * @param array $params
      * @return void
      */
     public function end($params = array()) {
@@ -63,10 +63,10 @@ class Instrumenter {
     /**
      * Send information to notifier
      *
-     * @param string $tag 
+     * @param string $tag
      * @param float $start
      * @param float $end
-     * @param array $params 
+     * @param array $params
      */
     public function notify($tag, $start, $end, $params = array()) {
         $notifier = Notifier::instance();

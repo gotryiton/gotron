@@ -100,7 +100,7 @@ class Request {
     /**
      * Builds a request object with an array of options
      *
-     * @param array $options 
+     * @param array $options
      * @return Request
      */
     public static function build($options) {
@@ -116,7 +116,7 @@ class Request {
     }
 
     /**
-     * Pulls the Accept header and parses version and content type 
+     * Pulls the Accept header and parses version and content type
      *
      * @return bool
      */
@@ -166,7 +166,7 @@ class Request {
             if (is_array($header_body)) {
                 foreach ($header_body as $key => $value){
                      $this->params[$key] = $value;
-                }    
+                }
             }
         }
     }

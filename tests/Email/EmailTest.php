@@ -16,9 +16,9 @@ class EmailTest extends UnitTest {
         );
 
         $email_type = "test_email";
-        
+
         $email = Email::create($email_type, $options);
-        
+
         $this->assertEquals($email_type, $email->type);
         $this->assertEquals("Overriding the subject", $email->subject);
         $this->assertEquals($options['to'], $email->to);
@@ -37,9 +37,9 @@ class EmailTest extends UnitTest {
         );
 
         $email_type = "test_email";
-        
+
         $email = Email::create($email_type, $options);
-        
+
         $this->assertEquals($email_type, $email->type);
         $this->assertEquals("Overriding the subject", $email->subject);
         $this->assertEquals($options['to'], $email->to);
@@ -80,7 +80,7 @@ class EmailTest extends UnitTest {
             'view_path' => __DIR__ . "/../helpers/emails/",
             'layout' => false
         );
-        
+
         $email_type = "test_email_no_subject";
 
         $email = Email::create($email_type, $options);

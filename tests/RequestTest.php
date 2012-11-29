@@ -66,7 +66,7 @@ class RequestTest extends UnitTest {
         $request = new Request;
         $request->headers = ["Accept" => "application/json; charset=UTF-8", "Content-Type" => "application/json; charset=UTF-8", ];
         $request->load_content_type_and_version(array());
-        
+
         $this->assertEquals("json", $request->simple_accept_content_type());
         $this->assertEquals("json", $request->body_content_type());
     }

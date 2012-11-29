@@ -64,35 +64,35 @@ class StatsD {
      * Squirt the metrics over UDP
      **/
     public static function send($data, $sampleRate=1) {
-		if(defined('STATSD_ENABLED') && STATSD_ENABLED){
-	        // sampling
-	        $sampledData = array();
+        if(defined('STATSD_ENABLED') && STATSD_ENABLED){
+            // sampling
+            $sampledData = array();
 
-	        if ($sampleRate < 1) {
-	            foreach ($data as $stat => $value) {
-	                if ((mt_rand() / mt_getrandmax()) <= $sampleRate) {
-	                    $sampledData[$stat] = "$value|@$sampleRate";
-	                }
-	            }
-	        } else {
-	            $sampledData = $data;
-	        }
+            if ($sampleRate < 1) {
+                foreach ($data as $stat => $value) {
+                    if ((mt_rand() / mt_getrandmax()) <= $sampleRate) {
+                        $sampledData[$stat] = "$value|@$sampleRate";
+                    }
+                }
+            } else {
+                $sampledData = $data;
+            }
 
-	        if (empty($sampledData)) { return; }
+            if (empty($sampledData)) { return; }
 
-	        // Wrap this in a try/catch - failures in any of this should be silently ignored
-	        try {
-	            $host = STATSD_HOST;
-	            $port = STATSD_PORT;
-	            $fp = fsockopen("udp://$host", $port, $errno, $errstr);
-	            if (! $fp) { return; }
-	            foreach ($sampledData as $stat => $value) {
-	                fwrite($fp, "$stat:$value");
-	            }
-	            fclose($fp);
-	        } catch (Exception $e) {
-	        }
-		}
+            // Wrap this in a try/catch - failures in any of this should be silently ignored
+            try {
+                $host = STATSD_HOST;
+                $port = STATSD_PORT;
+                $fp = fsockopen("udp://$host", $port, $errno, $errstr);
+                if (! $fp) { return; }
+                foreach ($sampledData as $stat => $value) {
+                    fwrite($fp, "$stat:$value");
+                }
+                fclose($fp);
+            } catch (Exception $e) {
+            }
+        }
     }
 }
 

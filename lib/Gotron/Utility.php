@@ -8,22 +8,22 @@
  * @return string
  */
 function file_join() {
-	$args = func_get_args();
-	$paths = array();
+    $args = func_get_args();
+    $paths = array();
 
-	foreach($args as $arg) {
-	  $paths = array_merge($paths, (array)$arg);
-	}
+    foreach($args as $arg) {
+      $paths = array_merge($paths, (array)$arg);
+    }
 
-	foreach($paths as &$path) {
-	  $path = trim($path, '/');
-	}
+    foreach($paths as &$path) {
+      $path = trim($path, '/');
+    }
 
-	if (substr($args[0], 0, 1) == '/') {
-	  $paths[0] = '/' . $paths[0];
-	}
+    if (substr($args[0], 0, 1) == '/') {
+      $paths[0] = '/' . $paths[0];
+    }
 
-	return join('/', $paths);
+    return join('/', $paths);
 }
 
 if (!function_exists('getallheaders')) {
@@ -34,6 +34,7 @@ if (!function_exists('getallheaders')) {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
+
         return $headers;
     }
 }

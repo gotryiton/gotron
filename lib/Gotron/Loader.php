@@ -9,13 +9,13 @@ class Loader extends \Aura\Autoload\Loader {
     public $framework_class_paths = array();
 
     /**
-	 * Adds path to the class paths array
-	 *
-	 * @param array $paths 
-	 * @return void
-	 */
-	public function addFrameworkClassPath($path) {
-    	$this->framework_class_paths[] = rtrim($path, DIRECTORY_SEPARATOR);
+     * Adds path to the class paths array
+     *
+     * @param array $paths
+     * @return void
+     */
+    public function addFrameworkClassPath($path) {
+        $this->framework_class_paths[] = rtrim($path, DIRECTORY_SEPARATOR);
     }
 
     public function addFrameworkClassPaths($paths, $namespace = "Gotron") {
@@ -39,22 +39,22 @@ class Loader extends \Aura\Autoload\Loader {
         $this->tried_paths = array();
 
         $pos = strrpos($spec, '\\');
-		$namespace = substr($spec, 0, $pos);
+        $namespace = substr($spec, 0, $pos);
 
-		if($namespace === $this->framework_namespace) {
-			$non_namespace = str_replace($namespace, "", $spec);
-			$ctf = $this->classToFile($non_namespace);
-			foreach($this->framework_class_paths as $i => $path) {
-				$this->tried_paths[] = "#{$i}: {$path}";
+        if ($namespace === $this->framework_namespace) {
+            $non_namespace = str_replace($namespace, "", $spec);
+            $ctf = $this->classToFile($non_namespace);
+            foreach ($this->framework_class_paths as $i => $path) {
+                $this->tried_paths[] = "#{$i}: {$path}";
 
-				// convert the remaining spec to a file name
+                // convert the remaining spec to a file name
                 $file = $path . DIRECTORY_SEPARATOR . $ctf;
 
-				if(is_readable($file)) {
-					return $file;
-				}
-			}
-		}
+                if (is_readable($file)) {
+                    return $file;
+                }
+            }
+        }
 
         return parent::find($spec);
     }
