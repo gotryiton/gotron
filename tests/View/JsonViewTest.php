@@ -9,7 +9,7 @@ class JsonViewTest extends UnitTest {
     public static function setUpBeforeClass() {
         parent::setUpBeforeClass();
     }
-    
+
     public static function tearDownAfterClass() {
         parent::tearDownAfterClass();
     }

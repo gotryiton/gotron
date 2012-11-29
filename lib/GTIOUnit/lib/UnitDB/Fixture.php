@@ -9,18 +9,18 @@ use Spyc,
 class Fixture extends UnitDB {
 
     public function __construct($fixture_path = null) {
-        if(is_null($fixture_path)) {
-            if(defined('FIXTURE_PATH')) {
+        if (is_null($fixture_path)) {
+            if (defined('FIXTURE_PATH')) {
                 $fixture_path = FIXTURE_PATH;
             }
             else {
                 $fixture_path = __DIR__ . "/../../../fixtures/";
             }
         }
-        if(is_dir($fixture_path)) {
+        if (is_dir($fixture_path)) {
             $this->fixture_path = $fixture_path;
         }
-        else{
+        else {
             throw new \Exception( "Fixture Path does not exist: " . $fixture_path );
         }
         parent::__construct();
@@ -29,10 +29,10 @@ class Fixture extends UnitDB {
     public function create($name, $added_attributes = array()) {
         $fixture_file = $this->fixture_path . "$name.yaml";
         $fixture_file_json = $this->fixture_path . "$name.json";
-        if(file_exists($fixture_file)) {
+        if (file_exists($fixture_file)) {
             $fixture = Spyc::YAMLLoad($fixture_file);
         }
-        else if(file_exists($fixture_file_json)) {
+        elseif (file_exists($fixture_file_json)) {
             $fixture = json_decode(file_get_contents($fixture_file_json), true);
         }
         else {
@@ -51,9 +51,8 @@ class Fixture extends UnitDB {
             return $column['column_name'];
         });
 
-        
         foreach ($rows as $attributes) {
-            foreach($attributes as $k => $v){
+            foreach ($attributes as $k => $v){
                 if (!is_string($k)) {
                     unset($attributes[$k]);
                 }
@@ -62,14 +61,14 @@ class Fixture extends UnitDB {
             //iterate through the attributes to check if the column exists
             __($attributes)->each(function($value, $column) use ($columns, $table_name) {
                 if(!__()->includ($columns, $column)) throw new \Exception( "Column $column does not exist for table $table_name");
-            });  
+            });
 
             //override $attributes with $added_attributes
             foreach($added_attributes as $key => $value) {
                 if(array_key_exists($key, $attributes)) {
                     $attributes[$key] = $value;
                 }
-            }  
+            }
 
             //get the column names and values for the query
             $column_names = __($attributes)->map(function($value, $column) { return $column; });

@@ -10,11 +10,11 @@ class BeanstalkerConnectionTest extends UnitTest {
         $bean = new Beanstalker;
         $this->assertInstanceOf('Gotron\Beanstalker\Beanstalker', $bean);
     }
-	
-	public function test_connection_to_beanstalk() {
-		$bean = new Beanstalker;
-		$this->assertInternalType('array', $bean->listTubes());
-	}
+
+    public function test_connection_to_beanstalk() {
+        $bean = new Beanstalker;
+        $this->assertInternalType('array', $bean->listTubes());
+    }
 
 }
 ?>

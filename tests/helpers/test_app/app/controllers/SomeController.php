@@ -18,24 +18,24 @@ class SomeController extends Controller {
     }
 
     public function test_json() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->render(array('json' => $data));
     }
 
     public function test_respond_to() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->respond_to([
             'html' => function() use($data){
                 $this->render($data, array('view' => 'test', 'layout' => false));
             },
             'json' => function() use($data) {
                 $this->render(array('json' => $data));
-            }    
+            }
         ]);
     }
 
     public function test_respond_to_version() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->respond_to([
             'html' => function() use($data){
                 $this->render($data, array('view' => 'test', 'layout' => false));
@@ -55,7 +55,7 @@ class SomeController extends Controller {
     }
 
     public function test_respond_to_version_presenter() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->respond_to([
             'html' => function() use($data){
                 $this->render($data, array('view' => 'test', 'layout' => false));
@@ -75,7 +75,7 @@ class SomeController extends Controller {
     }
 
     public function test_respond_to_version_multi_presenter() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->respond_to([
             'html' => function() use($data){
                 $this->render($data, array('view' => 'test', 'layout' => false));
@@ -87,17 +87,17 @@ class SomeController extends Controller {
     }
 
     public function test_php_no_layout() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => false));
     }
 
     public function test_php_layout_default() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test'));
     }
 
     public function test_php_layout_set() {
-		$data = array("name" => $this->params['name']);
+        $data = array("name" => $this->params['name']);
         $this->render($data, array('view' => 'test', 'layout' => 'layout_set'));
     }
 

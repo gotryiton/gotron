@@ -6,35 +6,33 @@ declare(ticks = 5);
 
 
 /**
- * Daemon process for BeanstalkerWorker 
+ * Daemon process for BeanstalkerWorker
  *
  * @package Gotron\Beanstalker
  */
 
 class BeanstalkerDaemon {
-    
+
     protected $workers = Array();
-    protected $numWorkers;
+    protected $num_workers;
     protected $queues = Array();
     protected $log;
     protected $host = NULL;
     protected $port = NULL;
-    
-    public function __construct($queues, $numWorkers, $log, $host = null, $port = null)
-    {
+
+    public function __construct($queues, $num_workers, $log, $host = null, $port = null) {
         $this->queues = $queues;
-        $this->numWorkers = $numWorkers;
+        $this->num_workers = $num_workers;
         $this->log = $log;
         $this->host = $log;
         $this->port = $port;
     }
-    
-    public function workerAction()
-    {
+
+    public function workerAction() {
         pcntl_signal(SIGTERM, array($this, 'signalhandler'));
 
         $child      = false;
-        for ($i = 0; $i < $this->numWorkers; $i++) {
+        for ($i = 0; $i < $this->num_workers; $i++) {
             $pid = pcntl_fork();
             if ($pid == 0) {
                 $child = true;
@@ -45,17 +43,17 @@ class BeanstalkerDaemon {
         }
 
         if ($child) {
-            
             $worker = new BeanstalkerWorker($this->queues);
-            if($this->numWorkers == 1){
+            if($this->num_workers == 1){
                 $worker->setLog($this->log);
             }
             else{
                 $worker->setLog($this->log . "-" . ($workerNum+1));
             }
-            
+
             while ($worker->work());
-        } else {
+        }
+        else {
             pcntl_signal(SIGCHLD, array($this, 'signalhandler'));
 
             while (true) {
@@ -63,9 +61,8 @@ class BeanstalkerDaemon {
             }
         }
     }
-    
-    function signalhandler($signal)
-    {
+
+    function signalhandler($signal) {
         switch ($signal) {
         case SIGCHLD:
             while (($pid = pcntl_wait($signal, WNOHANG)) > 0) {
@@ -76,7 +73,8 @@ class BeanstalkerDaemon {
                             $workers   = array();
                             $jobscount = 0;
                             return;
-                        } else {
+                        }
+                        else {
                             // $this->logger->info("Restarting worker $pid, new pid $newpid.");
                             $this->workers[$key] = $newpid;
                         }
@@ -91,6 +89,6 @@ class BeanstalkerDaemon {
             exit;
         }
     }
-    
+
 }
 ?>

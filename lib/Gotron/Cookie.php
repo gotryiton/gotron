@@ -13,14 +13,14 @@ class Cookie {
      * Set a cookie in the same way as setcookie function
      *  puts it in Globals if cookies.disabled is true
      *
-     * @param string $name 
-     * @param string $value 
-     * @param int $expire 
+     * @param string $name
+     * @param string $value
+     * @param int $expire
      * @return bool
      */
     public static function set($name, $value, $expire = 0) {
         $name = static::namespaced($name);
-        if(Config::bool('cookies.disabled')) {
+        if (Config::bool('cookies.disabled')) {
             return static::set_cookie_in_globals($name, $value);
         }
         else {
@@ -31,13 +31,13 @@ class Cookie {
     /**
      * Read the cookie, uses GLOBALS if cookies are disabled
      *
-     * @param string $name 
+     * @param string $name
      * @return string
      */
     public static function read($name) {
         $name = static::namespaced($name);
-        if(Config::bool('cookies.disabled')) {
-            if(isset($GLOBALS['cookies'][$name])) {
+        if (Config::bool('cookies.disabled')) {
+            if (isset($GLOBALS['cookies'][$name])) {
                 return $GLOBALS['cookies'][$name];
             }
             else {
@@ -62,14 +62,15 @@ class Cookie {
     /**
      * Deletes the cookie
      *
-     * @param string $name 
+     * @param string $name
      * @return bool
      */
     public static function delete($name) {
-        if(Config::bool('cookies.disabled')) {
+        if (Config::bool('cookies.disabled')) {
             $name = static::namespaced($name);
-            if(isset($GLOBALS['cookies'][$name])) {
+            if (isset($GLOBALS['cookies'][$name])) {
                 unset($GLOBALS['cookies'][$name]);
+
                 return true;
             }
         }
@@ -84,7 +85,7 @@ class Cookie {
      * @return void
      */
     public static function flush() {
-        if(Config::bool('cookies.disabled')) {
+        if (Config::bool('cookies.disabled')) {
             $GLOBALS['cookies'] = array();
         }
     }
@@ -95,10 +96,10 @@ class Cookie {
      * @return string
      */
     protected static function namespaced($name) {
-        if($namespace = Config::get('cookies.namespace', true)) {
+        if ($namespace = Config::get('cookies.namespace', true)) {
             return "{$namespace}_{$name}";
         }
-        else{
+        else {
             return $name;
         }
     }
@@ -107,12 +108,13 @@ class Cookie {
      * Sets cookie in globals array
      *  used in testing
      *
-     * @param string $name 
-     * @param string $value 
+     * @param string $name
+     * @param string $value
      * @return bool
      */
     protected static function set_cookie_in_globals($name, $value) {
         $GLOBALS['cookies'][$name] = $value;
+
         return true;
     }
 

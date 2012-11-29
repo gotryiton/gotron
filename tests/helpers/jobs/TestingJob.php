@@ -2,10 +2,12 @@
 
 namespace TestApp;
 
-class TestingJob {	
-	public function perform() {
-		return "Hello";
-	}
+class TestingJob {
+
+    public function perform() {
+        return "Hello";
+    }
+
 }
 
 ?>

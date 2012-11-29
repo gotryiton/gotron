@@ -2,6 +2,12 @@
 
 namespace Gotron;
 
+/**
+ * Http Client library
+ *
+ * derived from gam-http - https://code.google.com/p/gam-http
+ **/
+
 class Http extends Singleton {
 
     private $_host = null;
@@ -14,19 +20,36 @@ class Http extends Singleton {
     private $mock_urls = array();
     private $persistent = false;
 
+    private $_append = array();
+    private $_agent;
+    private $_debugMode = false;
+    private $_referer;
+    private $_silentMode = false;
+    private $_cookie;
+    private $_headers = array();
+    private $_connMultiple = false;
+
     const HTTP  = 'http';
     const HTTPS = 'https';
-    
-    private $_connMultiple = false;
+
+    const POST   = 'POST';
+    const GET    = 'GET';
+    const DELETE = 'DELETE';
+    const PUT    = 'PUT';
+
+    const HTTP_OK = 200;
+    const HTTP_CREATED = 201;
+    const HTTP_ACEPTED = 202;
 
     static public function connect($host, $port = null, $protocol = self::HTTP) {
         $instance = self::instance();
         $instance->_host = $host;
         $instance->_port = $port;
         $instance->_protocol = $protocol;
+
         return $instance;
     }
-    
+
     /**
      *
      * @return Http
@@ -40,14 +63,10 @@ class Http extends Singleton {
         return $instance;
     }
 
-    private $_append = array();
-    public function add($http)
-    {
+    public function add($http) {
         $this->_append[] = $http;
         return $this;
     }
-    
-    private $_silentMode = false;
 
     /**
      *
@@ -56,14 +75,12 @@ class Http extends Singleton {
      */
     public function silentMode($mode=true) {
         $this->_silentMode = $mode;
-        return $this;    
+        return $this;
     }
-    
-    private $_debugMode = false;
 
     public function debugMode($mode=true) {
         $this->_debugMode = $mode;
-        return $this;    
+        return $this;
     }
 
     public function setCredentials($user, $pass) {
@@ -72,28 +89,20 @@ class Http extends Singleton {
         return $this;
     }
 
-    private $_agent;
     public function setUserAgent($agent) {
         $this->_agent = $agent;
     }
 
-    private $_referer;
     public function setReferer($referer) {
         $this->_referer = $referer;
     }
 
-    private $_cookie;
     public function setCookie($cookie) {
         $this->_cookie = $cookie;
     }
 
-    const POST   = 'POST';
-    const GET    = 'GET';
-    const DELETE = 'DELETE';
-    const PUT    = 'PUT';
-
     private $_requests = array();
-    
+
     /**
      * @param string $url
      * @param array $params
@@ -103,7 +112,7 @@ class Http extends Singleton {
         $this->_requests[] = array(self::PUT, $this->_url($url), $params);
         return $this;
     }
-    
+
     /**
      * @param string $url
      * @param array $params
@@ -133,11 +142,11 @@ class Http extends Singleton {
         $this->_requests[] = array(self::DELETE, $this->_url($url), $params);
         return $this;
     }
-    
+
     public function _getRequests() {
         return $this->_requests;
     }
-    
+
     /**
      * PUT request
      *
@@ -170,7 +179,7 @@ class Http extends Singleton {
     public function doGet($url, $params=array()) {
         return $this->_exec(self::GET, $this->_url($url), $params);
     }
-    
+
     /**
      * DELETE Request
      *
@@ -182,7 +191,6 @@ class Http extends Singleton {
         return $this->_exec(self::DELETE, $this->_url($url), $params);
     }
 
-    private $_headers = array();
     /**
      * setHeaders
      *
@@ -207,7 +215,7 @@ class Http extends Singleton {
     }
 
     /**
-     * Builds absolute url 
+     * Builds absolute url
      *
      * @param string $url
      * @return string
@@ -217,17 +225,13 @@ class Http extends Singleton {
             $url = substr($url, 1, strlen($url) - 1);
 
         //don't add the port to url unless it's explicitly set in constructor
-        if(empty($this->_port)){ 
-            return "{$this->_protocol}://{$this->_host}/{$url}";    
+        if(empty($this->_port)){
+            return "{$this->_protocol}://{$this->_host}/{$url}";
         }
         else{
-            return "{$this->_protocol}://{$this->_host}:{$this->_port}/{$url}";   
+            return "{$this->_protocol}://{$this->_host}:{$this->_port}/{$url}";
         }
     }
-
-    const HTTP_OK = 200;
-    const HTTP_CREATED = 201;
-    const HTTP_ACEPTED = 202;
 
     public static function mock_url($url, $data, $persistent = false) {
         $instance = self::instance();
@@ -295,9 +299,9 @@ class Http extends Singleton {
 
         $headers = $this->_headers;
         $s = curl_init();
-        
+
         curl_setopt($s, CURLOPT_FOLLOWLOCATION, 1);
-        
+
         if(!is_null($this->_user)){
            curl_setopt($s, CURLOPT_USERPWD, $this->_user.':'.$this->_pass);
         }
@@ -311,12 +315,12 @@ class Http extends Singleton {
            curl_setopt($s, CURLOPT_TIMEOUT, $this->_timeout);
         }
         if(!is_null($this->_cookie)){
-           curl_setopt($s, CURLOPT_COOKIESESSION, TRUE); 
+           curl_setopt($s, CURLOPT_COOKIESESSION, TRUE);
            curl_setopt($s, CURLOPT_COOKIE, $this->_cookie);
         }
         if ($this->_debugMode)
             curl_setopt($s, CURLOPT_VERBOSE, 1);
-    
+
         switch ($type) {
             case self::DELETE:
                 curl_setopt($s, CURLOPT_URL, $url . '?' . http_build_query($params));
@@ -356,7 +360,7 @@ class Http extends Singleton {
         }
         return $out;
     }
-    
+
     public function run() {
         if ($this->_connMultiple) {
             return $this->_runMultiple();
@@ -364,7 +368,7 @@ class Http extends Singleton {
             return $this->_run();
         }
     }
-    
+
     private function _runMultiple() {
         $out= null;
         if (count($this->_append) > 0) {
@@ -372,13 +376,13 @@ class Http extends Singleton {
             foreach ($this->_append as $_append) {
                 $arr = array_merge($arr, $_append->_getRequests());
             }
-            
+
             $this->_requests = $arr;
             $out = $this->_run();
         }
         return $out;
     }
-    
+
     private function _run() {
         if ($this->has_mock) {
 
@@ -390,15 +394,15 @@ class Http extends Singleton {
             $mh = curl_multi_init();
             foreach ($this->_requests as $id => $reg) {
                 $curly[$id] = curl_init();
-            
+
                 $type   = $reg[0];
                 $url    = $reg[1];
                 $params = $reg[2];
-            
+
                 if(!is_null($this->_user)){
                    curl_setopt($curly[$id], CURLOPT_USERPWD, $this->_user.':'.$this->_pass);
                 }
-            
+
                 if ($this->_debugMode)
                     curl_setopt($curly[$id], CURLOPT_VERBOSE, 1);
 
@@ -423,16 +427,16 @@ class Http extends Singleton {
                 }
                 curl_setopt($curly[$id], CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curly[$id], CURLOPT_HTTPHEADER, $headers);
-            
+
                 curl_multi_add_handle($mh, $curly[$id]);
             }
-    
+
             $running = null;
             do {
                 curl_multi_exec($mh, $running);
                 sleep(0.2);
             } while($running > 0);
-    
+
             foreach($curly as $id => $c) {
                 $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
                 switch ($status) {
