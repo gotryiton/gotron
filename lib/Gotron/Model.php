@@ -280,6 +280,9 @@ class Model extends ActiveRecord\Model {
         $query = $options['sql'][0];
         $offset = 0;
 
+        if(isset($options['group']))
+            $query .= " GROUP BY {$options['group']}";
+
         if(isset($limits['order']))
             $query .= " ORDER BY {$limits['order']}";
         else if(isset($options['order']))
