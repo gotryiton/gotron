@@ -42,7 +42,7 @@ class Loader extends \Aura\Autoload\Loader {
 		$namespace = substr($spec, 0, $pos);
 
 		if($namespace === $this->framework_namespace) {
-			$non_namespace = str_replace($namespace, "", $spec);
+            $non_namespace = str_replace($namespace . "\\", "\\", $spec);
 			$ctf = $this->classToFile($non_namespace);
 			foreach($this->framework_class_paths as $i => $path) {
 				$this->tried_paths[] = "#{$i}: {$path}";
