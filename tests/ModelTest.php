@@ -24,15 +24,14 @@ class ModelTest extends UnitTest {
         $connection->query(Book::$create_query);
         $connection->query(Publisher::$create_query);
         $connection->query(Agent::$create_query);
-        
+
         $fix = new Fixture(__DIR__ . "/fixtures/");
         $fix->create('book');
         $fix->create('book',array('id' => 2,'author' => 'paul'));
         $fix->create('book',array('id' => 3,'title' => 'nothing'));
     }
-    
-    public static function tearDownAfterClass()
-    {
+
+    public static function tearDownAfterClass() {
         parent::tearDownAfterClass();
 
         $connection = ConnectionManager::get_connection();
@@ -40,46 +39,46 @@ class ModelTest extends UnitTest {
         $connection->query("DROP TABLE IF EXISTS publishers");
         $connection->query("DROP TABLE IF EXISTS agents");
     }
-        
-    public function setUp(){
+
+    public function setUp() {
         $this->expectOutputString('');
     }
-    
+
     public function testGetByFinderWithOneConditionString() {
         $books = Book::finder('title_string',array('title' => 'something'));
         $this->assertEquals(2,count($books));
     }
-    
+
     public function testGetByFinderWithOneConditionHash() {
         $books = Book::finder('title_hash',array('title' => 'something'));
         $this->assertEquals(2,count($books));
     }
-    
+
     public function testGetByFinderWithMultipleUserDefinedConditionsString() {
         $books = Book::finder('title_author_string',array('title' => 'something','author' => 'john'));
         $this->assertEquals(1,count($books));
     }
-    
+
     public function testGetByFinderWithMultipleUserDefinedConditionsHash() {
         $books = Book::finder('title_author_hash',array('title' => 'something','author' => 'john'));
         $this->assertEquals(1,count($books));
     }
-    
+
     public function testGetByFinderWithOneUserDefinedConditionAndOnePreDefinedString() {
         $books = Book::finder('title_author_string',array('title' => 'something'));
         $this->assertEquals(1,count($books));
     }
-    
+
     public function testGetByFinderWithOneUserDefinedConditionAndOnePreDefinedHash() {
         $books = Book::finder('title_author_hash',array('title' => 'something'));
         $this->assertEquals(1,count($books));
     }
-    
+
     public function testGetByFinderWithTwoOfTheSameAttributes() {
         $books = Book::finder('title_twice',array('title' => array('something','nothing'),'author' => 'john'));
         $this->assertEquals(2,count($books));
     }
-    
+
     public function testGetByFinderWithArrayInConditions() {
         $books = Book::finder('title_array',array('title' => array('something','nothing')));
         $this->assertEquals(2,count($books));
@@ -119,7 +118,7 @@ class ModelTest extends UnitTest {
         $publisher->reload();
 
         $this->assertGreaterThan($current_updated_time, $publisher->updated_at);
-        
+
 
     }
 
@@ -136,8 +135,6 @@ class ModelTest extends UnitTest {
         $agent = Agent::find(1);
         $this->assertEquals("agent/1", $agent->cache_key());
     }
-
-
 
 }
 

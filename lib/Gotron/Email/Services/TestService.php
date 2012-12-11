@@ -8,10 +8,9 @@ namespace Gotron\Email\Services;
  */
 class TestService extends EmailService {
 
-	public function send($email)
-	{
-	    return true;
-	}
-	
+    public function send($email) {
+        return true;
+    }
+
 }
 ?>

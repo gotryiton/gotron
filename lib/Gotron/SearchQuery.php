@@ -50,6 +50,7 @@ class SearchQuery {
         }
 
         $this->connection = Client::connection($config);
+
         return $this->connection;
     }
 
@@ -66,36 +67,43 @@ class SearchQuery {
 
     public function offset($offset) {
         $this->from = $offset;
+
         return $this;
     }
 
     public function limit($limit) {
         $this->size = $limit;
+
         return $this;
     }
 
     public function filter($filter = []) {
         $this->filter = $filter;
+
         return $this;
     }
 
     public function query_string($query_string = []) {
         $this->query_string = $query_string;
+
         return $this;
     }
 
     public function should($should = []) {
         $this->query_string = $query_string;
+
         return $this;
     }
 
     public function q($query = []) {
         $this->query = $query;
+
         return $this;
     }
 
     public function sort($sort = []) {
         $this->sort = $sort;
+
         return $this;
     }
 
@@ -123,6 +131,7 @@ class SearchQuery {
         $this->last_query = $query;
 
         $result = $this->connection()->search($query);
+
         return SearchResult::from_search($result);
     }
 
@@ -133,6 +142,7 @@ class SearchQuery {
 
         return $array;
     }
+
 }
 
 ?>

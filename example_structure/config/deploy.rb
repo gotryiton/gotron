@@ -4,7 +4,7 @@ set :scm, :git
 set :deploy_to, "/var/www/saas"
 set :user, "deployer"
 set :keep_releases, 6
-                             
+
 set :minifying, false
 
 set :stages, %w(production staging dev load_testing)
@@ -27,7 +27,7 @@ namespace :web do
     run "compass clean #{latest_release} --config #{latest_release}/config/compass_config.rb"
     run "compass compile #{latest_release} --config #{latest_release}/config/compass_config.rb"
   end
-  
+
   desc "Create the ASSET_REVISION file"
   task :create_asset_revision_file, :roles => :app do
     if fetch(:minifying)
@@ -37,11 +37,11 @@ namespace :web do
     # Always need the revision file in the current_path
     run "cp #{shared_path}/ASSET_REVISION #{latest_release}/ASSET_REVISION"
   end
-  
+
   task :reload_fpm, :roles => :web do
     run "ruby #{latest_release}/tools/minifydeploy.rb #{latest_revision} #{stage.upcase}"
   end
-  
+
   task :apc_clear, :roles => :web do
     run "curl -s http://localhost/cleanup/clear_cache"
   end
@@ -53,7 +53,7 @@ namespace :maintenance do
   task :on do
     run "echo 'SHOW_MAINTENANCE' > #{deploy_to}/MAINTENANCE"
   end
-  
+
   desc "Turn maintenance off"
   task :off do
     run "rm #{deploy_to}/MAINTENANCE"
@@ -65,7 +65,7 @@ namespace :fpm do
   task :reload, :roles => :web do
     run "#{sudo} sv 2 php5-fpm"
   end
-  
+
   [:stop, :start, :restart].each do |action|
     desc "#{action.to_s} php-fpm"
     task action, :roles => :web do

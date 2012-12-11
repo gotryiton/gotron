@@ -42,17 +42,17 @@ abstract class EmailService {
         return new $class();
     }
 
-	private static function load_adapter_class($service) {
-		$class = ucwords($service) . 'Service';
-		$service_class = __NAMESPACE__ . "\\$class";
+    private static function load_adapter_class($service) {
+        $class = ucwords($service) . 'Service';
+        $service_class = __NAMESPACE__ . "\\$class";
         $source = __DIR__ . "/$class.php";
 
         if (!file_exists($source)) {
             throw new Exception("$class not found!");
         }
 
-		return $service_class;
-	}
+        return $service_class;
+    }
 
     /**
      * Send an email

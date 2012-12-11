@@ -82,7 +82,7 @@ class Email {
             $this->to = $to;
         }
 
-        if(isset($options['reply_to'])) {
+        if (isset($options['reply_to'])) {
             $this->reply_to = $options['reply_to'];
         }
         else {
@@ -91,10 +91,10 @@ class Email {
 
         $this->from = Config::get('email.from');
 
-        if(isset($options['data']))
+        if (isset($options['data']))
             $this->data = $options['data'];
 
-        if(isset($options['view_path'])) {
+        if (isset($options['view_path'])) {
             $this->view_path = $options['view_path'];
         }
         else {
@@ -107,7 +107,7 @@ class Email {
 
         $this->subject = (isset($options['subject'])) ? $options['subject'] : null;
     }
-    
+
     /**
      * Singleton
      *
@@ -116,12 +116,12 @@ class Email {
     public static function get_instance($type, $to, $options = array()) {
         return new self($type, $to, $options);
     }
-    
+
     /**
      * Create the actual HTML and Text views
      *
      * @return void
-     * @author 
+     * @author
      */
     public function create_views() {
         $view_path = file_join($this->view_path, "{$this->type}.php");

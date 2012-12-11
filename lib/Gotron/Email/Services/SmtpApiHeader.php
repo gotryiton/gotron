@@ -28,9 +28,9 @@ class SmtpApiHeader {
         if (!is_array($val)) return;
         // checking for associative array
         $diff = array_diff_assoc($val, array_values($val));
-        if(((empty($diff)) ? false : true)) {
+        if (((empty($diff)) ? false : true)) {
             $this->data['unique_args'] = $val;
-        } 
+        }
     }
 
     public function setCategory($cat) {
@@ -65,5 +65,5 @@ class SmtpApiHeader {
         return $str;
     }
 }
- 
+
 ?>

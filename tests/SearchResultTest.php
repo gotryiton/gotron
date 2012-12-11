@@ -34,7 +34,6 @@ class SearchResultTest extends UnitTest {
         $this->assertFalse(array_key_exists('books', $result->models));
     }
 
-
 }
 
 ?>

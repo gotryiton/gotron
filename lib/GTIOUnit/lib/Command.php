@@ -3,6 +3,7 @@
  * Overrides the TextUI_Command to call the correct TestRunner
  */
 class GtioTextUICommand extends PHPUnit_TextUI_Command {
+
     /**
      * @param boolean $exit
      */
@@ -10,7 +11,7 @@ class GtioTextUICommand extends PHPUnit_TextUI_Command {
         $command = new GtioTextUICommand;
         return $command->run($_SERVER['argv'], $exit);
     }
-    
+
     /**
      * Create a TestRunner, override in subclasses.
      *
@@ -20,4 +21,5 @@ class GtioTextUICommand extends PHPUnit_TextUI_Command {
     protected function createRunner() {
         return new GtioTestRunner($this->arguments['loader']);
     }
+
 }
