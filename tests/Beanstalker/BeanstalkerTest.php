@@ -70,40 +70,40 @@ class BeanstalkerTests extends UnitTest {
         $worker->work(0);
     }
 
-    public function test_model_queue_callback() {
-        $config = Config::instance();
-        $config->set('beanstalk.disabled', false);
-        $config->set('model_directory', 'tests/GTIO/helpers/models');
-        Utils::clear_db($config['database']);
+    // public function test_model_queue_callback() {
+    //     $config = Config::instance();
+    //     $config->set('beanstalk.disabled', false);
+    //     $config->set('model_directory', 'tests/GTIO/helpers/models');
+    //     Utils::clear_db($config['database']);
 
-        $connection = ConnectionManager::get_connection();
-        $connection->query(Book::$create_query);
-        $connection->query(Publisher::$create_query);
+    //     $connection = ConnectionManager::get_connection();
+    //     $connection->query(Book::$create_query);
+    //     $connection->query(Publisher::$create_query);
 
-        $fix = new Fixture(__DIR__ . "/../fixtures/");
-        $fix->create('publisher');
+    //     $fix = new Fixture(__DIR__ . "/../fixtures/");
+    //     $fix->create('publisher');
 
-        $book = Book::create(array(
-                "title" => "ORIGINAL TITLE",
-                "author" => "Some author",
-                "publisher_id" => 1
-            ));
+    //     $book = Book::create(array(
+    //             "title" => "ORIGINAL TITLE",
+    //             "author" => "Some author",
+    //             "publisher_id" => 1
+    //         ));
 
-        $unique = "(\w+)";
-        $this->expectOutputRegex("/\[$unique\] \[test\] Worker started\.\.\.\n\[$unique\] \[test\] Performing Job Id: \d+\n\[$unique\] \[test\] Successfully performed Job Id\: \d+\n\[$unique\] \[test\] Worker stopped\.\.\./");
+    //     $unique = "(\w+)";
+    //     $this->expectOutputRegex("/\[$unique\] \[test\] Worker started\.\.\.\n\[$unique\] \[test\] Performing Job Id: \d+\n\[$unique\] \[test\] Successfully performed Job Id\: \d+\n\[$unique\] \[test\] Worker stopped\.\.\./");
 
-        $worker = new BeanstalkerWorker(array("CallbackDelayedJobQueue"));
-        $worker->setLog("STDOUT");
-        $worker->work(0);
+    //     $worker = new BeanstalkerWorker(array("CallbackDelayedJobQueue"));
+    //     $worker->setLog("STDOUT");
+    //     $worker->work(0);
 
-        $book->reload();
+    //     $book->reload();
 
-        $this->assertEquals("CHANGED TITLE", $book->title);
+    //     $this->assertEquals("CHANGED TITLE", $book->title);
 
-        $connection = ConnectionManager::get_connection();
-        $connection->query("DROP TABLE IF EXISTS books");
-        $connection->query("DROP TABLE IF EXISTS publishers");
-    }
+    //     $connection = ConnectionManager::get_connection();
+    //     $connection->query("DROP TABLE IF EXISTS books");
+    //     $connection->query("DROP TABLE IF EXISTS publishers");
+    // }
 }
   
 ?>
