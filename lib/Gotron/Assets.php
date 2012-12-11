@@ -32,6 +32,7 @@ class Assets {
             if (Config::get('assets.hashed', true)) {
                 $object = static::hash_object($object, $extension, $prefix);
             }
+
             $object = $object . ".{$extension}";
 
             return file_join($path, $object);
@@ -54,7 +55,7 @@ class Assets {
 
         return "{$object}_{$sha}";
     }
-    
+
 }
 
 ?>

@@ -14,7 +14,7 @@ class JsonView extends AbstractView{
 
     protected $etag = null;
 
-	protected $content_type = "application/json";
+    protected $content_type = "application/json";
 
     /**
      * Generate method to be implemented
@@ -29,7 +29,7 @@ class JsonView extends AbstractView{
             $this->content = "";
         }
 
-		return $this;
+        return $this;
     }
 
     /**
@@ -38,7 +38,7 @@ class JsonView extends AbstractView{
      * @return void
      */
     public function get_headers() {
-		return $this->headers;
+        return $this->headers;
     }
 
 }

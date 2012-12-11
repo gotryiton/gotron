@@ -14,6 +14,7 @@ require_once dirname(__FILE__) . "/../helpers/jobs/UnitTestJob.php";
 require_once dirname(__FILE__) . "/../helpers/jobs/UnitTestErrorJob.php";
 
 class BeanstalkerTests extends UnitTest {
+
     public $queueName = 'UnitTestQueue';
     public $className = 'TestApp\UnitTestJob';
     public $log;
@@ -23,18 +24,18 @@ class BeanstalkerTests extends UnitTest {
         parent::setUpBeforeClass();
         static::clear_beanstalk();
     }
-    
+
     public static function tearDownAfterClass() {
         parent::tearDownAfterClass();
     }
-    
+
     public function setUp() {
         $this->log = dirname(__FILE__) . '/../helpers/jobs/jobtest-log';
         $this->log_file = $this->log . "_" . date('Y-m-d') . '.log';
-        
+
         parent::setUp();
     }
-    
+
     public function tearDown() {
         parent::tearDown();
     }
@@ -45,7 +46,7 @@ class BeanstalkerTests extends UnitTest {
         $job = new BeanstalkerJob;
         $result = $job->enqueue($this->queueName, $this->className, array('name' => 'UnitTestName'));
         $this->assertInternalType('integer', $result);
-        
+
         $unique = "(\w+)";
         $this->expectOutputRegex("/\[$unique\]\ \[test\]\ Worker\ started\.\.\.\n\[$unique\]\ \[test\]\ Performing\ Job\ Id\:\ $result\nThis is the output from UnitTestName\n\[$unique\]\ \[test\]\ Successfully\ performed\ Job\ Id\:\ $result\n\[$unique\]\ \[test\]\ Worker\ stopped\.\.\.\n/");
         $worker = new BeanstalkerWorker(array($this->queueName));
@@ -55,12 +56,12 @@ class BeanstalkerTests extends UnitTest {
 
     public function test_enqueue_invalid_job() {
         $job = new BeanstalkerJob;
-        
+
         $this->setExpectedException('Gotron\Exception');
-        
+
         $result = $job->enqueue($this->queueName,'UnitTestInvalidJob',array('name' => 'UnitTestName'));
     }
-    
+
     public function test_logs_exception_in_job() {
         $job = new BeanstalkerJob;
         $result = $job->enqueue('ErrorQueue', 'TestApp\UnitTestErrorJob', array('name' => 'UnitTestName'));
@@ -105,5 +106,5 @@ class BeanstalkerTests extends UnitTest {
     //     $connection->query("DROP TABLE IF EXISTS publishers");
     // }
 }
-  
+
 ?>

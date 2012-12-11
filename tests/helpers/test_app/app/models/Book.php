@@ -13,7 +13,7 @@ class Book extends Model {
     );
 
     static $queue_after_create = array("test_after_create");
-    
+
     static $finders = array(
         'title_string' => array('conditions' => array('title = ?',1)),
         'title_hash' => array('conditions' => array('title' => 1)),

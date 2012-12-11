@@ -243,9 +243,10 @@ class RouterTest extends UnitTest {
             '/some/[action]' => 'Some',
             '/someother/route' => 'SomeOther'
         );
-    
+
         $this->assertEquals('/some/[action]', Router::find_best_route($routes, $path));
     }
+
 }
 
 ?>

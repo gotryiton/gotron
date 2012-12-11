@@ -1,7 +1,7 @@
 begin
   require 'tasks/standalone_migrations'
   require 'logging'
-  
+
   ActiveRecord::Base.schema_format = :sql
 
   logger = Logging.logger['migration_log']
@@ -9,7 +9,7 @@ begin
     Logging.appenders.syslog("##migration##", :facility => Syslog::Constants::LOG_LOCAL0)
   )
   ActiveRecord::Base.logger = logger
-  
+
   namespace :db do
     desc "Migrates the DB"
     task :migrate do

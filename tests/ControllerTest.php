@@ -31,7 +31,7 @@ class ControllerTest extends UnitTest {
         $controller->call_method('test_php_layout_default');
         $this->assertEquals($expected_output, $controller->response->body);
     }
-    
+
     public function test_call_method_php_layout_set() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
@@ -40,7 +40,7 @@ class ControllerTest extends UnitTest {
         $controller->call_method('test_php_layout_set');
         $this->assertEquals($expected_output, $controller->response->body);
     }
-    
+
     public function test_call_method_json() {
         $controller = new SomeController;
         $controller->params['name'] = 'somebody';
@@ -49,7 +49,7 @@ class ControllerTest extends UnitTest {
         $controller->call_method('test_json');
         $this->assertEquals($expected_output, $controller->response->body);
     }
-    
+
     public function test_call_method_default() {
         $controller = new SomeController;
         $controller->params['name'] = 'index';
@@ -92,12 +92,12 @@ class ControllerTest extends UnitTest {
         $this->assertNotNull($controller->response->headers['ETag']);
 
         $etag = $controller->response->headers['ETag'];
-        
+
         $controller = new SomeController;
         $controller->request = Request::build(['headers' => ['If-None-Match' => $etag]]);
         $controller->params['id'] = 123456;
         $expected_output = null;
-        
+
         $controller->call_method('test_etag_caching');
         $this->assertEquals($expected_output, $controller->response->body);
         $this->assertEquals(304, $controller->response->status_code);

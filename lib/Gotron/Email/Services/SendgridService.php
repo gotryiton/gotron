@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../../../vendor/swiftmailer/lib/swift_init.php';
  * Sendgrid email service
  *
  */
- 
+
 class SendgridService extends EmailService
 {
     const USER = "SENDGRID_USER";
@@ -23,65 +23,66 @@ class SendgridService extends EmailService
 
     protected $swift = null;
 
-	public function send($email) {
-	    $response = $this->send_request($email);
-	    if($response === 1)
-	        return true;
-	    else
-	        return false;
-	}
-	
-	/**
-	 * Sends the request to sendgrid
-	 *
-	 * @param Email $email 
-	 * @return int Number of successful messages
-	 */
-	protected function send_request($email)
-	{
-	    $message = $this->build_message($email);
-		return $this->get_sendgrid_connection()->send($message);
-	}
-	
-	/**
-	 * Create the swift_message to be sent
-	 *
-	 * @param Email $email 
-	 * @return void
-	 */
-	public function build_message($email)
-	{
-	    $message = new Swift_Message;
-	    $message->setReplyTo($email->reply_to);
-	    $message->setFrom($email->from);
+    public function send($email) {
+        $response = $this->send_request($email);
+
+        if ($response === 1)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Sends the request to sendgrid
+     *
+     * @param Email $email
+     * @return int Number of successful messages
+     */
+    protected function send_request($email) {
+        $message = $this->build_message($email);
+
+        return $this->get_sendgrid_connection()->send($message);
+    }
+
+    /**
+     * Create the swift_message to be sent
+     *
+     * @param Email $email
+     * @return void
+     */
+    public function build_message($email) {
+        $message = new Swift_Message;
+        $message->setReplyTo($email->reply_to);
+        $message->setFrom($email->from);
         $message->setTo($email->to);
         $message->setSubject($email->subject);
-		$message->setBody($email->html_content, 'text/html');
-		$message->addPart($email->text_content, 'text/plain');
+        $message->setBody($email->html_content, 'text/html');
+        $message->addPart($email->text_content, 'text/plain');
 
         $headers = $message->getHeaders();
         $headers->addTextHeader('X-SMTPAPI', $this->build_headers($email));
 
-		return $message;
-	}
+        return $message;
+    }
 
     public function build_headers($email) {
         $api_header = new SmtpApiHeader;
         $site_type = defined('SITE_TYPE') ? SITE_TYPE : "development";
         $category = $site_type . '-' . $email->type;
         $api_header->setCategory($category);
+
         return $api_header->asJSON();
     }
-	
-	/**
-	 * Gets the SMTP connection
-	 *
-	 * @return SwiftMailer
-	 */
-	private function get_sendgrid_connection()
-	{
-	    if($this->swift instanceof Swift_Mailer){
-	        return $this->swift;
+
+    /**
+     * Gets the SMTP connection
+     *
+     * @return SwiftMailer
+     */
+    private function get_sendgrid_connection()
+    {
+        if ($this->swift instanceof Swift_Mailer) {
+            return $this->swift;
         }
         else {
             $config = Config::instance();
@@ -96,9 +97,10 @@ class SendgridService extends EmailService
             $this->transport->setTimeout(15);
             $this->transport->setUsername($user);
             $this->transport->setPassword($password);
+
             return $this->swift = Swift_Mailer::newInstance($this->transport);
         }
-	}
-	
+    }
+
 }
 ?>
