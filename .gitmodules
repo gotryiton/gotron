@@ -13,3 +13,6 @@
 [submodule "vendor/elasticsearch"]
 	path = vendor/elasticsearch
 	url = git://github.com/gotryiton/elasticsearch.git
+[submodule "vendor/php-activerecord"]
+	path = vendor/php-activerecord
+	url = git://github.com/gotryiton/php-activerecord.git
