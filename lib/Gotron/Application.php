@@ -47,13 +47,13 @@ class Application extends Singleton {
         $this->loader->setMode(0);
         $this->loader->register();
         $this->loader->setPaths(array(
-            'Gotron\\' => file_join(__DIR__, ".."),
-            'ActiveRecord\\' => file_join(__DIR__, "/../ActiveRecord/lib"),
+            'Gotron\\' => file_join(__DIR__, "..")
         ));
     }
 
     public function autoload_vendors() {
         $this->loader->setPaths(array(
+            'ActiveRecord\\' => file_join(__DIR__, "/../../vendor/php-activerecord/lib"),
             'Requests' => file_join(__DIR__, "/../../vendor/Requests/library"),
             'Swift' => file_join(__DIR__, "/../../vendor/swiftmailer/lib/classes"),
             'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes"),
@@ -167,7 +167,7 @@ class Application extends Singleton {
      * @return void
      */
     public static function initialize_active_record($app_config) {
-        require_once __DIR__ . '/../ActiveRecord/lib/ActiveRecord/Utils.php';
+        require_once __DIR__ . '/../../vendor/php-activerecord/lib/ActiveRecord/Utils.php';
         ActiveRecord\Config::initialize(function($cfg) use($app_config) {
             $logger = new Logging('QUERY_LOG');
             $cfg->set_logging($app_config->bool('db.query_logging'));
