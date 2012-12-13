@@ -31,7 +31,6 @@ class Application extends Singleton {
         $instance->autoload_config();
         $instance->load_helpers();
         self::initialize_active_record($config);
-        self::initialize_routes();
 
         return $instance;
     }
