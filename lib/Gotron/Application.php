@@ -258,7 +258,6 @@ class Application extends Singleton {
     }
 
     public static function route() {
-        static::initialize();
         Router::route(static::instance());
     }
 
