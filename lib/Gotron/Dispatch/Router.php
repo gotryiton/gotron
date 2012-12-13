@@ -205,6 +205,12 @@ class Router {
                     newrelic_add_custom_parameter($key,$value);
                 }
             }
+
+            if (is_array($request->headers)) {
+                foreach ($request->headers as $key => $value) {
+                    newrelic_add_custom_parameter($key,$value);
+                }
+            }
         }
         return true;
     }
