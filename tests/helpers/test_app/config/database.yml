@@ -2,16 +2,16 @@ development: &development
   adapter: mysql
   encoding: utf8
   reconnect: false
-  database: gtio_framework_development
+  database: gotron_development
   pool: 5
-  username: root
+  username: test
   password:
   host: localhost
 
 test:
   <<: *development
-  database: gtio_framework_test
+  database: gotron_test
 
 production:
   <<: *development
-  database: gtio_framework_production
+  database: gotron_production
