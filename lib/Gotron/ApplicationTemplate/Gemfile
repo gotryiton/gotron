@@ -1,0 +1,10 @@
+source :rubygems
+
+gem 'railsless-deploy'
+gem 'capistrano-ext'
+gem 'mysql'
+gem 'standalone_migrations'
+gem 'logging'
+
+gem 'compass'
+gem 'guard-compass'

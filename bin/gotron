@@ -1,0 +1,202 @@
+#!/usr/bin/env php
+<?php
+
+namespace Gotron;
+
+use Gotron\View\PhpView;
+
+require __DIR__ . "/../lib/Gotron/bootstrap.php";
+
+$app = new Application;
+$app->autoload_library();
+
+function help($status = 0) {
+    echo <<<EOF
+Gotron
+============
+usage: gotron new <project_name> [<directory>]
+
+EOF;
+    exit($status);
+}
+
+$current_directory = getcwd();
+
+if (array_key_exists(1, $argv) && in_array($argv[1], ['help', '--help', '-h'])) {
+    help();
+}
+else if (!array_key_exists(1, $argv) || $argv[1] !== 'new' || !array_key_exists(2, $argv)) {
+    help(1);
+}
+
+$app_name = $argv[2];
+$directory = rtrim(array_key_exists(3, $argv) ? $argv[3] : $current_directory, '/');
+
+$directories = [
+    'app/controllers' => [
+        'ApplicationController.php',
+        'HomepageController.php'
+    ],
+    'app/helpers' => [
+        '.gitkeep'
+    ],
+    'app/models' => [
+        '.gitkeep'
+    ],
+    'app/modules' => [
+        '.gitkeep'
+    ],
+    'app/presenters/v1' => [
+        'StatusPresenter.php'
+    ],
+    'app/processes' => [
+        '.gitkeep'
+    ],
+    'app/sass' => [
+        'screen.scss'
+    ],
+    'app/views/layouts' => [
+        'layout.php'
+    ],
+    'app/views/homepage' => [
+        'index.php'
+    ],
+    'bin' => [
+        'test'
+    ],
+    'config' => [
+        'application.php',
+        'autoload.php',
+        'database.yml',
+        'deploy.rb',
+        'routes.php'
+    ],
+    'config/environments' => [
+        'test.php',
+        'development.php',
+        'staging.php',
+        'production.php'
+    ],
+    'config/deploy' => [
+        'staging.rb',
+        'production.rb'
+    ],
+    'config/localization' => [
+        'en.yaml'
+    ],
+    'db/migrate' => [
+        '.gitkeep'
+    ],
+    'public' => [
+        'index.php'
+    ],
+    'public/assets/css' => [
+        '.gitkeep'
+    ],
+    'public/assets/images' => [
+        '.gitkeep'
+    ],
+    'public/assets/js' => [
+        '.gitkeep'
+    ],
+    'tests' => [
+        'bootstrap.php'
+    ],
+    'tests/app/controllers' => [
+        '.gitkeep'
+    ],
+    'tests/app/models' => [
+        '.gitkeep'
+    ],
+    'tests/app/modules' => [
+        '.gitkeep'
+    ],
+    'tests/fixtures' => [
+        '.gitkeep'
+    ],
+    'tests/helpers' => [
+        'UnitTestClass.php'
+    ],
+    'tmp' => [
+        '.gitkeep'
+    ],
+    'vendor' => [
+        '.gitkeep'
+    ],
+    'Capfile',
+    'Gemfile',
+    'Guardfile',
+    'Rakefile',
+    'phpunit.xml'
+];
+
+$main_directory = $directory . DIRECTORY_SEPARATOR . $app_name;
+if (!file_exists($main_directory)) {
+    mkdir($main_directory);
+}
+else {
+    exit("Directory {$main_directory} already exists");
+}
+
+echo "Creating project '{$app_name}' in {$main_directory}\n";
+
+function create_directory($name, $main_directory) {
+    $directory = file_join($main_directory, $name);
+    if (!file_exists($directory)) {
+        mkdir($directory, 0777, true);
+    }
+    echo "    created ...... /{$name}\n";
+}
+
+function create_file($filename, $main_directory, $app_name, $directory = "") {
+    $full_filename = empty($directory) ? $filename : file_join($directory, $filename);
+    if ($filename === '.gitkeep') {
+        $template = file_join(__DIR__, '/../lib/Gotron/ApplicationTemplate', 'gitkeep');
+    }
+    else {
+        $template = file_join(__DIR__, '/../lib/Gotron/ApplicationTemplate', $full_filename);
+    }
+
+    $output = file_get_contents($template);
+    $camelized = preg_replace('/(?:^|_)(.?)/e', "strtoupper('$1')", $app_name);
+    $output = str_replace('@app_namespace', $camelized, $output);
+    $output = str_replace('@app_class', $camelized, $output);
+    $output = str_replace('@app_name', $app_name, $output);
+
+    $output_file = file_join($main_directory, $full_filename);
+
+    file_put_contents($output_file, $output);
+
+    if ($directory === "bin") {
+        chmod($output_file, 0755);
+    }
+
+    echo "    created ...... /{$full_filename}\n";
+}
+
+foreach ($directories as $key => $value) {
+    if (is_array($value)) {
+        create_directory($key, $main_directory);
+        foreach ($value as $file) {
+            create_file($file, $main_directory, $app_name, $key);
+        }
+    }
+    else {
+        create_file($value, $main_directory, $app_name);
+    }
+}
+
+chdir($main_directory);
+passthru("git init");
+passthru("git submodule add git@github.com:gotryiton/gotron.git vendor/gotron");
+passthru("git submodule update --init --recursive");
+
+echo "\n  Success!\n";
+echo <<<EOF
+    _____       _
+   / ____|     | |
+  | |  __  ___ | |_ _ __ ___  _ __
+  | | |_ |/ _ \| __| '__/ _ \| '_ \
+  | |__| | (_) | |_| | | (_) | | | |
+   \_____|\___/ \__|_|  \___/|_| |_|\n
+EOF;
