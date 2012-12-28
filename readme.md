@@ -1,9 +1,4 @@
-      _____       _
-     / ____|     | |
-    | |  __  ___ | |_ _ __ ___  _ __
-    | | |_ |/ _ \| __| '__/ _ \| '_ \
-    | |__| | (_) | |_| | | (_) | | | |
-     \_____|\___/ \__|_|  \___/|_| |_|
+![Gotron](http://assets.gotryiton.com/img/gotron/ff91430392/logo-m.png)
 
 Gotron is a web application framework for PHP developers.
 
