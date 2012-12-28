@@ -14,6 +14,11 @@ class HomepageController extends ApplicationController {
             }
         ]);
     }
+
+    public function status() {
+        $this->render(['json' => StatusPresenter::to_array(['ok' => true, 'name' => '@app_name'])]);
+    }
+
 }
 
 ?>

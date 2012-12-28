@@ -110,7 +110,7 @@ $directories = [
         'bootstrap.php'
     ],
     'tests/app/controllers' => [
-        '.gitkeep'
+        'HomepageControllerTest.php'
     ],
     'tests/app/models' => [
         '.gitkeep'
