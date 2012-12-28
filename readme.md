@@ -19,7 +19,7 @@ The simplest way to create a new project is to clone this repository and then us
 
 That will create the directory `blog` in your home directory, create the necessary files that gotron uses, and add gotron and its dependencies as submodules.
 
-Then, to start the php server:
+Then, to start the PHP server:
 
     cd ~/blog
     bundle install
