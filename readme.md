@@ -35,5 +35,12 @@ If you want compass to continually compile css you can run `bundle exec guard`.
 To run the Gotron test suite:
 
   1. Install mysql and make sure it is running. (On a mac install homebrew and run `brew install mysql`)
-  2. Run `mysql -u root -e "CREATE DATABASE gotron_development; CREATE USER 'test'@'localhost' IDENTIFIED BY 'test'; GRANT ALL PRIVILEGES ON gotron_development.* TO 'test'@'localhost' WITH GRANT OPTION;"` (command may need to be modified depending on the setup of the mysql instance)
+  2. Run:
+    ```
+    mysql -u root -e "CREATE DATABASE gotron_development; \
+      CREATE USER 'test'@'localhost' IDENTIFIED BY 'test'; \
+      GRANT ALL PRIVILEGES ON gotron_development.* TO 'test'@'localhost' WITH GRANT OPTION;"
+    ```
+
+   (This command may need to be modified depending on the setup of your mysql instance. If you have any important data on there you should *definitely* set a root password.)
   3. From the root directory run `bin/test`.
