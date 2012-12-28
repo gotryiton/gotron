@@ -67,6 +67,7 @@ $directories = [
     'config' => [
         'application.php',
         'autoload.php',
+        'compass_config.rb',
         'database.yml',
         'deploy.rb',
         'routes.php'
@@ -123,6 +124,7 @@ $directories = [
     'vendor' => [
         '.gitkeep'
     ],
+    '.gitignore',
     'Capfile',
     'Gemfile',
     'Guardfile',
@@ -152,6 +154,10 @@ function create_file($filename, $main_directory, $app_name, $directory = "") {
     $full_filename = empty($directory) ? $filename : file_join($directory, $filename);
     if ($filename === '.gitkeep') {
         $template = file_join(__DIR__, '/../lib/Gotron/ApplicationTemplates', 'gitkeep');
+    }
+    elseif ($filename === '.gitignore') {
+        $template_file_name = empty($directory) ? 'gitignore' : file_join($directory, 'gitignore');
+        $template = file_join(__DIR__, '/../lib/Gotron/ApplicationTemplates', $template_file_name);
     }
     else {
         $template = file_join(__DIR__, '/../lib/Gotron/ApplicationTemplates', $full_filename);
