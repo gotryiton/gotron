@@ -5,9 +5,10 @@ Gotron is a web application framework for PHP developers.
 Gotron powers the [Go Try It On](http://www.gotryiton.com) website and the API for the [Go Try It On iPhone application](https://itunes.apple.com/us/app/go-try-it-on/id398392143?mt=8). It has borrowed a number of concepts from Ruby on Rails and added others where necessary.
 
 ## Requirements
-    - PHP 5.4+
-    - Ruby 1.9+ (For Compass and Migrations)
-    - MySQL
+
+- [PHP 5.4+](http://php.net/)
+- [Ruby 1.9+](http://www.ruby-lang.org/en/) (For [Compass](http://compass-style.org/) and [Standalone Migrations](https://github.com/thuss/standalone-migrations))
+- [MySQL](http://www.mysql.com/)
 
 ## Getting started
 
@@ -17,7 +18,7 @@ The simplest way to create a new project is to clone this repository and then us
     cd gotron
     bin/gotron new blog ~/
 
-That will create the directory `blog` in your home directory, create the necessary files that gotron uses, and add gotron and its dependencies as submodules.
+That will create the directory `blog` in your home directory, create the necessary files that Gotron uses, and add Gotron and its dependencies as submodules.
 
 Then, to start the PHP server:
 
@@ -42,5 +43,5 @@ To run the Gotron test suite:
       GRANT ALL PRIVILEGES ON gotron_development.* TO 'test'@'localhost' WITH GRANT OPTION;"
     ```
 
-   (This command may need to be modified depending on the setup of your MySQL instance. If you have any important data on there you should **definitely** set a root password.)
+    (This command may need to be modified depending on the setup of your MySQL instance. If you have any important data on there you should **definitely** set a root password.)
   3. From the root directory run `bin/test`.
