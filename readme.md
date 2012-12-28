@@ -42,5 +42,5 @@ To run the Gotron test suite:
       GRANT ALL PRIVILEGES ON gotron_development.* TO 'test'@'localhost' WITH GRANT OPTION;"
     ```
 
-   (This command may need to be modified depending on the setup of your mysql instance. If you have any important data on there you should *definitely* set a root password.)
+   (This command may need to be modified depending on the setup of your mysql instance. If you have any important data on there you should **definitely** set a root password.)
   3. From the root directory run `bin/test`.
