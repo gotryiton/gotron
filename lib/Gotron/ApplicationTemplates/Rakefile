@@ -1,0 +1,30 @@
+begin
+  require 'tasks/standalone_migrations'
+  require 'logging'
+
+  ActiveRecord::Base.schema_format = :sql
+
+  logger = Logging.logger['migration_log']
+  logger.add_appenders(
+    Logging.appenders.syslog("##migration##",:facility => Syslog::Constants::LOG_LOCAL0)
+  )
+  ActiveRecord::Base.logger = logger
+
+  namespace :db do
+    namespace :test do
+      desc "Recreates the database with current migrations"
+      task :update do |t|
+        ENV['DB'] = 'test' if ENV['DB'].nil?
+        ActiveRecord::Base.configurations = standalone_configurator.config_for_all
+        ActiveRecord::Base.establish_connection standalone_configurator.config_for Rails.env
+        ActiveRecord::Base.connection.recreate_database(ActiveRecord::Base.configurations[Rails.env]['database'])
+
+        # migrating test db
+        Rake::Task["db:migrate"].reenable
+        Rake::Task["db:migrate"].invoke
+      end
+    end
+  end
+rescue LoadError => e
+  puts "gem install standalone_migrations to get db:migrate:* tasks! (Error: #{e})"
+end

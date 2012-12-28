@@ -2,16 +2,16 @@ development: &development
   adapter: mysql
   encoding: utf8
   reconnect: false
-  database: gotron_development
+  database: development
   pool: 5
-  username: test
+  username: root
   password:
   host: localhost
 
 test:
   <<: *development
-  database: gotron_test
+  database: test
 
 production:
   <<: *development
-  database: gotron_production
+  database: production

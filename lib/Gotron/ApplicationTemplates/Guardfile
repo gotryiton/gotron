@@ -1,0 +1,5 @@
+# More info at https://github.com/guard/guard#readme
+
+guard 'compass', :configuration_file => 'config/compass_config.rb' do
+  watch(%r{^app/sass/(.*)\.s[ac]ss})
+end

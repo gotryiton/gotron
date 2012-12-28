@@ -1,0 +1,5 @@
+.sass-cache
+/public/assets/css/*.css
+tags
+.DS_Store
+/tmp/*
