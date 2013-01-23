@@ -240,7 +240,7 @@ class BeanstalkerJob extends Beanstalker {
         if (0 === error_reporting()) {
             return false;
         }
-        \Logging::write($errstr,'BEANSTALKER_JOB');
+        Logging::write($errstr, 'BEANSTALKER_JOB');
     }
 
     /**
