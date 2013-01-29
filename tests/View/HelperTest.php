@@ -12,6 +12,7 @@ class HelperTest extends UnitTest {
         $config->set('assets.js_location', '/test/assets/directory/javascripts');
         $config->set('assets.css_location', '/test/assets/directory/css');
         $config->set('assets.images_location', '/test/assets/directory/images');
+        $config->set('assets.hashed', false);
     }
 
     public function test_javascript_tag() {
