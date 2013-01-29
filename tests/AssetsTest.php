@@ -16,6 +16,12 @@ class AssetsTest extends UnitTest {
         $this->assertEquals('/assets/js/test.js', Assets::javascript('test'));
     }
 
+    public function test_javascript_multi_level() {
+        $this->assertEquals('/assets/js/test/test.js', Assets::javascript('test/test'));
+        $this->assertEquals('/assets/js/test/123/test.js', Assets::javascript('test/123/test'));
+        $this->assertEquals('/assets/js/test/123/test/321/test.js', Assets::javascript('test/123/test/321/test'));
+    }
+
     public function test_css_unset() {
         $this->assertEquals('/assets/css/test.css', Assets::css('test'));
     }

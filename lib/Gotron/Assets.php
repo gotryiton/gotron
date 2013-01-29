@@ -23,6 +23,9 @@ class Assets {
             $extension = $file_info['extension'];
             $object = $file_info['filename'];
         }
+        elseif (array_key_exists('basename', $file_info)) {
+            $object = $file_info['basename'];
+        }
 
         if (array_key_exists('dirname', $file_info) && $file_info['dirname'] !== ".") {
             $object = file_join($file_info['dirname'], $object);
