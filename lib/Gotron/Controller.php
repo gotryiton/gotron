@@ -282,6 +282,11 @@ class Controller {
         $this->response = Error::response($status_code, $this->request);
     }
 
+    protected function render_status($status_code = 200) {
+        $this->rendered = true;
+        $this->response = Response::build(200);
+    }
+
     /**
      * Renders an ETag 304
      *
