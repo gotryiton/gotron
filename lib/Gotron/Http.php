@@ -458,16 +458,26 @@ class Http extends Singleton {
         }
     }
 
-    public static function http_get($url, $params = array(), $silent = false) {
+    public static function http_get($url, $params = array(), $silent = false, $timeout = null) {
         $http = self::connect_with_url($url);
+
+        if (!is_null($timeout)) {
+            $http->setTimeout($timeout);
+        }
+
         $http->silentMode($silent);
         $parsed = parse_url($url);
         $path = isset($parsed['path']) ? $parsed['path'] : "/";
         return $http->doGet($path, $params);
     }
 
-    public static function http_post($url, $params = array(), $silent = false) {
+    public static function http_post($url, $params = array(), $silent = false, $timeout = null) {
         $http = self::connect_with_url($url);
+
+        if (!is_null($timeout)) {
+            $http->setTimeout($timeout);
+        }
+
         $http->silentMode($silent);
         $parsed = parse_url($url);
         $path = $parsed['path'];
