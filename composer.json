@@ -20,7 +20,8 @@
       "Gotron" : "lib/"
     },
     "files": [
-      "lib/View/Helpers.php"
+      "lib/Gotron/Utility.php",
+      "lib/Gotron/View/Helpers.php"
     ]
   }
 }
