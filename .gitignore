@@ -3,3 +3,5 @@
 lib/ActiveRecord/test/log/query.log
 tags
 *.swp
+vendor
+composer.phar
