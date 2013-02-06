@@ -5,7 +5,6 @@
   "keywords": ["gotron", "framework"],
   "homepage": "http://github.com/gotryiton/gotron",
   "license": "MIT",
-  "minimum-stablity": "dev",
   "repositories": [
     {"type": "vcs", "url": "https://github.com/gotryiton/php-activerecord"},
     {"type": "vcs", "url": "https://github.com/gotryiton/elasticsearch"}
