@@ -1,4 +1,10 @@
 {
+  "name": "gotryiton/gotron",
+  "type": "library",
+  "description": "Gotron is a web application framework for PHP developers",
+  "keywords": ["gotron", "framework"],
+  "homepage": "http://github.com/gotryiton/gotron",
+  "license": "MIT",
   "repositories": [
     {"type": "vcs", "url": "https://github.com/gotryiton/php-activerecord"},
     {"type": "vcs", "url": "https://github.com/gotryiton/elasticsearch"}
