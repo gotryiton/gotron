@@ -62,7 +62,7 @@ class Config extends Singleton implements ArrayAccess {
         $instance = self::instance();
         $instance->load_default_directories();
         $instance->set_environment(self::get_environment());
-        $instance->set_root_directory(realpath(__DIR__ . "/../../../../"));
+        $instance->set_root_directory(realpath(__DIR__ . "/../../../../../"));
         static::initialize($config);
         $instance->define_app_version();
         $instance->load_environment_config($instance->environment);
