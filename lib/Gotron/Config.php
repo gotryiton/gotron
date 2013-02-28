@@ -43,6 +43,11 @@ class Config extends Singleton implements ArrayAccess {
     public $routes = array();
 
     /**
+     * Stored yaml docs
+     **/
+    public $yaml = array();
+
+    /**
      * Calls the Closure function with the config instance
      *
      * @param Closure $initializer
@@ -197,14 +202,19 @@ class Config extends Singleton implements ArrayAccess {
             $params = array($params);
         }
 
+        $key = md5($yaml_file);
         if (file_exists($yaml_file)) {
-            $yaml = Spyc::YAMLLoad($yaml_file);
+            if (!array_key_exists($key, $this->yaml)) {
+                $this->yaml[$key] = Spyc::YAMLLoad($yaml_file);
+            }
+
             if ($environment) {
-                $config = $yaml[$this->environment];
+                $config = $this->yaml[$key][$this->environment];
             }
             else {
-                $config = $yaml;
+                $config = $this->yaml[$key];
             }
+
             foreach ($params as $param) {
                 if (array_key_exists($param, $config)) {
                     $this->set($param, $config[$param]);
@@ -214,6 +224,20 @@ class Config extends Singleton implements ArrayAccess {
                 }
             }
         }
+    }
+
+    /**
+     * Checks if a database config exists
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public static function database_config_exists($name) {
+        $instance = Config::instance();
+        $instance->load_database_config();
+        $key = md5(file_join(static::get('root_directory'), "config/database.yml"));
+
+        return array_key_exists($name, $instance->yaml[$key]);
     }
 
     /**
