@@ -179,8 +179,9 @@ class ModelTest extends UnitTest {
         $values = [
             ['On the Road', 'Jack Kerouac', 22], // already exists
             ['The Sun Also Rises', 'Ernest Hemingway', 26],
+            // ['The Sun Also Rises', 'Ernest Hemingway', 26], // TODO: This case is not handled
             ['Slaughterhouse Five', 'Kurt Vonnegut', 26],
-            ['Slaughterhouse Five', 'A Plagiarist', 26],
+            ['Slaughterhouse Five', 'A Plagiarist', 24],
         ];
 
         $bulk_response = Book::bulk_insert(
@@ -193,12 +194,17 @@ class ModelTest extends UnitTest {
         $keyed_records = $bulk_response['keyed_records'];
         $this->assertCount(4, $keyed_records);
 
-        $i = 0;
-        foreach ($keyed_records as $record) {
-            $this->assertEquals($values[$i][0], $record->title);
-            $this->assertEquals($values[$i][1], $record->author);
-            $i++;
-        }
+        $book = Book::find(['title' => 'On the Road', 'author' => 'Jack Kerouac']);
+        $this->assertEquals(26, $book->publisher_id);
+
+        $book = Book::find(['title' => 'The Sun Also Rises', 'author' => 'Ernest Hemingway']);
+        $this->assertEquals(26, $book->publisher_id);
+
+        $book = Book::find(['title' => 'Slaughterhouse Five', 'author' => 'Kurt Vonnegut']);
+        $this->assertEquals(26, $book->publisher_id);
+
+        $book = Book::find(['title' => 'Slaughterhouse Five', 'author' => 'A Plagiarist']);
+        $this->assertEquals(24, $book->publisher_id);
 
         $this->assertEquals(4 + $book_count, Book::count());
     }
