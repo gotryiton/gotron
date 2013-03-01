@@ -136,6 +136,73 @@ class ModelTest extends UnitTest {
         $this->assertEquals("agent/1", $agent->cache_key());
     }
 
+    public function testBulkInsertWithOneKey() {
+        $values = [
+            ['something'], // already exists
+            ['agent_one'],
+            ['agent_two'],
+            ['agent_three']
+        ];
+
+        $bulk_response = Agent::bulk_insert(
+            ['name'],
+            $values,
+            'name'
+        );
+
+        $this->assertEquals(3, $bulk_response['new_count']);
+        $keyed_records = $bulk_response['keyed_records'];
+        $this->assertCount(4, $keyed_records);
+
+        $i = 0;
+        foreach ($keyed_records as $key => $record) {
+            $this->assertEquals($values[$i][0], $key);
+            $this->assertEquals($values[$i][0], $record->name);
+            $i++;
+        }
+
+        $this->assertEquals(4, Agent::count()); // Make sure it did not add any others
+    }
+
+    public function testBulkInsertWithMultipleKeys() {
+        $book_count = Book::count();
+
+        $fix = new Fixture(__DIR__ . "/fixtures/");
+        $fix->create('book', [
+            'id' => 22,
+            'title' => 'On the Road',
+            'author' => 'Jack Kerouac',
+            'publisher_id' => 26,
+            'updated_at' => 1234321
+        ]);
+
+        $values = [
+            ['On the Road', 'Jack Kerouac', 22], // already exists
+            ['The Sun Also Rises', 'Ernest Hemingway', 26],
+            ['Slaughterhouse Five', 'Kurt Vonnegut', 26],
+            ['Slaughterhouse Five', 'A Plagiarist', 26],
+        ];
+
+        $bulk_response = Book::bulk_insert(
+            ['title', 'author', 'publisher_id'],
+            $values,
+            ['title', 'author']
+        );
+
+        $this->assertEquals(3, $bulk_response['new_count']);
+        $keyed_records = $bulk_response['keyed_records'];
+        $this->assertCount(4, $keyed_records);
+
+        $i = 0;
+        foreach ($keyed_records as $record) {
+            $this->assertEquals($values[$i][0], $record->title);
+            $this->assertEquals($values[$i][1], $record->author);
+            $i++;
+        }
+
+        $this->assertEquals(4 + $book_count, Book::count());
+    }
+
 }
 
 ?>
