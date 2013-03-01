@@ -104,7 +104,7 @@ class Model extends ActiveRecord\Model {
     }
 
     /**
-     * Returns records in an array with keys as the valu of the
+     * Returns records in an array with keys as the value of the
      * attributes for the key passed
      *
      * Will not key records for multiple attributes
