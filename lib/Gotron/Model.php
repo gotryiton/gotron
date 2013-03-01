@@ -156,7 +156,7 @@ class Model extends ActiveRecord\Model {
         if (!is_null($key)) {
             if (is_array($key)) {
                 $existing_records = static::find_by_multiple_keys($key, $values, $column_names);
-                $existing_keys = array_map(function($record) {
+                $existing_keys = array_map(function($record) use($key) {
                     $keys = [];
                     foreach ($key as $column) {
                         $keys[]= $record->$column;
