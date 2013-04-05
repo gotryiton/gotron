@@ -15,8 +15,13 @@ function file_join() {
       $paths = array_merge($paths, (array)$arg);
     }
 
-    foreach($paths as &$path) {
-      $path = rtrim($path, '/');
+    foreach($paths as $i => &$path) {
+        if ($i === 0) {
+            $path = rtrim($path, '/');
+        }
+        else {
+            $path = trim($path, '/');
+        }
     }
 
     return join('/', $paths);
