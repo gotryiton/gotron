@@ -16,11 +16,7 @@ function file_join() {
     }
 
     foreach($paths as &$path) {
-      $path = trim($path, '/');
-    }
-
-    if (substr($args[0], 0, 1) == '/') {
-      $paths[0] = '/' . $paths[0];
+      $path = rtrim($path, '/');
     }
 
     return join('/', $paths);

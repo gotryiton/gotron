@@ -54,6 +54,12 @@ class AssetsTest extends UnitTest {
         $config->set('assets_dictionary', false);
         $config->set('assets.hashed', false);
     }
+
+    public function test_protocol_relative_domain() {
+        $config = Config::instance();
+        $config->set('assets.images_location', '//test_images_location/');
+        $this->assertEquals('//test_images_location/test.jpg', Assets::image('test.jpg'));
+    }
 }
 
 ?>
