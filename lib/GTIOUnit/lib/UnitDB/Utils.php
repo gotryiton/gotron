@@ -17,15 +17,16 @@ class Utils extends UnitDB {
 
     protected function get_truncate_tables_query() {
         $result = $this->run_query("SHOW TABLES FROM {$this->database}", true);
-        $drop_query = "";
+        $drop_query = "SET FOREIGN_KEY_CHECKS=0; ";
         if (!empty($result)) {
             foreach ($result as $table) {
                 $value = array_shift($table);
                 if ($value != 'schema_migrations'){
-                    $drop_query .= "TRUNCATE TABLE " . $value . " ; ";
+                    $drop_query .= "TRUNCATE TABLE " . $value . "; ";
                 }
             }
         }
+        $drop_query .= "SET FOREIGN_KEY_CHECKS=1;";
 
         return ($drop_query) ? $drop_query : false;
     }
