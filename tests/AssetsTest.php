@@ -69,7 +69,6 @@ class AssetsTest extends UnitTest {
         $config->set('assets.images_location', '//test_images_location/');
         $this->assertEquals('//test_images_location/test.jpg', Assets::image('test.jpg'));
     }
-
 }
 
 ?>
