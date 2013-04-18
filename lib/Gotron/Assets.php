@@ -40,9 +40,11 @@ class Assets {
             $object = $object . ".{$extension}";
 
             return file_join($path, $object);
-        } else if ($absolute) {
+        }
+        else if ($absolute) {
             return Config::get("cdn.domain") . "assets/{$prefix}/{$object}.{$extension}";
-        } else {
+        }
+        else {
             return "/assets/{$prefix}/{$object}.{$extension}";
         }
     }
