@@ -17,7 +17,6 @@ class Assets {
     }
 
     public static function get_filename($object, $prefix, $extension = null, $absolute = false) {
-
         $file_info = pathinfo($object);
 
         if (is_null($extension)) {
