@@ -12,11 +12,11 @@ class Assets {
         return static::get_filename($object, 'css', 'css');
     }
 
-    public static function image($object) {
-        return static::get_filename($object, 'images');
+    public static function image($object, $absolute = false) {
+        return static::get_filename($object, 'images', null, $absolute);
     }
 
-    public static function get_filename($object, $prefix, $extension = null) {
+    public static function get_filename($object, $prefix, $extension = null, $absolute = false) {
         $file_info = pathinfo($object);
 
         if (is_null($extension)) {
@@ -39,6 +39,9 @@ class Assets {
             $object = $object . ".{$extension}";
 
             return file_join($path, $object);
+        }
+        else if ($absolute) {
+            return Config::get("cdn.domain") . "assets/{$prefix}/{$object}.{$extension}";
         }
         else {
             return "/assets/{$prefix}/{$object}.{$extension}";

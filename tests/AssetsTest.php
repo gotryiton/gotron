@@ -42,6 +42,13 @@ class AssetsTest extends UnitTest {
         $this->assertEquals('http://test_css_location/test.css', Assets::css('test'));
     }
 
+    public function test_absolute_domain_image() {
+        $config = Config::instance();
+        $this->assertFalse($config->get('assets.images_location', true));
+        $config->set('cdn.domain', 'http://cdn.gotron.com/');
+        $this->assertEquals('http://cdn.gotron.com/assets/images/test.jpg', Assets::image('test.jpg', true));
+    }
+
     public function test_hash() {
         $config = Config::instance();
         $config->set('assets_dictionary', ["js" => ["test.something.js" => "a712hjnk21"], "css" => ["test.css" => "a2821jk1a2"], "images" => ["test.jpg" => "3x819jk1a2"]]);
