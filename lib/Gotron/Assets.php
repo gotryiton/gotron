@@ -38,6 +38,10 @@ class Assets {
 
             $object = $object . ".{$extension}";
 
+            if ($absolute) {
+                $path = add_protocol($path);
+            }
+
             return file_join($path, $object);
         }
         else if ($absolute) {

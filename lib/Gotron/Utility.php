@@ -27,6 +27,22 @@ function file_join() {
     return join('/', $paths);
 }
 
+/**
+ * Ensures a protocol-less url gets a protocol
+ *
+ * @param string $str The url to be modified
+ * @param string $protocol The protocol to be added if missing
+ *
+ * @return string
+ */
+function add_protocol($str, $protocol = 'http') {
+    if (strpos($str, '//') === 0) {
+        return $protocol . ':' . $str;
+    }
+    return $str;
+}
+
+
 if (!function_exists('getallheaders')) {
     function getallheaders() {
         $headers = array();
