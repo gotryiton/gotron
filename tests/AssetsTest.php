@@ -69,6 +69,12 @@ class AssetsTest extends UnitTest {
         $config->set('assets.images_location', '//test_images_location/');
         $this->assertEquals('//test_images_location/test.jpg', Assets::image('test.jpg'));
     }
+
+    public function test_protocol_absolute_domain() {
+        $config = Config::instance();
+        $config->set('assets.images_location', '//test_images_location/');
+        $this->assertEquals('http://test_images_location/test.jpg', Assets::image('test.jpg', true));
+    }
 }
 
 ?>
