@@ -4,8 +4,6 @@ namespace TestApp;
 
 use Gotron\Application;
 
-require __DIR__ . "/../../../../lib/Gotron/bootstrap.php";
-
 class TestApplication extends Application {
 
     const VERSION = '4.1.1';

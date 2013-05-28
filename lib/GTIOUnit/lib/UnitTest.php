@@ -3,7 +3,7 @@
 namespace GTIOUnit;
 
 use PHPUnit_Framework_TestCase,
-    Pheanstalk,
+    Pheanstalk_Pheanstalk as Pheanstalk,
     Gotron\Header,
     Gotron\Dispatch\Router,
     PHPUnit_Framework_Constraint_IsTrue,
