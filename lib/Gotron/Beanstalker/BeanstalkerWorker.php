@@ -154,17 +154,22 @@ class BeanstalkerWorker extends Beanstalker {
     private function release_job() {
         $failNum = 5;
         $jobId = $this->current_job->get_job_id();
-        $jobStats = $this->statsJob($jobId);
-        $releases = (int)$jobStats->__get('releases');
-        if (($releases + 1) >= $failNum) {
-            $this->current_job->delete_job();
-            $this->current_job = null;
-            $this->log->lwrite("Deleting Job Id " . $jobId . " failed and released $failNum times");
+
+        try {
+            $jobStats = $this->statsJob($jobId);
+            $releases = (int)$jobStats->__get('releases');
+            if (($releases + 1) >= $failNum) {
+                $this->current_job->delete_job();
+                $this->current_job = null;
+                $this->log->lwrite("Deleting Job Id " . $jobId . " failed and released $failNum times");
+            }
+            else {
+                $this->current_job->release_job();
+                $this->log->lwrite("Failure, released Job Id: " . $jobId . " - release " . $releases);
+            }
         }
-        else {
-            $this->current_job->release_job();
-            $this->log->lwrite("Failure, released Job Id: " . $jobId . " - release " . $releases);
-        }
+        catch (\Exception $e) {}
+
         return true;
     }
 

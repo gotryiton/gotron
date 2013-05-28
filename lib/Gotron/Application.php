@@ -22,8 +22,6 @@ class Application extends Singleton {
     public static function initialize() {
         $instance = static::instance();
         $instance->define_unique_id();
-        $instance->autoload_library();
-        $instance->autoload_vendors();
         $config = Config::load_config(static::configuration());
         $instance->config = $config;
         $instance->autoload_app();
@@ -33,35 +31,6 @@ class Application extends Singleton {
         self::initialize_active_record($config);
 
         return $instance;
-    }
-
-    /**
-     * Autoload the library requirements
-     *
-     * @return void
-     * @author
-     */
-    public function autoload_library() {
-        $this->loader = new Loader;
-        $this->loader->setMode(0);
-        $this->loader->register();
-        $this->loader->setPaths(array(
-            'Gotron\\' => file_join(__DIR__, "..")
-        ));
-    }
-
-    public function autoload_vendors() {
-        $this->loader->setPaths(array(
-            'ActiveRecord\\' => file_join(__DIR__, "/../../vendor/php-activerecord/lib"),
-            'Requests' => file_join(__DIR__, "/../../vendor/Requests/library"),
-            'Swift' => file_join(__DIR__, "/../../vendor/swiftmailer/lib/classes"),
-            'Pheanstalk' => file_join(__DIR__, "/../../vendor/Pheanstalk/classes"),
-            'ElasticSearch\\' => file_join(__DIR__, "/../../vendor/elasticsearch/src")
-        ));
-
-        $this->loader->setClasses(array(
-           'Spyc' => file_join(__DIR__, "/../../vendor/Spyc/spyc.php")
-        ));
     }
 
     /**
@@ -115,6 +84,10 @@ class Application extends Singleton {
      * @return void
      */
     public function autoload_app() {
+        $this->loader = new Loader;
+        $this->loader->setMode(0);
+        $this->loader->register();
+
         $root_directory = $this->config->get('root_directory');
 
         $this->loader->addFrameworkClassPaths(array(
@@ -166,7 +139,6 @@ class Application extends Singleton {
      * @return void
      */
     public static function initialize_active_record($app_config) {
-        require_once __DIR__ . '/../../vendor/php-activerecord/lib/ActiveRecord/Utils.php';
         ActiveRecord\Config::initialize(function($cfg) use($app_config) {
             $logger = new Logging('QUERY_LOG');
             $cfg->set_logging($app_config->bool('db.query_logging'));

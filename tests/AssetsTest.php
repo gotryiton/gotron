@@ -16,10 +16,12 @@ class AssetsTest extends UnitTest {
         $this->assertEquals('/assets/js/test.js', Assets::javascript('test'));
     }
 
-    public function test_javascript_multi_level() {
-        $this->assertEquals('/assets/js/test/test.js', Assets::javascript('test/test'));
-        $this->assertEquals('/assets/js/test/123/test.js', Assets::javascript('test/123/test'));
-        $this->assertEquals('/assets/js/test/123/test/321/test.js', Assets::javascript('test/123/test/321/test'));
+    public function test_javascript_multi_level_relative() {
+        $config = Config::instance();
+        $config->set('assets.js_location', '/devassets/js/');
+        $this->assertEquals('/devassets/js/test/test.js', Assets::javascript('test/test'));
+        $this->assertEquals('/devassets/js/test/123/test.js', Assets::javascript('test/123/test'));
+        $this->assertEquals('/devassets/js/test/123/test/321/test.js', Assets::javascript('test/123/test/321/test'));
     }
 
     public function test_css_unset() {
@@ -40,6 +42,13 @@ class AssetsTest extends UnitTest {
         $this->assertEquals('http://test_css_location/test.css', Assets::css('test'));
     }
 
+    public function test_absolute_domain_image() {
+        $config = Config::instance();
+        $this->assertFalse($config->get('assets.images_location', true));
+        $config->set('cdn.domain', 'http://cdn.gotron.com/');
+        $this->assertEquals('http://cdn.gotron.com/assets/images/test.jpg', Assets::image('test.jpg', true));
+    }
+
     public function test_hash() {
         $config = Config::instance();
         $config->set('assets_dictionary', ["js" => ["test.something.js" => "a712hjnk21"], "css" => ["test.css" => "a2821jk1a2"], "images" => ["test.jpg" => "3x819jk1a2"]]);
@@ -53,6 +62,18 @@ class AssetsTest extends UnitTest {
 
         $config->set('assets_dictionary', false);
         $config->set('assets.hashed', false);
+    }
+
+    public function test_protocol_relative_domain() {
+        $config = Config::instance();
+        $config->set('assets.images_location', '//test_images_location/');
+        $this->assertEquals('//test_images_location/test.jpg', Assets::image('test.jpg'));
+    }
+
+    public function test_protocol_absolute_domain() {
+        $config = Config::instance();
+        $config->set('assets.images_location', '//test_images_location/');
+        $this->assertEquals('http://test_images_location/test.jpg', Assets::image('test.jpg', true));
     }
 }
 

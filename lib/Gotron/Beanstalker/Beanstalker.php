@@ -2,7 +2,7 @@
 
 namespace Gotron\Beanstalker;
 
-use Pheanstalk,
+use Pheanstalk_Pheanstalk as Pheanstalk,
     Pheanstalk_Connection,
     Gotron\Logging,
     Gotron\Config;
