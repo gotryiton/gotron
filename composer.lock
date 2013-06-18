@@ -1,25 +1,28 @@
 {
-    "hash": "667856884bf6ce8957d7b9ccbb971f3d",
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "2af868f844082adfb8bc8e012f3a6355",
     "packages": [
         {
             "name": "aura/autoload",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/auraphp/Aura.Autoload",
-                "reference": "1.0.0"
+                "url": "https://github.com/auraphp/Aura.Autoload.git",
+                "reference": "1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/auraphp/Aura.Autoload/archive/1.0.0.zip",
-                "reference": "1.0.0",
+                "url": "https://api.github.com/repos/auraphp/Aura.Autoload/zipball/1.0.1",
+                "reference": "1.0.1",
                 "shasum": ""
             },
             "require": {
                 "aura/installer-default": ">=1.0.0",
                 "php": ">=5.4.0"
             },
-            "time": "2012-11-27 00:00:00",
             "type": "aura-package",
             "autoload": {
                 "psr-0": {
@@ -28,7 +31,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD"
+                "BSD-2-Clause"
             ],
             "authors": [
                 {
@@ -60,7 +63,8 @@
                 "autoloader",
                 "class loader",
                 "psr-0"
-            ]
+            ],
+            "time": "2013-04-12 00:00:00"
         },
         {
             "name": "aura/installer-default",
@@ -76,7 +80,6 @@
                 "reference": "1.0.0",
                 "shasum": ""
             },
-            "time": "2012-11-26 21:35:57",
             "type": "composer-installer",
             "extra": {
                 "class": "Aura\\Composer\\DefaultInstaller"
@@ -101,7 +104,8 @@
             "keywords": [
                 "aura",
                 "installer"
-            ]
+            ],
+            "time": "2012-11-26 21:35:57"
         },
         {
             "name": "gotryiton/elasticsearch",
@@ -123,7 +127,6 @@
             "require-dev": {
                 "mageekguy/atoum": "dev-master@dev"
             },
-            "time": "2013-02-06 17:22:09",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -148,26 +151,26 @@
             ],
             "support": {
                 "source": "https://github.com/gotryiton/elasticsearch/tree/master"
-            }
+            },
+            "time": "2013-02-06 17:22:09"
         },
         {
             "name": "gotryiton/php-activerecord",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/gotryiton/php-activerecord",
-                "reference": "651fe4b2a0702c88f9b2b7411176b2cfa5a2c597"
+                "url": "https://github.com/gotryiton/php-activerecord.git",
+                "reference": "72d38787f231cb38eea6fc597140c46dfe0dcfa4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gotryiton/php-activerecord/zipball/651fe4b2a0702c88f9b2b7411176b2cfa5a2c597",
-                "reference": "651fe4b2a0702c88f9b2b7411176b2cfa5a2c597",
+                "url": "https://api.github.com/repos/gotryiton/php-activerecord/zipball/72d38787f231cb38eea6fc597140c46dfe0dcfa4",
+                "reference": "72d38787f231cb38eea6fc597140c46dfe0dcfa4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2013-02-06 17:35:25",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -189,30 +192,35 @@
             "support": {
                 "source": "https://github.com/gotryiton/php-activerecord/tree/master",
                 "issues": "https://github.com/gotryiton/php-activerecord/issues"
-            }
+            },
+            "time": "2013-03-07 15:54:19"
         },
         {
-            "name": "lespoilus/spyc",
+            "name": "mustangostang/spyc",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/lespoilus/spyc.git",
-                "reference": "5a5bacdef1e514bdbb30701f13d9867140a6a21b"
+                "url": "https://github.com/mustangostang/spyc.git",
+                "reference": "3b36782a1008dec4dedfe8b6c9344ec071ce0d22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lespoilus/spyc/zipball/5a5bacdef1e514bdbb30701f13d9867140a6a21b",
-                "reference": "5a5bacdef1e514bdbb30701f13d9867140a6a21b",
+                "url": "https://api.github.com/repos/mustangostang/spyc/zipball/3b36782a1008dec4dedfe8b6c9344ec071ce0d22",
+                "reference": "3b36782a1008dec4dedfe8b6c9344ec071ce0d22",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.1"
             },
-            "time": "2012-10-15 11:52:47",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.5.x-dev"
+                }
+            },
             "autoload": {
                 "files": [
-                    "spyc.php"
+                    "Spyc.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -226,32 +234,31 @@
                 }
             ],
             "description": "A simple YAML loader/dumper class for PHP",
-            "homepage": "https://github.com/lespoius/spyc/",
+            "homepage": "https://github.com/mustangostang/spyc/",
             "keywords": [
                 "spyc",
                 "yaml",
-                "yml",
-                "zf2"
-            ]
+                "yml"
+            ],
+            "time": "2013-06-13 10:54:22"
         },
         {
             "name": "pda/pheanstalk",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/pda/pheanstalk",
-                "reference": "4d26a912c868cb4d0216ea6d35e4c9d12aefd350"
+                "url": "https://github.com/pda/pheanstalk.git",
+                "reference": "5028537601caba22a85d20a3168443920538baac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/4d26a912c868cb4d0216ea6d35e4c9d12aefd350",
-                "reference": "4d26a912c868cb4d0216ea6d35e4c9d12aefd350",
+                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/5028537601caba22a85d20a3168443920538baac",
+                "reference": "5028537601caba22a85d20a3168443920538baac",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2013-01-31 14:58:11",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -274,7 +281,8 @@
             "homepage": "https://github.com/pda/pheanstalk",
             "keywords": [
                 "beanstalkd"
-            ]
+            ],
+            "time": "2013-04-03 09:09:52"
         },
         {
             "name": "rmccue/requests",
@@ -282,18 +290,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rmccue/Requests.git",
-                "reference": "eee30254c2ba314ad7fe3bc493095af421118c27"
+                "reference": "7820210f53e08a776f4bada8bc1edf8b64eca17e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rmccue/Requests/zipball/eee30254c2ba314ad7fe3bc493095af421118c27",
-                "reference": "eee30254c2ba314ad7fe3bc493095af421118c27",
+                "url": "https://api.github.com/repos/rmccue/Requests/zipball/7820210f53e08a776f4bada8bc1edf8b64eca17e",
+                "reference": "7820210f53e08a776f4bada8bc1edf8b64eca17e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2"
             },
-            "time": "2012-10-25 14:01:26",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -320,7 +327,8 @@
                 "ipv6",
                 "iri",
                 "sockets"
-            ]
+            ],
+            "time": "2013-05-28 12:43:19"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -339,7 +347,6 @@
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2013-01-08 15:50:34",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -369,22 +376,23 @@
             "keywords": [
                 "mail",
                 "mailer"
-            ]
+            ],
+            "time": "2013-01-08 15:50:34"
         }
     ],
     "packages-dev": [
         {
             "name": "phpunit/php-code-coverage",
-            "version": "1.2.7",
+            "version": "1.2.11",
             "source": {
                 "type": "git",
-                "url": "git://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "1.2.7"
+                "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
+                "reference": "1.2.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/php-code-coverage/archive/1.2.7.zip",
-                "reference": "1.2.7",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1.2.11",
+                "reference": "1.2.11",
                 "shasum": ""
             },
             "require": {
@@ -393,11 +401,13 @@
                 "phpunit/php-text-template": ">=1.1.1@stable",
                 "phpunit/php-token-stream": ">=1.1.3@stable"
             },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
             "suggest": {
                 "ext-dom": "*",
                 "ext-xdebug": ">=2.0.5"
             },
-            "time": "2012-12-02 14:54:55",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -424,7 +434,8 @@
                 "coverage",
                 "testing",
                 "xunit"
-            ]
+            ],
+            "time": "2013-05-23 18:23:24"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -443,7 +454,6 @@
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2012-10-11 04:44:38",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -469,7 +479,8 @@
             "keywords": [
                 "filesystem",
                 "iterator"
-            ]
+            ],
+            "time": "2012-10-11 04:44:38"
         },
         {
             "name": "phpunit/php-text-template",
@@ -488,7 +499,6 @@
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2012-10-31 11:15:28",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -513,7 +523,8 @@
             "homepage": "https://github.com/sebastianbergmann/php-text-template/",
             "keywords": [
                 "template"
-            ]
+            ],
+            "time": "2012-10-31 11:15:28"
         },
         {
             "name": "phpunit/php-timer",
@@ -532,7 +543,6 @@
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2012-10-11 04:45:58",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -557,7 +567,8 @@
             "homepage": "http://www.phpunit.de/",
             "keywords": [
                 "timer"
-            ]
+            ],
+            "time": "2012-10-11 04:45:58"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -577,7 +588,6 @@
                 "ext-tokenizer": "*",
                 "php": ">=5.3.3"
             },
-            "time": "2012-10-11 04:47:14",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -602,20 +612,21 @@
             "homepage": "http://www.phpunit.de/",
             "keywords": [
                 "tokenizer"
-            ]
+            ],
+            "time": "2012-10-11 04:47:14"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "3.7.13",
+            "version": "3.7.21",
             "source": {
                 "type": "git",
-                "url": "git://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3.7.13"
+                "url": "https://github.com/sebastianbergmann/phpunit.git",
+                "reference": "3.7.21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/phpunit/archive/3.7.13.zip",
-                "reference": "3.7.13",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3.7.21",
+                "reference": "3.7.21",
                 "shasum": ""
             },
             "require": {
@@ -624,20 +635,22 @@
                 "ext-reflection": "*",
                 "ext-spl": "*",
                 "php": ">=5.3.3",
-                "phpunit/php-code-coverage": ">=1.2.1",
+                "phpunit/php-code-coverage": ">=1.2.1,<1.3.0",
                 "phpunit/php-file-iterator": ">=1.3.1",
                 "phpunit/php-text-template": ">=1.1.1",
-                "phpunit/php-timer": ">=1.0.2",
+                "phpunit/php-timer": ">=1.0.2,<1.1.0",
                 "phpunit/phpunit-mock-objects": ">=1.2.0,<1.3.0",
-                "symfony/yaml": ">=2.1.0,<2.2.0"
+                "symfony/yaml": ">=2.0,<3.0"
+            },
+            "require-dev": {
+                "pear-pear/pear": "1.9.4"
             },
             "suggest": {
                 "ext-json": "*",
                 "ext-simplexml": "*",
                 "ext-tokenizer": "*",
-                "phpunit/php-invoker": ">=1.1.0"
+                "phpunit/php-invoker": ">=1.1.0,<1.2.0"
             },
-            "time": "2013-01-13 10:21:19",
             "bin": [
                 "composer/bin/phpunit"
             ],
@@ -673,7 +686,8 @@
                 "phpunit",
                 "testing",
                 "xunit"
-            ]
+            ],
+            "time": "2013-05-23 18:54:29"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -696,7 +710,6 @@
             "suggest": {
                 "ext-soap": "*"
             },
-            "time": "2013-01-13 10:24:48",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -722,31 +735,36 @@
             "keywords": [
                 "mock",
                 "xunit"
-            ]
+            ],
+            "time": "2013-01-13 10:24:48"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.1.7",
+            "version": "v2.3.1",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml",
-                "reference": "v2.1.7"
+                "url": "https://github.com/symfony/Yaml.git",
+                "reference": "v2.3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.1.7",
-                "reference": "v2.1.7",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.3.1",
+                "reference": "v2.3.1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-17 21:21:51",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\Yaml": ""
+                    "Symfony\\Component\\Yaml\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -764,7 +782,8 @@
                 }
             ],
             "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-05-10 18:12:13"
         }
     ],
     "aliases": [
@@ -774,8 +793,14 @@
     "stability-flags": {
         "pda/pheanstalk": 20,
         "rmccue/requests": 20,
-        "lespoilus/spyc": 20,
+        "mustangostang/spyc": 20,
         "gotryiton/php-activerecord": 20,
         "gotryiton/elasticsearch": 20
-    }
+    },
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
 }

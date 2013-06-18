@@ -14,7 +14,7 @@
     "pda/pheanstalk": "dev-master",
     "rmccue/requests": "dev-master",
     "swiftmailer/swiftmailer": "v4.3.0",
-    "lespoilus/spyc": "dev-master",
+    "mustangostang/spyc": "dev-master",
     "gotryiton/php-activerecord": "dev-master",
     "gotryiton/elasticsearch": "dev-master"
   },
