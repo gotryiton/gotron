@@ -1,4 +1,4 @@
-![Gotron](http://assets.gotryiton.com/img/gotron/ff91430392/logo-m.png)
+![Gotron](/logo.png)
 
 Gotron is a web application framework for PHP developers.
 
